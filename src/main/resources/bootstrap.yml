@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: ch-upms
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.202.10.66:8848
+        namespace: ${nacos.namespace:}
+      config:
+        server-addr: 10.202.10.66:8848
+        shared-dataids: ch-upms.yml
+        namespace: ${nacos.namespace:}

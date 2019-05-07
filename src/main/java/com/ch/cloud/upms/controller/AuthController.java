@@ -1,0 +1,126 @@
+package com.ch.cloud.upms.controller;
+
+import com.alibaba.fastjson.JSONObject;
+import com.ch.Constants;
+import com.ch.cloud.upms.model.StMenu;
+import com.ch.cloud.upms.model.StRole;
+import com.ch.cloud.upms.model.StUser;
+import com.ch.cloud.upms.pojo.Menu;
+import com.ch.cloud.upms.service.IMenuService;
+import com.ch.cloud.upms.service.IRoleService;
+import com.ch.cloud.upms.service.IUserService;
+import com.ch.result.Result;
+import com.ch.result.ResultUtils;
+import com.ch.utils.CommonUtils;
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * desc:
+ *
+ * @author zhimin
+ * @date 2019/4/22 8:42 PM
+ */
+@RestController
+public class AuthController {
+
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private IUserService userService;
+    @Autowired
+    IRoleService roleService;
+    @Autowired
+    IMenuService menuService;
+
+
+    @GetMapping({"user/{username}/info"})
+    public Result<?> getByUsername(@PathVariable String username) {
+        return ResultUtils.wrapFail(() -> userService.findByUsername(username));
+    }
+
+    @GetMapping({"user/{id}/role"})
+    public Result<StRole> getUserRole(@PathVariable Long id) {
+        return ResultUtils.wrapList(() -> roleService.findByUserId(id));
+    }
+
+
+    @GetMapping({"user/{id}/permission"})
+    public Result<StRole> getUserPermission(@PathVariable Long id) {
+        return ResultUtils.wrapList(() -> roleService.findByUserId(id));
+    }
+
+
+    @GetMapping({"user/info"})
+    public Result<?> getAuthInfo(@RequestHeader(Constants.TOKEN_USER) String username) {
+        return ResultUtils.wrapFail(() -> {
+            JSONObject info = new JSONObject();
+            StUser user = userService.findByUsername(username);
+
+            info.put("user", covertUserVo(user));
+            StRole role = roleService.findDefault(username);
+            if (role == null) return info;
+            List<Menu> menus;
+            List<StMenu> routers;
+            List<StMenu> permissions;
+            if (CommonUtils.isEquals(role.getType(), Constants.ZERO)) {
+                menus = menuService.findMenuTreeByRoleId(0L);
+                routers = menuService.findRouterByRoleId(0L);
+                permissions = menuService.findPermissionByRoleId(0L);
+            } else {
+                menus = menuService.findMenuTreeByRoleId(role.getId());
+                routers = menuService.findRouterByRoleId(role.getId());
+                permissions = menuService.findPermissionByRoleId(role.getId());
+            }
+            info.put("menus", menus);
+            info.put("routers", covertMenuVo(routers));
+            info.put("permissions", covertMenuVo(permissions));
+            return info;
+        });
+    }
+
+    private JSONObject covertUserVo(StUser user) {
+        if(user == null) return new JSONObject();
+        JSONObject info = new JSONObject();
+        info.put("name",user.getUsername());
+        info.put("realName",user.getRealName());
+        info.put("lastLoginTime",user.getLastLoginAt());
+        return info;
+    }
+
+    private List<JSONObject> covertMenuVo(List<StMenu> menus) {
+        if (CommonUtils.isEmpty(menus)) return Lists.newArrayList();
+        return menus.stream().map(r -> {
+            JSONObject info = new JSONObject();
+            info.put("code", r.getCode());
+            info.put("name", r.getName());
+            info.put("url", r.getUrl());
+            return info;
+        }).collect(Collectors.toList());
+    }
+
+
+    @PostMapping("menu")
+    public Result<Menu> menu(@RequestHeader(Constants.TOKEN_USER) String username) {
+        logger.debug("fetch menu by username: {}", username);
+        return ResultUtils.wrapList(() -> {
+            StRole role = roleService.findDefault(username);
+            List<Menu> menus = Lists.newArrayList();
+            if (role == null) return menus;
+            if (CommonUtils.isEquals(role.getType(), Constants.ZERO)) {
+                menus = menuService.findMenuTreeByRoleId(0L);
+            } else {
+                menus = menuService.findMenuTreeByRoleId(role.getId());
+            }
+            return menus;
+        });
+    }
+
+}

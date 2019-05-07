@@ -1,0 +1,108 @@
+package com.ch.cloud.upms.service.impl;
+
+import com.ch.Constants;
+import com.ch.cloud.upms.mapper.StUserMapper;
+import com.ch.cloud.upms.model.StRole;
+import com.ch.cloud.upms.model.StUser;
+import com.ch.cloud.upms.service.IRoleService;
+import com.ch.cloud.upms.service.IUserService;
+import com.ch.mybatis.service.BaseService;
+import com.ch.mybatis.utils.ExampleUtils;
+import com.ch.utils.CommonUtils;
+import com.ch.utils.EncryptUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.common.Mapper;
+import tk.mybatis.mapper.entity.Example;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+/**
+ * @author 01370603
+ * @date 2018/12/21 18:06
+ */
+@Service
+public class UserServiceImpl extends BaseService<Long, StUser> implements IUserService {
+
+    @Autowired(required = false)
+    private StUserMapper userMapper;
+
+    @Override
+    protected Mapper<StUser> getMapper() {
+        return userMapper;
+    }
+
+//    @Autowired(required = false)
+//    private PasswordService passwordService;
+
+    @Autowired
+    private IRoleService roleService;
+
+    @Override
+    public StUser findByUsername(String username) {
+        if (CommonUtils.isEmpty(username)) return null;
+        StUser record = new StUser();
+        record.setUsername(username);
+        return getMapper().selectOne(record);
+    }
+
+    @Override
+    public int updatePassword(StUser record) {
+        if (record != null && CommonUtils.isNotEmpty(record.getId(), record.getPassword())) {
+            StUser r = new StUser();
+            r.setId(record.getId());
+//            r.setPassword(passwordService.encryptPassword(record.getPassword()));
+            return super.update(r);
+        }
+        return 0;
+    }
+
+    @Override
+    public int assignRole(Long id, List<Long> roleIds) {
+        List<StRole> roleList = roleService.findByUserId(id);
+        List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), Constants.ZERO)).map(StRole::getId).collect(Collectors.toList());
+
+        AtomicInteger c = new AtomicInteger();
+        if (!roleIds.isEmpty()) {
+            roleIds.stream().filter(r -> !uRoleIds.contains(r)).forEach(r -> c.getAndAdd(userMapper.insertAssignRole(id, r)));
+            uRoleIds.stream().filter(r -> !roleIds.contains(r)).forEach(r -> c.getAndAdd(userMapper.deleteAssignRole(id, r)));
+        } else if (!uRoleIds.isEmpty()) {
+            uRoleIds.forEach(r -> c.getAndAdd(userMapper.deleteAssignRole(id, r)));
+        }
+        return c.get();
+    }
+
+    @Override
+    public int save(StUser record) {
+        if (record != null) {
+            if (CommonUtils.isEmpty(record.getPassword())) {
+                record.setPassword(EncryptUtils.generate());
+            }
+//            record.setPassword(passwordService.encryptPassword(record.getPassword()));
+            record.setUserId(RandomStringUtils.randomNumeric(10));
+        }
+        return super.save(record);
+    }
+
+    @Override
+    public int update(StUser record) {
+        //不更新密码
+        record.setPassword(null);
+        return super.update(record);
+    }
+
+    @Override
+    public PageInfo<StUser> findPage(StUser record, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Example e = getExample();
+        ExampleUtils.dynCond(e.createCriteria(), record);
+        e.orderBy("userId").asc();
+        List<StUser> records = getMapper().selectByExample(e);
+        return new PageInfo<>(records);
+    }
+}

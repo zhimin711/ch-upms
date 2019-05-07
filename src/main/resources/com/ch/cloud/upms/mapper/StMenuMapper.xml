@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ch.cloud.upms.mapper.StMenuMapper">
+  <resultMap id="BaseResultMap" type="com.ch.cloud.upms.model.StMenu">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="PID" jdbcType="BIGINT" property="pid" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />
+    <result column="URL" jdbcType="VARCHAR" property="url" />
+    <result column="SORT" jdbcType="INTEGER" property="sort" />
+    <result column="TYPE" jdbcType="CHAR" property="type" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="STATUS" jdbcType="CHAR" property="status" />
+    <result column="CREATE_BY" jdbcType="VARCHAR" property="createBy" />
+    <result column="CREATE_AT" jdbcType="TIMESTAMP" property="createAt" />
+    <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
+    <result column="UPDATE_AT" jdbcType="TIMESTAMP" property="updateAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PID, NAME, CODE, ICON, URL, SORT, TYPE, DESCRIPTION, STATUS, CREATE_BY, CREATE_AT, 
+    UPDATE_BY, UPDATE_AT
+  </sql>
+
+
+  <select id="findRouterByRoleId" resultMap="BaseResultMap">
+    SELECT DISTINCT t.*
+    FROM st_menu t
+    LEFT JOIN st_role_permission t1
+    on t1.PERMISSION_ID = t.ID
+    WHERE t.STATUS in ('s', '1')
+    AND t.TYPE in ('2')
+    <if test="_parameter > 0">
+      AND t1.ROLE_ID = #{roleId}
+    </if>
+    ORDER BY sort
+  </select>
+  <select id="findPermissionByRoleId" resultMap="BaseResultMap">
+    SELECT DISTINCT t.*
+    FROM st_menu t
+    LEFT JOIN st_role_permission t1
+    on t1.PERMISSION_ID = t.ID
+    WHERE t.STATUS in ('s', '1')
+    AND t.TYPE in ('3','4')
+    <if test="_parameter > 0">
+      AND t1.ROLE_ID = #{roleId}
+    </if>
+    ORDER BY sort
+  </select>
+  <select id="findTopMenuByRoleId" resultMap="BaseResultMap">
+    SELECT DISTINCT t.*
+    FROM st_menu t
+    LEFT JOIN st_role_permission t1
+    on t1.PERMISSION_ID = t.ID
+    WHERE t.STATUS in ('s', '1')
+    AND t.TYPE in ('1','2')
+    and t.pid is null
+    <if test="_parameter > 0">
+      AND t1.ROLE_ID = #{roleId}
+    </if>
+    ORDER BY sort
+  </select>
+  <select id="findMenuByRoleIdAndPid" resultMap="BaseResultMap">
+    SELECT DISTINCT t.*
+    FROM st_menu t
+    LEFT JOIN st_role_permission t1
+    on t1.PERMISSION_ID = t.ID
+    WHERE t.STATUS in ('s', '1')
+    AND t.TYPE in ('1','2')
+    <if test="pid == null">
+      and t.pid is null
+    </if>
+    <if test="pid != null">
+      and t.pid = #{pid}
+    </if>
+    <if test="roleId > 0">
+      AND t1.ROLE_ID = #{roleId}
+    </if>
+    ORDER BY sort
+  </select>
+</mapper>
