@@ -52,7 +52,7 @@ dependencies {
     implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-config:${alicloudVersion}"
     implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-discovery:${alicloudVersion}"
 
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+//    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
 
     implementation('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2')
 

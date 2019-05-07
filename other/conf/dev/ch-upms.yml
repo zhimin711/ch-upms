@@ -1,15 +1,15 @@
 #服务端口
 server:
   port: 8082
-  # servlet:
-    # context-path: /upms
+    # servlet:
+  # context-path: /upms
 spring:
   servlet:
     multipart:
       max-file-size: 100MB
-      max-request-size: 1024MB
+      max-request-size: 512MB
   datasource:
-    url: jdbc:mysql://192.168.0.8:3306/admin?useSSL=false
+    url: jdbc:mysql://192.168.1.8:3306/admin?useSSL=false
     username: admin
     password: 123456
     # 使用druid数据源
@@ -28,9 +28,6 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
-  thymeleaf:
-    mode: HTML
-    cache: false
 
 logging:
   config: classpath:config/logback.xml
