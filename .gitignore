@@ -63,7 +63,7 @@ nb-configuration.xml
 .gradle
 gradle-app.setting
 build/
-libs/
+##libs/
 logs/
 
 ## OS Specific

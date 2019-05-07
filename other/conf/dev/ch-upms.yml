@@ -34,7 +34,7 @@ spring:
 
 logging:
   config: classpath:config/logback.xml
-  path: logs/ch-admin
+  path: logs
   level:
     com.ch: debug
     com.alibaba.nacos.client: warn
