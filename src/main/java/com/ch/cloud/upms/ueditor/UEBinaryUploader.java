@@ -6,7 +6,7 @@ import com.baidu.ueditor.define.BaseState;
 import com.baidu.ueditor.define.FileType;
 import com.baidu.ueditor.define.State;
 import com.baidu.ueditor.upload.StorageManager;
-import com.ch.e.CoreError;
+import com.ch.e.PubError;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.ExceptionUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -77,7 +77,7 @@ public class UEBinaryUploader {
                 is = fileStream.openStream();
             }
             if (originFileName == null) {
-                throw ExceptionUtils.create(CoreError.INVALID);
+                throw ExceptionUtils.create(PubError.INVALID);
             }
 
             String savePath = (String) conf.get("savePath");

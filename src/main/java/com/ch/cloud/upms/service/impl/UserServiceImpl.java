@@ -97,7 +97,7 @@ public class UserServiceImpl extends BaseService<Long, StUser> implements IUserS
     }
 
     @Override
-    public PageInfo<StUser> findPage(StUser record, int pageNum, int pageSize) {
+    public PageInfo<StUser> findPage(int pageNum, int pageSize, StUser record) {
         PageHelper.startPage(pageNum, pageSize);
         Example e = getExample();
         ExampleUtils.dynCond(e.createCriteria(), record);

@@ -73,7 +73,7 @@ public class RoleServiceImpl extends BaseService<Long, StRole> implements IRoleS
     }
 
     @Override
-    public PageInfo<StRole> findPage(StRole record, int pageNum, int pageSize) {
+    public PageInfo<StRole> findPage(int pageNum, int pageSize, StRole record) {
         PageHelper.startPage(pageNum, pageSize);
         Example e = getExample();
         ExampleUtils.dynCond(e.createCriteria(), record);

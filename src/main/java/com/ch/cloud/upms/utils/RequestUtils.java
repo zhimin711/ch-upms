@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.utils;
 
 import com.ch.Constants;
-import com.ch.e.CoreError;
+import com.ch.e.PubError;
 import com.ch.utils.ExceptionUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -19,7 +19,7 @@ public class RequestUtils {
 
     public static HttpServletRequest get() {
         RequestAttributes reqAttr = RequestContextHolder.getRequestAttributes();
-        if (reqAttr == null) throw ExceptionUtils.create(CoreError.NOT_EXISTS, "http request not found!l");
+        if (reqAttr == null) throw ExceptionUtils.create(PubError.NOT_EXISTS, "http request not found!l");
         return ((ServletRequestAttributes) reqAttr).getRequest();
     }
 

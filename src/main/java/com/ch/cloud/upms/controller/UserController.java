@@ -1,11 +1,10 @@
 package com.ch.cloud.upms.controller;
 
-import com.ch.Status;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.model.StUser;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
-import com.ch.e.CoreError;
+import com.ch.e.PubError;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
@@ -38,15 +37,15 @@ public class UserController {
     public PageResult<StUser> page(@RequestBody StUser record,
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
-        PageInfo<StUser> pageInfo = userService.findPage(record, pageNum, pageSize);
-        return new PageResult<>(pageInfo.getList(), pageInfo.getTotal());
+        PageInfo<StUser> pageInfo = userService.findPage(pageNum, pageSize, record);
+        return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
     }
 
     @PostMapping("save")
     public Result<Integer> add(@RequestBody StUser record) {
         StUser r = userService.findByUsername(record.getUsername());
         if (r != null) {
-            return new Result<>(CoreError.EXISTS, "用户名已存在！");
+            return Result.error(PubError.EXISTS);
         }
         return ResultUtils.wrapFail(() -> userService.save(record));
     }
@@ -74,12 +73,9 @@ public class UserController {
 
     @PostMapping("initPwd")
     public Result<String> initPwd(@RequestBody Long[] userIds) {
-        Result<String> result = new Result<>(Status.FAILED);
 
         if (CommonUtils.isEmpty(userIds) || userIds.length > 1) {
-            result.setStatus(Status.ERROR);
-            result.setError(CoreError.ARGS, "不支持批量更新!");
-            return result;
+            return Result.error(PubError.ARGS, "不支持批量更新!");
         }
         Long userId = userIds[0];
         StUser user = userService.find(userId);
@@ -88,16 +84,13 @@ public class UserController {
             user.setPassword(pwd);
             int c = userService.updatePassword(user);
             if (c > 0) {
-                result.setStatus(Status.SUCCESS);
-                result.put(pwd);
+                return Result.success(pwd);
             } else {
-                result.setError(CoreError.UPDATE, "更新密码失败!");
+                return Result.error(PubError.UPDATE, "更新密码失败!");
             }
         } else {
-            result.setStatus(Status.ERROR);
-            result.setError(CoreError.NOT_EXISTS, "用户不存在!");
+            return Result.error(PubError.NOT_EXISTS);
         }
-        return result;
     }
 
 }

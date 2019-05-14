@@ -3,10 +3,9 @@ package com.ch.cloud.upms.controller;
 import com.ch.cloud.upms.model.StMenu;
 import com.ch.cloud.upms.pojo.VueRecord;
 import com.ch.cloud.upms.service.IMenuService;
-import com.ch.cloud.upms.service.IPersistentTokenService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.utils.VueRecordUtils;
-import com.ch.e.CoreError;
+import com.ch.e.PubError;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
@@ -27,8 +26,6 @@ import java.util.List;
 public class MenuController {
 
     @Autowired
-    IPersistentTokenService tokenService;
-    @Autowired
     IRoleService roleService;
     @Autowired
     IMenuService menuService;
@@ -38,14 +35,14 @@ public class MenuController {
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
         PageInfo<StMenu> pageInfo = menuService.findTreePage(record, pageNum, pageSize);
-        return new PageResult<>(pageInfo.getList(), pageNum, pageSize, pageInfo.getTotal());
+        return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
     }
 
     @PostMapping("save")
     public Result<Integer> add(@RequestBody StMenu record) {
         StMenu r = menuService.findByCode(record.getCode());
         if (r != null) {
-            return new Result<>(CoreError.EXISTS, "菜单代码已存在！");
+            return Result.error(PubError.EXISTS);
         }
         return ResultUtils.wrapFail(() -> menuService.save(record));
     }

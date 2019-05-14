@@ -2,12 +2,10 @@ package com.ch.cloud.upms.controller;
 
 import com.ch.cloud.upms.model.BtUploadFile;
 import com.ch.cloud.upms.service.IUploadFileService;
-import com.ch.e.CoreError;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.CommonUtils;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,25 +38,23 @@ public class UploadRecordController {
                                          @PathVariable(value = "num") int pageNum,
                                          @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
-            PageInfo<BtUploadFile> pageInfo = uploadFileService.findPage(record, pageNum, pageSize);
+            PageInfo<BtUploadFile> pageInfo = uploadFileService.findPage(pageNum, pageSize, record);
             return new InvokerPage.Page<>(pageInfo.getTotal(), pageInfo.getList());
         });
     }
 
-//    @PostMapping("save")
+    //    @PostMapping("save")
     public Result<Integer> add(@RequestBody BtUploadFile record) {
         return ResultUtils.wrapFail(() -> uploadFileService.save(record));
     }
 
     @PostMapping({"save/{id}"})
     public Result<Integer> edit(@PathVariable int id, @RequestBody BtUploadFile record) {
-        if (CommonUtils.isEquals("0", record.getType())) {
-            return new Result<>(CoreError.NOT_ALLOWED, "角色类型错误！");
-        }
+
         return ResultUtils.wrapFail(() -> uploadFileService.update(record));
     }
 
-//    @PostMapping({"delete"})
+    //    @PostMapping({"delete"})
     public Result<Integer> delete(Long id) {
         return ResultUtils.wrapFail(() -> uploadFileService.delete(id));
     }

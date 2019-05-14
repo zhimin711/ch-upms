@@ -2,7 +2,7 @@ package com.ch.cloud.upms.controller;
 
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.service.IRoleService;
-import com.ch.e.CoreError;
+import com.ch.e.PubError;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
@@ -32,7 +32,7 @@ public class RoleController {
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
-            PageInfo<StRole> pageInfo = roleService.findPage(record, pageNum, pageSize);
+            PageInfo<StRole> pageInfo = roleService.findPage(pageNum, pageSize, record);
             return new InvokerPage.Page<>(pageInfo.getTotal(), pageInfo.getList());
         });
     }
@@ -41,9 +41,9 @@ public class RoleController {
     public Result<Integer> add(@RequestBody StRole record) {
         StRole r = roleService.findByCode(record.getCode());
         if (r != null) {
-            return new Result<>(CoreError.EXISTS, "角色代码已存在！");
+            return Result.error(PubError.EXISTS);
         } else if (CommonUtils.isEquals("0", record.getType())) {
-            return new Result<>(CoreError.NOT_ALLOWED, "角色类型错误！");
+            return Result.error(PubError.NOT_ALLOWED, "角色类型错误！");
         }
         return ResultUtils.wrapFail(() -> roleService.save(record));
     }
@@ -51,7 +51,7 @@ public class RoleController {
     @PostMapping({"save/{id}"})
     public Result<Integer> edit(@PathVariable int id, @RequestBody StRole record) {
         if (CommonUtils.isEquals("0", record.getType())) {
-            return new Result<>(CoreError.NOT_ALLOWED, "角色类型错误！");
+            return Result.error(PubError.NOT_ALLOWED, "角色类型错误！");
         }
         return ResultUtils.wrapFail(() -> roleService.update(record));
     }

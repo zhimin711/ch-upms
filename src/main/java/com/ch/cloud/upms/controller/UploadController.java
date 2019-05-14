@@ -6,8 +6,8 @@ import com.ch.cloud.upms.model.BtUploadFile;
 import com.ch.cloud.upms.pojo.UploadImg;
 import com.ch.cloud.upms.service.IUploadFileService;
 import com.ch.cloud.upms.utils.RequestUtils;
-import com.ch.e.CoreError;
-import com.ch.e.CoreException;
+import com.ch.e.PubError;
+import com.ch.e.PubException;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.*;
@@ -53,7 +53,7 @@ public class UploadController {
                             String version) {
         logger.info("File upload ...");
         if (CommonUtils.isEmpty(uploadPath)) {
-            return new Result<>(CoreError.NON_NULL, "系统未配置存储目录，不上传，请联系管理员！");
+            return Result.error(PubError.NON_NULL, "系统未配置存储目录，不上传，请联系管理员！");
         }
         List<String> fileNameList = Lists.newArrayList();
         List<File> newFiles = Lists.newArrayList();
@@ -90,17 +90,17 @@ public class UploadController {
                 String folder = FileExtUtils.linkPath(dateStr, username);
                 if ("1".equals(type)) {
                     if (CommonUtils.isNotEmpty(records1)) {
-//                        throw ExceptionUtils.create(CoreError.EXISTS, file.getOriginalFilename() + "文件已存在！");
+//                        throw ExceptionUtils.create(PubError.EXISTS, file.getOriginalFilename() + "文件已存在！");
                         fileNameList.add(records1.get(0).getFileName());
                         fileNameList.add(records1.get(0).getFilePath());
-                        return new Result<>(fileNameList);
+                        return Result.success(fileNameList);
                     }
                     folder = FileExtUtils.linkPath("common", fileType);
                 } else if (CommonUtils.isNotEmpty(records1)) {
-//                    throw ExceptionUtils.create(CoreError.EXISTS, file.getOriginalFilename() + "文件您已上传！");
+//                    throw ExceptionUtils.create(PubError.EXISTS, file.getOriginalFilename() + "文件您已上传！");
                     fileNameList.add(records1.get(0).getFileName());
                     fileNameList.add(records1.get(0).getFilePath());
-                    return new Result<>(fileNameList);
+                    return Result.success(fileNameList);
                 }
                 //会把原Session invoke
                 //String path = request.getSession().getServletContext().getRealPath(folder);
@@ -145,15 +145,15 @@ public class UploadController {
                     //deal with by type
                 }
             }
-            return new Result<>(fileNameList);
-        } catch (CoreException e) {
+            return Result.success(fileNameList);
+        } catch (PubException e) {
             logger.error("upload file error!", e);
             newFiles.forEach(FileUtils::deleteQuietly);
-            return new Result<>(e.getError(), e.getMessage());
+            return Result.error(e.getError(), e.getMessage());
         } catch (Exception e) {
             logger.error("upload file error!", e);
             newFiles.forEach(FileUtils::deleteQuietly);
-            return new Result<>(CoreError.UNKNOWN, "遇到未知错误，请联系管理员！");
+            return Result.error(PubError.UNKNOWN, "遇到未知错误，请联系管理员！");
         }
     }
 
@@ -211,7 +211,7 @@ public class UploadController {
 
         BtUploadFile record = uploadFileService.findByFileName(fileName);
         if (record == null) {
-            throw ExceptionUtils.create(CoreError.NOT_EXISTS, "文件不存在");
+            throw ExceptionUtils.create(PubError.NOT_EXISTS, "文件不存在");
         }
         ;
 
@@ -290,7 +290,7 @@ public class UploadController {
         logger.info("File upload ...");
 
         if (CommonUtils.isEmpty(uploadPath)) {
-            return new Result<>(CoreError.NON_NULL, "系统未配置存储目录，不上传，请联系管理员！");
+            return Result.error(PubError.NON_NULL, "系统未配置存储目录，不上传，请联系管理员！");
         }
         List<String> fileNameList = Lists.newArrayList();
         List<File> newFiles = Lists.newArrayList();
@@ -324,7 +324,7 @@ public class UploadController {
                 if (CommonUtils.isNotEmpty(records1)) {
                     fileNameList.add(records1.get(0).getFileName());
                     fileNameList.add(records1.get(0).getFilePath());
-                    return new Result<>(fileNameList);
+                    return Result.success(fileNameList);
                 }
                 //这里不必处理IO流关闭的问题，因为FileUtils.copyInputStreamToFile()方法内部会自动把用到的IO流关掉
                 String uuid = UUIDGenerator.generate();
@@ -358,15 +358,15 @@ public class UploadController {
                     //deal with by type
                 }
             }
-            return new Result<>(fileNameList);
-        } catch (CoreException e) {
+            return Result.success(fileNameList);
+        } catch (PubException e) {
             logger.error("upload file error!", e);
             newFiles.forEach(FileUtils::deleteQuietly);
-            return new Result<>(e.getError(), e.getMessage());
+            return Result.error(e.getError(), e.getMessage());
         } catch (Exception e) {
             logger.error("upload file error!", e);
             newFiles.forEach(FileUtils::deleteQuietly);
-            return new Result<>(CoreError.UNKNOWN, "遇到未知错误，请联系管理员！");
+            return Result.error(PubError.UNKNOWN, "遇到未知错误，请联系管理员！");
         }
     }
 

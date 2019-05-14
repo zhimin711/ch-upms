@@ -35,13 +35,13 @@ ext {
     springOauth2 = '2.3.4.RELEASE'
     alicloudVersion = '0.9.0.RELEASE' //0.2.1.RELEASE
 
-    chVersion = '1.0.2-SNAPSHOT'
+    chVersion = '1.0.3-SNAPSHOT'
 }
 
 dependencies {
-    implementation(fileTree("${projectDir}/libs"))
+    implementation(fileTree("${rootDir}/libs"))
     implementation("com.ch:ch-core:${chVersion}")
-    implementation("com.ch:ch-jdbc-mybatis:${chVersion}")
+    implementation("com.ch:ch-mybatis:${chVersion}")
 
     implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-web') {
