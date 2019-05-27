@@ -1,8 +1,4 @@
 spring:
-  cloud:
-      zookeeper:
-        enabled: true  # true:开启zookeeper外部化配置, false:读取本地配置;
-        connect-string: 10.202.107.137:2181 # IP1:port1,IP2:port2,IP3:port3
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
