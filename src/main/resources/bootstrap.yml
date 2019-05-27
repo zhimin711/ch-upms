@@ -10,9 +10,5 @@ spring:
         namespace: ${nacos.namespace:}
       config:
         server-addr: 192.168.1.7:8848
-        shared-dataids: ch-upms.yml
+        shared-dataids: ch-upms.yml,ch-sentinel.properties
         namespace: ${nacos.namespace:}
-    sentinel:
-      eager: true
-      transport:
-        dashboard: 192.168.1.4:8080

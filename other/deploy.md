@@ -19,6 +19,7 @@ sudo docker run --name ch-upms \
 ```
 ####  重启 停止 删除
 ```
+sudo docker start ch-upms;
 sudo docker restart ch-upms; 
 sudo docker stop ch-upms;
 sudo docker rm ch-upms;
