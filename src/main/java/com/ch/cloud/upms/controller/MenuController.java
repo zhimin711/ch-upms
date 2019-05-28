@@ -1,11 +1,11 @@
 package com.ch.cloud.upms.controller;
 
 import com.ch.cloud.upms.model.StMenu;
-import com.ch.cloud.upms.pojo.VueRecord;
 import com.ch.cloud.upms.service.IMenuService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.utils.VueRecordUtils;
 import com.ch.e.PubError;
+import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;

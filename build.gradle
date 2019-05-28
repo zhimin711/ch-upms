@@ -5,6 +5,7 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 apply from: 'mybatisGenerator.gradle'
+apply from: 'buildApi.gradle'
 
 group = 'com.ch'
 version = '1.0.0-SNAPSHOT'

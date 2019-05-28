@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.ueditor;
 
-import com.ch.cloud.upms.pojo.FileInfo;
+
+import com.ch.pojo.FileInfo;
 
 import java.io.Serializable;
 import java.util.List;

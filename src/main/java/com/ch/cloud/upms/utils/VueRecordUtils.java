@@ -2,7 +2,7 @@ package com.ch.cloud.upms.utils;
 
 import com.ch.Constants;
 import com.ch.cloud.upms.model.StMenu;
-import com.ch.cloud.upms.pojo.VueRecord;
+import com.ch.pojo.VueRecord;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
 

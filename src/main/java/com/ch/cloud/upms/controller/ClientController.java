@@ -2,6 +2,8 @@ package com.ch.cloud.upms.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ch.Constants;
+import com.ch.cloud.client.UpmsClientService;
+import com.ch.cloud.client.dto.UserDto;
 import com.ch.cloud.upms.model.StMenu;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.model.StUser;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
  * @date 2019/4/22 8:42 PM
  */
 @RestController
-public class AuthController {
+public class ClientController implements UpmsClientService {
 
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -36,25 +38,44 @@ public class AuthController {
     @Autowired
     private IUserService userService;
     @Autowired
-    IRoleService roleService;
+    private IRoleService roleService;
     @Autowired
-    IMenuService menuService;
+    private IMenuService menuService;
 
 
+    @Override
     @GetMapping({"user/{username}/info"})
-    public Result<?> getByUsername(@PathVariable String username) {
-        return ResultUtils.wrapFail(() -> userService.findByUsername(username));
+    public Result<UserDto> findUserByUsername(@PathVariable String username) {
+        return ResultUtils.wrapFail(() -> {
+            StUser user = userService.findByUsername(username);
+            if (user == null) return null;
+            UserDto dto = new UserDto();
+            dto.setUsername(username);
+            dto.setPassword(user.getPassword());
+            return dto;
+        });
     }
 
     @GetMapping({"user/{id}/role"})
-    public Result<StRole> getUserRole(@PathVariable Long id) {
-        return ResultUtils.wrapList(() -> roleService.findByUserId(id));
+    public Result<String> findRoleByUserId(@PathVariable Long id) {
+        return ResultUtils.wrapList(() -> {
+            List<StRole> list = roleService.findByUserId(id);
+            if (list.isEmpty()) return Lists.newArrayList();
+            return list.stream().map(StRole::getCode).collect(Collectors.toList());
+        });
     }
 
 
     @GetMapping({"user/{id}/permission"})
-    public Result<StRole> getUserPermission(@PathVariable Long id) {
-        return ResultUtils.wrapList(() -> roleService.findByUserId(id));
+    public Result<String> findPermissionByUserId(@PathVariable Long id) {
+        return ResultUtils.wrapList(() -> {
+            //TODO get permission by user id
+            StUser user = userService.find(id);
+            StRole role = roleService.findDefault(user.getUsername());
+            List<StMenu> permissions = menuService.findPermissionByRoleId(role.getId());
+            if (permissions.isEmpty()) return Lists.newArrayList();
+            return permissions.stream().map(StMenu::getUrl).collect(Collectors.toList());
+        });
     }
 
 
@@ -87,11 +108,11 @@ public class AuthController {
     }
 
     private JSONObject covertUserVo(StUser user) {
-        if(user == null) return new JSONObject();
+        if (user == null) return new JSONObject();
         JSONObject info = new JSONObject();
-        info.put("name",user.getUsername());
-        info.put("realName",user.getRealName());
-        info.put("lastLoginTime",user.getLastLoginAt());
+        info.put("name", user.getUsername());
+        info.put("realName", user.getRealName());
+        info.put("lastLoginTime", user.getLastLoginAt());
         return info;
     }
 

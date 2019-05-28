@@ -1,25 +1,21 @@
+apply plugin: 'java'
+//apply plugin: 'maven'
 apply plugin: 'maven-publish'
-
-test {
-    group 'api'
-    // explicitly include or exclude tests
-    include 'com/ch/**/utils'
-//    exclude 'org/boo/**'
-
-}
 
 task jarApiBuild(type: Jar, group: 'api') {
     //指定生成的jar名
     baseName "$project.name-api"
-    from "$buildDir/classes/java/main"
-    include('com/ch/**/model/', 'com/ch/**/api/', 'com/ch/**/pojo/', 'com/ch/**/service/', 'com/ch/**/utils/')
-    exclude('**/impl/', '**/config/', '**/mapper/', '**/controller/', '**/aop/', '**/producer/', '**/cache/', '**/tools/')
 
     //从哪里打包class文件'build/classes/'
 //    from("$buildDir/classes/main")
+    from "$buildDir/classes/java/main"
+
     //打包到jar后的目录结构
 //    into('')
+//    include('com/ch/**/dto/', 'com/ch/**/api/', 'com/ch/**/pojo/', 'com/ch/**/utils/')
     //去掉不需要打包的目录和文件
+    exclude('**/upms/')
+
 //    exclude('test/', 'BuildConfig.class')
     //去掉R$开头的文件
 //    exclude{ it.name.startsWith('R$');}
@@ -27,6 +23,14 @@ task jarApiBuild(type: Jar, group: 'api') {
 }
 jarApiBuild.dependsOn(build)
 
+task jarApiSourceJar(type: Jar, group: 'api') {
+    baseName "$project.name-api"
+//    version "$project.version"
+    classifier = 'sources'
+    from sourceSets.main.allJava
+    include('**/client/')
+    exclude('**/upms/')
+}
 /*
 task jarApiCopy(type: Copy) {
     from "$buildDir/libs"
@@ -49,7 +53,8 @@ install {
         pom.artifactId = "$project.name-api"
         pom.groupId = "$project.group"
     }
-}*/
+}
+*/
 
 //https://docs.gradle.org/current/userguide/publishing_maven.html
 publishing {
@@ -58,9 +63,10 @@ publishing {
             groupId "$project.group"
             artifactId "$project.name-api"
             version "$project.version"
-            artifact jarApiBuild
+            artifacts = [jarApiBuild, jarApiSourceJar]
         }
     }
+    /*
     repositories {
         maven {
             def releasesRepoUrl = releaseUploadUrl
@@ -81,5 +87,5 @@ publishing {
 //                basic(BasicAuthentication)
 //            }
         }
-    }
+    }*/
 }
