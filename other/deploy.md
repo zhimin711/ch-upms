@@ -14,6 +14,7 @@ sudo docker build -t ch-upms:v1 /home/zhimin/docker/ch-upms
 sudo docker run --name ch-upms \
 --net=none \
 -v /home/zhimin/share:/mnt/share  \
+-v /home/zhimin/docker/hosts:/etc/hosts  \
 -m 512M --memory-swap -1 \
 -d ch-upms:v1;
 ```

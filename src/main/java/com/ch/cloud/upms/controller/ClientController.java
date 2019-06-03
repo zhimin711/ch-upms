@@ -50,6 +50,7 @@ public class ClientController implements UpmsClientService {
             StUser user = userService.findByUsername(username);
             if (user == null) return null;
             UserDto dto = new UserDto();
+            dto.setId(user.getId());
             dto.setUsername(username);
             dto.setPassword(user.getPassword());
             return dto;
