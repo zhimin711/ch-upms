@@ -2,6 +2,7 @@ package com.ch.cloud.upms.controller;
 
 import com.baidu.ueditor.define.ActionMap;
 import com.ch.Constants;
+import com.ch.NumS;
 import com.ch.cloud.upms.model.BtUploadFile;
 import com.ch.cloud.upms.service.IUploadFileService;
 import com.ch.cloud.upms.ueditor.UEActionEnter;
@@ -92,8 +93,8 @@ public class UEditorController {
                         }
                         uploadFile.setMd5(uploadResult.getMd5());
                         uploadFile.setStatus(Constants.ENABLED);
-                        uploadFile.setSrcType(Constants.ZERO);
-                        uploadFile.setCreateAt(DateUtils.currentTime());
+                        uploadFile.setSrcType(NumS._0);
+                        uploadFile.setCreateAt(DateUtils.current());
                         uploadFile.setCreateBy(username);
                         uploadFileService.save(uploadFile);
                     }

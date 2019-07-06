@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.ch.Constants;
+import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.BtUploadFileMapper;
 import com.ch.cloud.upms.model.BtUploadFile;
 import com.ch.cloud.upms.service.IUploadFileService;
@@ -57,8 +58,8 @@ public class UploadFileServiceImpl extends BaseService<Long, BtUploadFile> imple
         Example example = getExample();
         example.createCriteria().andEqualTo("fileName", uid);
         BtUploadFile v = new BtUploadFile();
-        v.setStatus(Constants.THREE);
-        v.setUpdateAt(DateUtils.currentTime());
+        v.setStatus(StatusS.DELETE);
+        v.setUpdateAt(DateUtils.current());
         v.setUpdateBy(username);
         return getMapper().updateByExampleSelective(v, example);
     }

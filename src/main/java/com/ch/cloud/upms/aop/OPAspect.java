@@ -46,14 +46,14 @@ public class OPAspect {
             logger.info("{} doBeforeSave => {}", username, o);
             Map<String, String> map = Maps.newHashMap();
             map.put("createBy", username);
-            String createAt = DateUtils.format(DateUtils.currentTime());
+            String createAt = DateUtils.format(DateUtils.current());
             map.put("createAt", createAt);
             if (o instanceof Collection) {
                 for (Object obj : (Collection) o) {
-                    setFieldValue(obj, map);
+                    setFieldValue(obj, map, false);
                 }
             } else {
-                setFieldValue(o, map);
+                setFieldValue(o, map, false);
             }
         }
 
@@ -76,14 +76,14 @@ public class OPAspect {
             logger.info("{} doBeforeUpdate => {}", username, o);
             Map<String, String> map = Maps.newHashMap();
             map.put("updateBy", username);
-            String updateAt = DateUtils.format(DateUtils.currentTime());
+            String updateAt = DateUtils.format(DateUtils.current());
             map.put("updateAt", updateAt);
             if (o instanceof Collection) {
                 for (Object obj : (Collection) o) {
-                    setFieldValue(obj, map);
+                    setFieldValue(obj, map, true);
                 }
             } else {
-                setFieldValue(o, map);
+                setFieldValue(o, map, true);
             }
         }
     }
@@ -101,7 +101,7 @@ public class OPAspect {
         logger.info("doBeforeDelete => {}", joinPoint.getArgs()[0]);
     }
 
-    private void setFieldValue(Object o, Map<String, String> valueMap) {
+    private void setFieldValue(Object o, Map<String, String> valueMap, boolean isOverride) {
 //        Map<String, String> propMap = CommonUtils.getFieldValueMap(o);
         Map<String, String> map = Maps.newHashMap();
         if (o != null && valueMap != null && !valueMap.isEmpty()) {
@@ -112,7 +112,7 @@ public class OPAspect {
             });
         }
         if (o != null && !map.isEmpty()) {
-            BeanExtUtils.setFieldValue(o, map);
+            BeanExtUtils.setFieldValue(o, map, isOverride);
         }
     }
 }

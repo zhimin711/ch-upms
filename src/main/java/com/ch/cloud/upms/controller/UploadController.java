@@ -1,7 +1,9 @@
 package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
+import com.ch.NumS;
 import com.ch.Status;
+import com.ch.StatusS;
 import com.ch.cloud.upms.model.BtUploadFile;
 import com.ch.cloud.upms.pojo.UploadImg;
 import com.ch.cloud.upms.service.IUploadFileService;
@@ -86,7 +88,7 @@ public class UploadController {
                 q2.setCreateBy(username);
                 List<BtUploadFile> records2 = uploadFileService.find(q2);
                 //文件会上传到\\upload\\文件夹中
-                String dateStr = DateUtils.format(DateUtils.currentTime(), DateUtils.Pattern.DATE_SHORT);
+                String dateStr = DateUtils.format(DateUtils.current(), DateUtils.Pattern.DATE_SHORT);
                 String folder = FileExtUtils.linkPath(dateStr, username);
                 if ("1".equals(type)) {
                     if (CommonUtils.isNotEmpty(records1)) {
@@ -114,9 +116,9 @@ public class UploadController {
                 // 删除原文件记录
                 if (!"1".equals(type) && CommonUtils.isNotEmpty(records2)) {
                     records2.forEach(r -> {
-                        r.setStatus(Constants.THREE);
+                        r.setStatus(StatusS.DELETE);
                         r.setUpdateBy(username);
-                        r.setUpdateAt(DateUtils.currentTime());
+                        r.setUpdateAt(DateUtils.current());
                     });
                     uploadFileService.batchUpdate(records2);
                 }
@@ -132,7 +134,7 @@ public class UploadController {
                 record.setMd5(md5);
                 record.setVersion(version);
                 record.setCreateBy(username);
-                record.setCreateAt(DateUtils.currentTime());
+                record.setCreateAt(DateUtils.current());
 
                 if ("1".equals(type)) {
                     record.setStatus(Constants.ENABLED);
@@ -316,7 +318,7 @@ public class UploadController {
                 q1.setFileType(fileType);
                 List<BtUploadFile> records1 = uploadFileService.find(q1);
                 //文件会上传到\\upload\\文件夹中
-                String dateStr = DateUtils.format(DateUtils.currentTime(), DateUtils.Pattern.DATE_SHORT);
+                String dateStr = DateUtils.format(DateUtils.current(), DateUtils.Pattern.DATE_SHORT);
                 String folder = FileExtUtils.linkPath(dateStr, username);
                 if ("3".equals(uploadImg.getType())) {
                     folder = FileExtUtils.linkPath("article", dateStr);
@@ -349,7 +351,7 @@ public class UploadController {
                 record.setMd5(md5);
                 record.setVersion(uploadImg.getVersion());
                 record.setCreateBy(username);
-                record.setCreateAt(DateUtils.currentTime());
+                record.setCreateAt(DateUtils.current());
 
                 int c = uploadFileService.save(record);
                 if (c > 0) {
@@ -390,7 +392,7 @@ public class UploadController {
                 return records1.get(0).getFilePath();
             }
 
-            String dateStr = DateUtils.format(DateUtils.currentTime(), DateUtils.Pattern.DATE_SHORT);
+            String dateStr = DateUtils.format(DateUtils.current(), DateUtils.Pattern.DATE_SHORT);
             String uuid = UUIDGenerator.generate();
             String folder = FileExtUtils.linkPath(dateStr, username);
             if ("3".equals(uploadImg.getType())) {
@@ -419,10 +421,10 @@ public class UploadController {
             record.setMd5(md5);
 //            record.setVersion(version);
             record.setCreateBy(username);
-            record.setCreateAt(DateUtils.currentTime());
+            record.setCreateAt(DateUtils.current());
 
             record.setStatus(Constants.ENABLED);
-            record.setSrcType(Constants.TWO);
+            record.setSrcType(NumS._2);
             int c = uploadFileService.save(record);
             return record.getFilePath();
         });
