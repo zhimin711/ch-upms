@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.ch.Constants;
+import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.StUserMapper;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.model.StUser;
@@ -65,7 +66,7 @@ public class UserServiceImpl extends BaseService<Long, StUser> implements IUserS
     @Override
     public int assignRole(Long id, List<Long> roleIds) {
         List<StRole> roleList = roleService.findByUserId(id);
-        List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), Constants.ZERO)).map(StRole::getId).collect(Collectors.toList());
+        List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(StRole::getId).collect(Collectors.toList());
 
         AtomicInteger c = new AtomicInteger();
         if (!roleIds.isEmpty()) {

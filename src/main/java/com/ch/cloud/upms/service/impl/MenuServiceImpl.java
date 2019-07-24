@@ -1,6 +1,8 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.ch.Constants;
+import com.ch.NumS;
+import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.StMenuMapper;
 import com.ch.cloud.upms.model.StMenu;
 import com.ch.cloud.upms.pojo.Menu;
@@ -80,7 +82,7 @@ public class MenuServiceImpl extends BaseService<Long, StMenu> implements IMenuS
         List<String> typeList = Lists.newArrayList("1", "2");
         if (CommonUtils.isNotEmpty(type) && typeList.contains(type)) {
             example.createCriteria()
-                    .andEqualTo("type", Constants.ONE)
+                    .andEqualTo("type", StatusS.ENABLED)
                     .andEqualTo("pid", pid);
         } else if (CommonUtils.isNotEmpty(type)) {
             example.createCriteria()
@@ -188,7 +190,7 @@ public class MenuServiceImpl extends BaseService<Long, StMenu> implements IMenuS
     @Override
     public List<StMenu> findTreeByType(String type) {
         if (CommonUtils.isEmpty(type)) return Lists.newArrayList();
-        List<StMenu> records = this.findTopByType(Constants.ONE);
+        List<StMenu> records = this.findTopByType(NumS._1);
         records.forEach(r -> {
             String p = r.getId().toString();
             if (CommonUtils.isNotEmpty(r.getPid())) {

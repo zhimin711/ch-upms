@@ -2,6 +2,7 @@ package com.ch.cloud.upms.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ch.Constants;
+import com.ch.StatusS;
 import com.ch.cloud.client.UpmsClientService;
 import com.ch.cloud.client.dto.UserDto;
 import com.ch.cloud.upms.model.StMenu;
@@ -92,7 +93,7 @@ public class ClientController implements UpmsClientService {
             List<Menu> menus;
             List<StMenu> routers;
             List<StMenu> permissions;
-            if (CommonUtils.isEquals(role.getType(), Constants.ZERO)) {
+            if (CommonUtils.isEquals(role.getType(), StatusS.DISABLED)) {
                 menus = menuService.findMenuTreeByRoleId(0L);
                 routers = menuService.findRouterByRoleId(0L);
                 permissions = menuService.findPermissionByRoleId(0L);
@@ -136,7 +137,7 @@ public class ClientController implements UpmsClientService {
             StRole role = roleService.findDefault(username);
             List<Menu> menus = Lists.newArrayList();
             if (role == null) return menus;
-            if (CommonUtils.isEquals(role.getType(), Constants.ZERO)) {
+            if (CommonUtils.isEquals(role.getType(), StatusS.DISABLED)) {
                 menus = menuService.findMenuTreeByRoleId(0L);
             } else {
                 menus = menuService.findMenuTreeByRoleId(role.getId());
