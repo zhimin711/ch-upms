@@ -6,7 +6,7 @@ import com.ch.cloud.upms.mapper.BtUploadFileMapper;
 import com.ch.cloud.upms.model.BtUploadFile;
 import com.ch.cloud.upms.service.IUploadFileService;
 import com.ch.mybatis.service.BaseService;
-import com.ch.type.FileType;
+import com.ch.t.FileType;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.google.common.collect.Lists;

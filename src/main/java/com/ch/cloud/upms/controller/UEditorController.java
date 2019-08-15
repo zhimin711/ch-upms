@@ -10,7 +10,7 @@ import com.ch.cloud.upms.ueditor.UEListResult;
 import com.ch.cloud.upms.ueditor.UEResult;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.pojo.FileInfo;
-import com.ch.type.FileType;
+import com.ch.t.FileType;
 import com.ch.utils.DateUtils;
 import com.ch.utils.JSONUtils;
 import org.apache.commons.io.FileUtils;

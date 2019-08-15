@@ -9,7 +9,7 @@ import com.ch.cloud.upms.pojo.Menu;
 import com.ch.cloud.upms.service.IMenuService;
 import com.ch.mybatis.service.BaseService;
 import com.ch.mybatis.utils.ExampleUtils;
-import com.ch.type.ConditionType;
+import com.ch.t.ConditionType;
 import com.ch.utils.CommonUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;

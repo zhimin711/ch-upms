@@ -1,6 +1,6 @@
 package com.ch.cloud.upms.model;
 
-import com.ch.type.ConditionType;
+import com.ch.t.ConditionType;
 
 import javax.persistence.*;
 import java.io.Serializable;
