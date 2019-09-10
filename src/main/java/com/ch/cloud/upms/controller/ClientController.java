@@ -107,9 +107,9 @@ public class ClientController implements UpmsClientService {
         });
     }
 
-    @GetMapping({"user/{userId}/permission"})
+    @GetMapping({"user/{userId}/permissionUrl"})
     @Override
-    public Result<String> findPermissionUrlByUserId(Long userId) {
+    public Result<String> findPermissionUrlByUserId(@PathVariable Long userId) {
         return ResultUtils.wrapList(() -> {
             StUser user = userService.find(userId);
             StRole role = roleService.findDefault(user.getUsername());
