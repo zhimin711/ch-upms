@@ -19,7 +19,7 @@ public class RequestUtils {
 
     public static HttpServletRequest get() {
         RequestAttributes reqAttr = RequestContextHolder.getRequestAttributes();
-        if (reqAttr == null) throw ExceptionUtils.create(PubError.NOT_EXISTS, "http request not found!l");
+        if (reqAttr == null) throw ExceptionUtils.create(PubError.NOT_EXISTS, "http request not found!");
         return ((ServletRequestAttributes) reqAttr).getRequest();
     }
 

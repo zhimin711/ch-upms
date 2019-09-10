@@ -1,5 +1,7 @@
 package com.ch.cloud.client;
 
+import com.ch.cloud.client.dto.PermissionDto;
+import com.ch.cloud.client.dto.RoleDto;
 import com.ch.cloud.client.dto.UserDto;
 import com.ch.result.Result;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +20,17 @@ public interface UpmsClientService {
     Result<UserDto> findUserByUsername(@PathVariable("username") String username);
 
     @GetMapping("user/{id}/role")
-    Result<String> findRoleByUserId(@PathVariable("id") Long userId);
+    Result<RoleDto> findRoleByUserId(@PathVariable("id") Long userId);
+
+    @GetMapping("user/{id}/roleCode")
+    Result<String> findRoleCodeByUserId(@PathVariable("id") Long userId);
 
     @GetMapping("user/{id}/permission")
-    Result<String> findPermissionByUserId(@PathVariable("id") Long userId);
+    Result<PermissionDto> findPermissionByUserId(@PathVariable("id") Long userId);
+
+    @GetMapping({"role/{roleId}/permission"})
+    Result<PermissionDto> findPermissionByRoleId(@PathVariable Long roleId);
+
+    @GetMapping("user/{id}/permission")
+    Result<String> findPermissionUrlByUserId(@PathVariable("id") Long userId);
 }

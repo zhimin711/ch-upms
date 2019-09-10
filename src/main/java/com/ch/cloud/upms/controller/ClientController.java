@@ -2,8 +2,10 @@ package com.ch.cloud.upms.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ch.Constants;
-import com.ch.StatusS;
+import com.ch.NumS;
 import com.ch.cloud.client.UpmsClientService;
+import com.ch.cloud.client.dto.PermissionDto;
+import com.ch.cloud.client.dto.RoleDto;
 import com.ch.cloud.client.dto.UserDto;
 import com.ch.cloud.upms.model.StMenu;
 import com.ch.cloud.upms.model.StRole;
@@ -18,6 +20,7 @@ import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,20 +62,56 @@ public class ClientController implements UpmsClientService {
     }
 
     @GetMapping({"user/{id}/role"})
-    public Result<String> findRoleByUserId(@PathVariable Long id) {
+    public Result<RoleDto> findRoleByUserId(@PathVariable Long id) {
         return ResultUtils.wrapList(() -> {
             List<StRole> list = roleService.findByUserId(id);
+            if (list.isEmpty()) return Lists.newArrayList();
+            return list.stream().map(r -> {
+                RoleDto dto = new RoleDto();
+                BeanUtils.copyProperties(r, dto);
+                return dto;
+            }).collect(Collectors.toList());
+        });
+    }
+
+    @Override
+    public Result<String> findRoleCodeByUserId(Long userId) {
+        return ResultUtils.wrapList(() -> {
+            List<StRole> list = roleService.findByUserId(userId);
             if (list.isEmpty()) return Lists.newArrayList();
             return list.stream().map(StRole::getCode).collect(Collectors.toList());
         });
     }
 
 
-    @GetMapping({"user/{id}/permission"})
-    public Result<String> findPermissionByUserId(@PathVariable Long id) {
+    @GetMapping({"user/{userId}/permission"})
+    public Result<PermissionDto> findPermissionByUserId(@PathVariable Long userId) {
+        //TODO get permission by user id
+        StUser user = userService.find(userId);
+        StRole role = roleService.findDefault(user.getUsername());
+        return this.findPermissionByRoleId(role.getId());
+    }
+
+    @GetMapping({"role/{roleId}/permission"})
+    @Override
+    public Result<PermissionDto> findPermissionByRoleId(@PathVariable Long roleId) {
         return ResultUtils.wrapList(() -> {
-            //TODO get permission by user id
-            StUser user = userService.find(id);
+            //TODO get permission by role id
+            List<StMenu> permissions = menuService.findPermissionByRoleId(roleId);
+            if (permissions.isEmpty()) return Lists.newArrayList();
+            return permissions.stream().map(r -> {
+                PermissionDto dto = new PermissionDto();
+                BeanUtils.copyProperties(r, dto);
+                return dto;
+            }).collect(Collectors.toList());
+        });
+    }
+
+    @GetMapping({"user/{userId}/permission"})
+    @Override
+    public Result<String> findPermissionUrlByUserId(Long userId) {
+        return ResultUtils.wrapList(() -> {
+            StUser user = userService.find(userId);
             StRole role = roleService.findDefault(user.getUsername());
             List<StMenu> permissions = menuService.findPermissionByRoleId(role.getId());
             if (permissions.isEmpty()) return Lists.newArrayList();
@@ -93,7 +132,7 @@ public class ClientController implements UpmsClientService {
             List<Menu> menus;
             List<StMenu> routers;
             List<StMenu> permissions;
-            if (CommonUtils.isEquals(role.getType(), StatusS.DISABLED)) {
+            if (CommonUtils.isEquals(role.getType(), NumS._0)) {
                 menus = menuService.findMenuTreeByRoleId(0L);
                 routers = menuService.findRouterByRoleId(0L);
                 permissions = menuService.findPermissionByRoleId(0L);
@@ -137,7 +176,7 @@ public class ClientController implements UpmsClientService {
             StRole role = roleService.findDefault(username);
             List<Menu> menus = Lists.newArrayList();
             if (role == null) return menus;
-            if (CommonUtils.isEquals(role.getType(), StatusS.DISABLED)) {
+            if (CommonUtils.isEquals(role.getType(), NumS._0)) {
                 menus = menuService.findMenuTreeByRoleId(0L);
             } else {
                 menus = menuService.findMenuTreeByRoleId(role.getId());

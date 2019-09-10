@@ -55,7 +55,7 @@ public class UploadController {
                             String version) {
         logger.info("File upload ...");
         if (CommonUtils.isEmpty(uploadPath)) {
-            return Result.error(PubError.NON_NULL, "系统未配置存储目录，不上传，请联系管理员！");
+            return Result.error(PubError.NON_NULL, "系统未配置存储目录，不允许上传，请联系管理员！");
         }
         List<String> fileNameList = Lists.newArrayList();
         List<File> newFiles = Lists.newArrayList();
