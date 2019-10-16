@@ -19,11 +19,11 @@ public class UserDto {
     /**
      * 用户名
      */
-    @ApiModelProperty("用户名")
+    @ApiModelProperty(name = "username", value = "登录名", required = true)
     private String username;
     /**
      * 密码
      */
-    @ApiModelProperty("密码")
+    @ApiModelProperty(name = "password", value = "密码", required = true, position = 1)
     private String password;
 }
