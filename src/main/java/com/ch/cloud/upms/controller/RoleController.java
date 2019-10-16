@@ -27,8 +27,8 @@ public class RoleController {
     @Autowired
     private IRoleService roleService;
 
-    @PostMapping(value = {"{num}/{size}"})
-    public PageResult<StRole> page(@RequestBody StRole record,
+    @GetMapping(value = {"{num}/{size}"})
+    public PageResult<StRole> page(StRole record,
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
