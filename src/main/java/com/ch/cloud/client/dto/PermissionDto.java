@@ -1,5 +1,7 @@
 package com.ch.cloud.client.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -9,9 +11,10 @@ import lombok.Data;
  * @date 2019/9/10
  */
 @Data
+@ApiModel("权限信息")
 public class PermissionDto {
 
-
+    @ApiModelProperty(hidden = true)
     private Long id;
 
     /**
