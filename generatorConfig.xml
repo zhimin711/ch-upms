@@ -10,11 +10,11 @@
         <!-- 格式化XML代码-->
         <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
         <!-- generate entity时，生成serialVersionUID -->
-        <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+        <!--<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />-->
         <!-- 这个插件只会增加字符串字段映射到一个JDBC字符的方法 -->
         <plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin" />
         <!-- genenat entity时,生成toString -->
-        <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
+        <!--<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />-->
         <!-- <plugin type="tk.mybatis.mapper.generator.MapperPlugin"> -->
         <plugin type="com.ch.generator.mybatis.TkMapperPluginExtend">
             <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
@@ -47,8 +47,8 @@
 
         <javaClientGenerator targetPackage="${package}.mapper" targetProject="${src_main_java}" type="XMLMAPPER"/>
         <!-- sql占位符，表示所有的表 -->
-        <table tableName="${table}">
-            <generatedKey column="ID" sqlStatement="Mysql" identity="true"/>
+        <table tableName="${tableName}">
+            <generatedKey column="${tablePk}" sqlStatement="Mysql" identity="true"/>
         </table>
 
     </context>

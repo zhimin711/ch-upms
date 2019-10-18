@@ -1,25 +1,36 @@
+ext {
+    configPath= "${projectDir}"
+}
+
 configurations {
     mybatisGenerator
+}
+
+
+[compileJava, compileTestJava, javadoc]*.options*.encoding = "UTF-8"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
     mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.2'
     mybatisGenerator 'mysql:mysql-connector-java:5.1.30'
     mybatisGenerator 'tk.mybatis:mapper:3.3.8'
-    mybatisGenerator 'com.ch:ch-mybatis-generator:1.0.1-SNAPSHOT'
+    mybatisGenerator 'com.ch:ch-mybatis-generator:1.0.2-SNAPSHOT'
 }
 
 def dbProperties = {
     def properties = new Properties()
     // src/main/resources/
-    file("../db.properties").withInputStream { inputStream ->
+    file("$configPath/db.properties").withInputStream { inputStream ->
         properties.load(inputStream)
     }
     properties
 }
 
 task mybatisGenerate {
-    group 'maven'
     doLast {
         def properties = dbProperties()
 
@@ -28,8 +39,9 @@ task mybatisGenerate {
         ant.properties['connectionURL'] = properties.getProperty("jdbc.url")
         ant.properties['userId'] = properties.getProperty("jdbc.username")
         ant.properties['password'] = properties.getProperty("jdbc.password")
-        ant.properties['package'] = properties.getProperty("my.package")
-        ant.properties['table'] = properties.getProperty("my.table")
+        ant.properties['package'] = properties.getProperty("target.package")
+        ant.properties['tableName'] = properties.getProperty("table.name")
+        ant.properties['tablePk'] = properties.getProperty("table.pk")
         ant.properties['src_main_java'] = sourceSets.main.java.srcDirs[0].path
         ant.properties['src_main_resources'] = sourceSets.main.resources.srcDirs[0].path
 
@@ -39,7 +51,7 @@ task mybatisGenerate {
                 classpath: configurations.mybatisGenerator.asPath
         )
         ant.mbgenerator(overwrite: true,
-                configfile: "../generatorConfig.xml", verbose: true) {
+                configfile: "$configPath/" + properties.getProperty("config.file.name"), verbose: true) {
             propertyset {
                 propertyref(name: 'targetProject')
                 propertyref(name: 'userId')
@@ -47,11 +59,13 @@ task mybatisGenerate {
                 propertyref(name: 'connectionURL')
                 propertyref(name: 'password')
                 propertyref(name: 'package')
-                propertyref(name: 'table')
+                propertyref(name: 'tableName')
+                propertyref(name: 'tablePk')
                 propertyref(name: 'src_main_java')
                 propertyref(name: 'src_main_resources')
 
             }
         }
     }
+    group 'mybatis'
 }

@@ -41,7 +41,7 @@ public class UserController {
         return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
     }
 
-    @PostMapping("save")
+    @PostMapping("")
     public Result<Integer> add(@RequestBody StUser record) {
         StUser r = userService.findByUsername(record.getUsername());
         if (r != null) {
@@ -50,7 +50,7 @@ public class UserController {
         return ResultUtils.wrapFail(() -> userService.save(record));
     }
 
-    @PostMapping({"save/{id}"})
+    @PutMapping({"{id}"})
     public Result<Integer> edit(@PathVariable int id, @RequestBody StUser record) {
         return ResultUtils.wrapFail(() -> userService.update(record));
     }

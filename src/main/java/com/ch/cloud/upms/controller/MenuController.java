@@ -22,7 +22,7 @@ import java.util.List;
  * @date 2018/12/21 10:40 PM
  */
 @RestController
-@RequestMapping("permission")
+@RequestMapping("menu")
 public class MenuController {
 
     @Autowired
@@ -66,11 +66,4 @@ public class MenuController {
         });
     }
 
-    @GetMapping({"routes"})
-    public Result<VueRecord> routes() {
-        return ResultUtils.wrapList(() -> {
-            List<StMenu> records = menuService.findTreeByType(null);
-            return VueRecordUtils.convertMenusByType(records, "1");
-        });
-    }
 }
