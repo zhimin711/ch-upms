@@ -33,8 +33,8 @@ public class UserController {
     @Autowired
     private IRoleService roleService;
 
-    @PostMapping(value = {"{num}/{size}"})
-    public PageResult<StUser> page(@RequestBody StUser record,
+    @GetMapping(value = {"{num}/{size}"})
+    public PageResult<StUser> page(StUser record,
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
         PageInfo<StUser> pageInfo = userService.findPage(pageNum, pageSize, record);
