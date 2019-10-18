@@ -65,4 +65,12 @@ public class MenuController {
             return VueRecordUtils.convertMenusByType(records, type);
         });
     }
+
+    @GetMapping({"routes"})
+    public Result<VueRecord> routes() {
+        return ResultUtils.wrapList(() -> {
+            List<StMenu> records = menuService.findTreeByType(null);
+            return VueRecordUtils.convertMenusByType(records, "1");
+        });
+    }
 }
