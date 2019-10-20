@@ -2,6 +2,9 @@ package com.ch.cloud.upms.service;
 
 import com.ch.cloud.upms.model.StPermission;
 import com.ch.mybatis.service.IService;
+import com.github.pagehelper.PageInfo;
+
+import java.util.List;
 
 /**
  * @author 01370603
@@ -10,4 +13,8 @@ import com.ch.mybatis.service.IService;
 public interface IPermissionService extends IService<Long, StPermission> {
 
     StPermission findByCode(String code);
+
+    PageInfo<StPermission> findTreePage(StPermission record, int pageNum, int pageSize);
+
+    List<StPermission> findTreeByType(String type);
 }

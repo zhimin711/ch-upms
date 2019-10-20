@@ -2,6 +2,7 @@ package com.ch.cloud.upms.utils;
 
 import com.ch.Constants;
 import com.ch.cloud.upms.model.StMenu;
+import com.ch.cloud.upms.model.StPermission;
 import com.ch.pojo.VueRecord;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
@@ -67,5 +68,27 @@ public class VueRecordUtils {
             return Lists.newArrayList();
         }
         return records.stream().map(r -> convertMenuByType(r, type)).collect(Collectors.toList());
+    }
+
+    public static List<VueRecord> convertParentsByType(List<StPermission> records, String type) {
+        if (CommonUtils.isEmpty(records)) {
+            return Lists.newArrayList();
+        }
+        return records.stream().map(r -> convertAuthByType(r, type)).collect(Collectors.toList());
+    }
+
+    private static VueRecord convertAuthByType(StPermission record, String type) {
+        VueRecord vueRecord = new VueRecord();
+        vueRecord.setLabel(record.getName());
+        vueRecord.setValue(record.getId().toString());
+        boolean disabled = CommonUtils.isEquals(record.getType(), "1") && Lists.newArrayList("3", "4").contains(type) && CommonUtils.isEmpty(record.getChildren());
+        if (!disabled) {
+            disabled = !CommonUtils.isEquals(Constants.ENABLED, record.getStatus());
+        }
+        vueRecord.setDisabled(disabled);
+        if (CommonUtils.isNotEmpty(record.getChildren())) {
+            vueRecord.setChildren(convertParentsByType(record.getChildren(), type));
+        }
+        return vueRecord;
     }
 }

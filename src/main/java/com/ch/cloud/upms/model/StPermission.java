@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.model;
 
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Table(name = "st_permission")
@@ -406,5 +407,17 @@ public class StPermission {
      */
     public void setUpdateAt(Date updateAt) {
         this.updateAt = updateAt;
+    }
+
+
+    @Transient
+    private List<StPermission> children;
+
+    public List<StPermission> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<StPermission> children) {
+        this.children = children;
     }
 }
