@@ -81,7 +81,11 @@ public class VueRecordUtils {
         VueRecord vueRecord = new VueRecord();
         vueRecord.setLabel(record.getName());
         vueRecord.setValue(record.getId().toString());
-        boolean disabled = CommonUtils.isEquals(record.getType(), "1") && Lists.newArrayList("3", "4").contains(type) && CommonUtils.isEmpty(record.getChildren());
+        boolean isMenu = Lists.newArrayList("1", "2").contains(type);
+        if (isMenu) {
+
+        }
+        boolean disabled = CommonUtils.isEquals(record.getType(), "1") && !isMenu && CommonUtils.isEmpty(record.getChildren());
         if (!disabled) {
             disabled = !CommonUtils.isEquals(Constants.ENABLED, record.getStatus());
         }
