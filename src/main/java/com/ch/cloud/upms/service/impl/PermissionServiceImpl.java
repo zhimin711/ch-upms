@@ -8,6 +8,7 @@ import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.mybatis.service.BaseService;
 import com.ch.mybatis.utils.ExampleUtils;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.StringExtUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -75,7 +76,10 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         example.orderBy("id").asc();
         List<StPermission> children = getMapper().selectByExample(example);
         if (CommonUtils.isEmpty(children)) return null;
-        children.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), status, type)));
+        children.forEach(r -> {
+            String pid1 = StringExtUtils.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
+            r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), status, type));
+        });
         return children;
     }
 
