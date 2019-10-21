@@ -9,6 +9,7 @@ import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.CommonUtils;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -39,8 +40,8 @@ public class PermissionController {
 
     @GetMapping(value = {"{num}/{size}"})
     public PageResult<StPermission> page(StPermission record,
-                                   @PathVariable(value = "num") int pageNum,
-                                   @PathVariable(value = "size") int pageSize) {
+                                         @PathVariable(value = "num") int pageNum,
+                                         @PathVariable(value = "size") int pageSize) {
         PageInfo<StPermission> pageInfo = permissionService.findTreePage(record, pageNum, pageSize);
         return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
     }
@@ -51,12 +52,21 @@ public class PermissionController {
         if (r != null) {
             return Result.error(PubError.EXISTS);
         }
+        if (CommonUtils.isEmpty(record.getParentId())) {
+            record.setParentId("0");
+        }
         return ResultUtils.wrapFail(() -> permissionService.save(record));
     }
 
     @PutMapping({"{id}"})
     public Result<Integer> edit(@PathVariable int id, @RequestBody StPermission record) {
-        return ResultUtils.wrapFail(() -> permissionService.updateWithNull(record));
+        return ResultUtils.wrapFail(() -> {
+
+            if (CommonUtils.isEmpty(record.getParentId())) {
+                record.setParentId("0");
+            }
+            return permissionService.updateWithNull(record);
+        });
     }
 
     @DeleteMapping({"delete"})
@@ -65,8 +75,7 @@ public class PermissionController {
     }
 
 
-
-    @ApiOperation(value = "获取权限树",notes = "0.全部 1.目录 2.菜单")
+    @ApiOperation(value = "获取权限树", notes = "0.全部 1.目录 2.菜单 3.按钮、链接")
     @GetMapping({"tree/{type}"})
     public Result<VueRecord> tree(@PathVariable String type) {
         return ResultUtils.wrapList(() -> {

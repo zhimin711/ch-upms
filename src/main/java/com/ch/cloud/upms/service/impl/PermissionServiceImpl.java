@@ -36,7 +36,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         PageHelper.startPage(pageNum, pageSize);
         List<StPermission> records = findTopCategory();
         if (CommonUtils.isNotEmpty(records)) {
-            records.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, null)));
+            records.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, "0")));
         }
         return new PageInfo<>(records);
     }
@@ -53,7 +53,8 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         if (records.isEmpty()) {
             return Lists.newArrayList();
         }
-        records.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, type)));
+        if (!CommonUtils.isEquals(type, NumS._0))
+            records.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, type)));
         return records;
     }
 
@@ -78,7 +79,9 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         if (CommonUtils.isEmpty(children)) return null;
         children.forEach(r -> {
             String pid1 = StringExtUtils.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
-            r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), status, type));
+            if (CommonUtils.isEquals(NumS._2, r.getType()) && CommonUtils.isEquals(type, NumS._0)) {
+                r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), status, type));
+            }
         });
         return children;
     }

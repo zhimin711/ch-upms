@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.utils;
 
 import com.ch.Constants;
+import com.ch.NumS;
 import com.ch.cloud.upms.model.StMenu;
 import com.ch.cloud.upms.model.StPermission;
 import com.ch.pojo.VueRecord;
@@ -24,8 +25,8 @@ public class VueRecordUtils {
     public static VueRecord convertMenu(StMenu record) {
         VueRecord vueRecord = new VueRecord();
         vueRecord.setLabel(record.getName());
-        vueRecord.setValue(record.getId().toString());
         vueRecord.setDisabled(!CommonUtils.isEquals(Constants.ENABLED, record.getStatus()));
+        vueRecord.setValue(record.getId().toString());
         if (CommonUtils.isNotEmpty(record.getChildren())) {
             vueRecord.setChildren(convertMenus(record.getChildren()));
         }
@@ -74,25 +75,51 @@ public class VueRecordUtils {
         if (CommonUtils.isEmpty(records)) {
             return Lists.newArrayList();
         }
+
+        boolean isMenu = CommonUtils.isEquals(NumS._2, type);
+        if (isMenu) {
+            return convertCategory(records);
+        }
         return records.stream().map(r -> convertAuthByType(r, type)).collect(Collectors.toList());
     }
 
-    private static VueRecord convertAuthByType(StPermission record, String type) {
-        VueRecord vueRecord = new VueRecord();
-        vueRecord.setLabel(record.getName());
-        vueRecord.setValue(record.getId().toString());
-        boolean isMenu = Lists.newArrayList("1", "2").contains(type);
-        if (isMenu) {
+    private static List<VueRecord> convertCategory(List<StPermission> records) {
+        List<VueRecord> categories = Lists.newArrayList();
+        records.forEach(r -> {
+            VueRecord vueRecord = convertPermission(r);
+            categories.add(vueRecord);
+            r.getChildren().forEach(e -> {
+                if (CommonUtils.isEquals(NumS._1, e.getType())) {
+                    VueRecord vueRecord1 = convertPermission(e);
+                    vueRecord1.setLabel("  " + e.getName());
+                    categories.add(vueRecord1);
+                }
+            });
+        });
+        return categories;
+    }
 
+    private static VueRecord convertAuthByType(StPermission record, String type) {
+        VueRecord vueRecord = convertPermission(record);
+//        boolean isCategory = CommonUtils.isEquals(NumS._1, type);
+//        boolean isMenu = CommonUtils.isEquals(NumS._2, type);
+        boolean isBtn = CommonUtils.isEquals(NumS._3, type);
+        if (isBtn && !vueRecord.isDisabled()) {
+            boolean disabled = CommonUtils.isEquals(record.getType(), "1") && CommonUtils.isEmpty(record.getChildren());
+            vueRecord.setDisabled(disabled);
         }
-        boolean disabled = CommonUtils.isEquals(record.getType(), "1") && !isMenu && CommonUtils.isEmpty(record.getChildren());
-        if (!disabled) {
-            disabled = !CommonUtils.isEquals(Constants.ENABLED, record.getStatus());
-        }
-        vueRecord.setDisabled(disabled);
         if (CommonUtils.isNotEmpty(record.getChildren())) {
             vueRecord.setChildren(convertParentsByType(record.getChildren(), type));
         }
+        return vueRecord;
+    }
+
+
+    private static VueRecord convertPermission(StPermission record) {
+        VueRecord vueRecord = new VueRecord();
+        vueRecord.setLabel(record.getName());
+        vueRecord.setValue(record.getId().toString());
+        vueRecord.setDisabled(!CommonUtils.isEquals(Constants.ENABLED, record.getStatus()));
         return vueRecord;
     }
 }
