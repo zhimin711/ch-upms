@@ -1,12 +1,11 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.ch.NumS;
-import com.ch.StatusS;
+import com.ch.Status;
 import com.ch.cloud.upms.mapper.StPermissionMapper;
 import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.mybatis.service.BaseService;
-import com.ch.mybatis.utils.ExampleUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.StringExtUtils;
 import com.github.pagehelper.PageHelper;
@@ -34,7 +33,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
     @Override
     public PageInfo<StPermission> findTreePage(StPermission record, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<StPermission> records = findTopCategory();
+        List<StPermission> records = findTopCategory(Status.UNKNOWN);
         if (CommonUtils.isNotEmpty(records)) {
             records.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, "0")));
         }
@@ -42,19 +41,30 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
     }
 
 
-    public List<StPermission> findTopCategory() {
-        Example example = Example.builder(StPermission.class).andWhere(Sqls.custom().andEqualTo("type", NumS._1).andEqualTo("parentId", NumS._0)).orderByAsc("sort", "parentId", "id").build();
+    public List<StPermission> findTopCategory(Status status) {
+        Sqls sqls = Sqls.custom();
+        sqls.andEqualTo("type", NumS._1).andEqualTo("parentId", NumS._0);
+        if (status == Status.ENABLED) {
+            sqls.andEqualTo("status", status.getCode());
+        }
+        Example example = Example.builder(StPermission.class)
+                .andWhere(sqls)
+                .orderByAsc("sort", "parentId", "id").build();
         return getMapper().selectByExample(example);
     }
 
     @Override
     public List<StPermission> findTreeByType(String type) {
-        List<StPermission> records = findTopCategory();
+        Status status = CommonUtils.isEquals(type, NumS._0) ? Status.ENABLED : Status.UNKNOWN;
+        List<StPermission> records = findTopCategory(status);
         if (records.isEmpty()) {
             return Lists.newArrayList();
         }
-        if (!CommonUtils.isEquals(type, NumS._0))
-            records.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, type)));
+        if (!CommonUtils.isEquals(type, NumS._1))
+            records.forEach(r -> {
+                List<StPermission> children = findChildrenByPidAndStatusAndType(r.getId().toString(), status.getCode(), type);
+                r.setChildren(children);
+            });
         return records;
     }
 
@@ -80,7 +90,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         children.forEach(r -> {
             String pid1 = StringExtUtils.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
             if (CommonUtils.isEquals(NumS._2, r.getType()) && CommonUtils.isEquals(type, NumS._0)) {
-                r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), status, type));
+                r.setChildren(findChildrenByPidAndStatusAndType(pid1, status, type));
             }
         });
         return children;
