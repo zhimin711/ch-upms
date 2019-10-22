@@ -115,6 +115,7 @@ public class ClientController implements UpmsClientService {
             PermissionDto dto = new PermissionDto();
             BeanUtils.copyProperties(r, dto);
             dto.setPid(r.getParentId());
+            if (dto.getSort() == null) dto.setSort(0);
             return dto;
         }).collect(Collectors.toList());
     }

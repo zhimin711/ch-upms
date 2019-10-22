@@ -37,5 +37,13 @@ public class PermissionDto {
      */
     private String icon;
 
+    /**
+     * 类型(1.目录 2.菜单页 3.按钮)
+     */
     private String type;
+
+    /**
+     * 菜单顺序
+     */
+    private Integer sort;
 }

@@ -39,7 +39,7 @@ public class StRole implements Serializable {
     private String description;
 
     /**
-     * 状态: 0.禁用 1.启动
+     * 状态: 0.禁用 1.启动 2.默认(启用)
      */
     @Column(name = "STATUS")
     private String status;
