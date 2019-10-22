@@ -8,10 +8,12 @@ import com.ch.cloud.client.dto.PermissionDto;
 import com.ch.cloud.client.dto.RoleDto;
 import com.ch.cloud.client.dto.UserDto;
 import com.ch.cloud.upms.model.StMenu;
+import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.model.StUser;
 import com.ch.cloud.upms.pojo.Menu;
 import com.ch.cloud.upms.service.IMenuService;
+import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.result.Result;
@@ -45,6 +47,8 @@ public class ClientController implements UpmsClientService {
     private IRoleService roleService;
     @Autowired
     private IMenuService menuService;
+    @Autowired
+    private IPermissionService permissionService;
 
 
     @Override
@@ -92,19 +96,27 @@ public class ClientController implements UpmsClientService {
         return this.findPermissionByRoleId(role.getId());
     }
 
+    @GetMapping({"role/{roleId}/menu"})
+    @Override
+    public Result<PermissionDto> findMenuByRoleId(@PathVariable Long roleId) {
+        return ResultUtils.wrapList(() -> this.findPermissionByTypeAndRoleId(Lists.newArrayList("1", "2"), roleId));
+    }
+
     @GetMapping({"role/{roleId}/permission"})
     @Override
     public Result<PermissionDto> findPermissionByRoleId(@PathVariable Long roleId) {
-        return ResultUtils.wrapList(() -> {
-            //TODO get permission by role id
-            List<StMenu> permissions = menuService.findPermissionByRoleId(roleId);
-            if (permissions.isEmpty()) return Lists.newArrayList();
-            return permissions.stream().map(r -> {
-                PermissionDto dto = new PermissionDto();
-                BeanUtils.copyProperties(r, dto);
-                return dto;
-            }).collect(Collectors.toList());
-        });
+        return ResultUtils.wrapList(() -> this.findPermissionByTypeAndRoleId(Lists.newArrayList("3", "4"), roleId));
+    }
+
+    private List<PermissionDto> findPermissionByTypeAndRoleId(List<String> types, Long roleId) {
+        List<StPermission> permissions = permissionService.findByTypeAndRoleId(types, roleId);
+        if (permissions.isEmpty()) return Lists.newArrayList();
+        return permissions.stream().map(r -> {
+            PermissionDto dto = new PermissionDto();
+            BeanUtils.copyProperties(r, dto);
+            dto.setPid(r.getParentId());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     @GetMapping({"user/{userId}/permissionUrl"})

@@ -27,4 +27,22 @@
     ID, NAME, CODE, URL, TYPE, ICON, SORT, IS_SHOW, IS_SYS, PARENT_ID, PARENT_NAME, DESCRIPTION, 
     STATUS, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
   </sql>
+
+  <select id="findByTypeAndRoleId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from st_permission t
+    inner join st_role_permission t1
+    on t.ID = t1.PERMISSION_ID
+    where t.status = '1'
+    <if test="types != null and types.size() > 0">
+      and t.TYPE in
+      <foreach collection="types" item="type" open="(" separator="," close=")" >
+        #{type}
+      </foreach>
+    </if>
+    <if test="roleId > 0">
+      and t1.ROLE_ID = #{roleId}
+    </if>
+  </select>
 </mapper>

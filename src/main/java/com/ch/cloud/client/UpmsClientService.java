@@ -28,6 +28,9 @@ public interface UpmsClientService {
     @GetMapping("user/{id}/permission")
     Result<PermissionDto> findPermissionByUserId(@PathVariable("id") Long userId);
 
+    @GetMapping({"role/{roleId}/menu"})
+    Result<PermissionDto> findMenuByRoleId(@PathVariable Long roleId);
+
     @GetMapping({"role/{roleId}/permission"})
     Result<PermissionDto> findPermissionByRoleId(@PathVariable Long roleId);
 

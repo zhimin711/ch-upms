@@ -17,4 +17,6 @@ public interface IPermissionService extends IService<Long, StPermission> {
     PageInfo<StPermission> findTreePage(StPermission record, int pageNum, int pageSize);
 
     List<StPermission> findTreeByType(String type);
+
+    List<StPermission> findByTypeAndRoleId(List<String> types, Long roleId);
 }
