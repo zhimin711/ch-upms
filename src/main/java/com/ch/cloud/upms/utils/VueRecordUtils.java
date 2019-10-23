@@ -88,6 +88,9 @@ public class VueRecordUtils {
         records.forEach(r -> {
             VueRecord vueRecord = convertPermission(r);
             categories.add(vueRecord);
+            if (r.getChildren() == null || r.getChildren().isEmpty()) {
+                return;
+            }
             r.getChildren().forEach(e -> {
                 if (CommonUtils.isEquals(NumS._1, e.getType())) {
                     VueRecord vueRecord1 = convertPermission(e);
