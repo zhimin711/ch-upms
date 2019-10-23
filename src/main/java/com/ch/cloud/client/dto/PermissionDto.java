@@ -41,6 +41,10 @@ public class PermissionDto {
      * 类型(1.目录 2.菜单页 3.按钮)
      */
     private String type;
+    /**
+     * 地址
+     */
+    private String url;
 
     /**
      * 菜单顺序
