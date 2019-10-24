@@ -30,7 +30,7 @@
 
   <select id="findByTypeAndRoleId" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"/>
+    DISTINCT <include refid="Base_Column_List"/>
     from st_permission t
     inner join st_role_permission t1
     on t.ID = t1.PERMISSION_ID

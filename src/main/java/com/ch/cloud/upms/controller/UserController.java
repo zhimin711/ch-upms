@@ -41,7 +41,7 @@ public class UserController {
         return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
     }
 
-    @PostMapping("")
+    @PostMapping
     public Result<Integer> add(@RequestBody StUser record) {
         StUser r = userService.findByUsername(record.getUsername());
         if (r != null) {
@@ -58,17 +58,6 @@ public class UserController {
     @PostMapping({"delete"})
     public Result<Integer> delete(Long id) {
         return ResultUtils.wrapFail(() -> userService.delete(id));
-    }
-
-
-    @GetMapping({"role/{id}"})
-    public Result<StRole> findRoleForUser(@PathVariable Long id) {
-        return ResultUtils.wrapList(() -> roleService.findRoleForUser(id));
-    }
-
-    @PostMapping({"role/{id}"})
-    public Result<Integer> saveUserRole(@PathVariable Long id, @RequestBody List<Long> roleIds) {
-        return ResultUtils.wrapFail(() -> userService.assignRole(id, roleIds));
     }
 
     @PostMapping("initPwd")
@@ -91,6 +80,16 @@ public class UserController {
         } else {
             return Result.error(PubError.NOT_EXISTS);
         }
+    }
+
+    @GetMapping({"{id}/roles"})
+    public Result<StRole> findRoleForUser(@PathVariable Long id) {
+        return ResultUtils.wrapList(() -> roleService.findRoleForUser(id));
+    }
+
+    @PostMapping({"{id}/roles"})
+    public Result<Integer> saveUserRole(@PathVariable Long id, @RequestBody List<Long> roleIds) {
+        return ResultUtils.wrap(() -> userService.assignRole(id, roleIds));
     }
 
 }
