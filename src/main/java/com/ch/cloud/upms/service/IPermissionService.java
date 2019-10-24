@@ -4,6 +4,7 @@ import com.ch.cloud.upms.model.StPermission;
 import com.ch.mybatis.service.IService;
 import com.github.pagehelper.PageInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,4 +20,6 @@ public interface IPermissionService extends IService<Long, StPermission> {
     List<StPermission> findTreeByType(String type);
 
     List<StPermission> findByTypeAndRoleId(List<String> types, Long roleId);
+
+    int updateRolePermissions(Long roleId, List<Long> permissionIds);
 }

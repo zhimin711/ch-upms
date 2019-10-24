@@ -68,9 +68,13 @@ public class RoleController {
 
 
     @GetMapping({"{roleId}/permissions"})
-    public Result<StPermission> findPermissionByRoleId(@PathVariable Long roleId) {
-        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(null, roleId));
+    public Result<StPermission> findPermissions(@PathVariable Long roleId) {
+        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(Lists.newArrayList("3", "4"), roleId));
     }
 
 
+    @PostMapping({"{roleId}/permissions"})
+    public Result<Integer> editPermissions(@PathVariable Long roleId, @RequestBody Long[] permissionIds) {
+        return ResultUtils.wrap(() -> permissionService.updateRolePermissions(roleId, Lists.newArrayList(permissionIds)));
+    }
 }

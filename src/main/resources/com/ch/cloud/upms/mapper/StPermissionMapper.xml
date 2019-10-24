@@ -45,4 +45,13 @@
       and t1.ROLE_ID = #{roleId}
     </if>
   </select>
+  <insert id="insertRolePermissions">
+    insert into st_role_permission(ROLE_ID, PERMISSION_ID) values
+    <foreach collection="permissionIds" separator="," item="permissionId">
+      (#{roleId}, #{permissionId})
+    </foreach>
+  </insert>
+  <delete id="deleteRolePermissions">
+    delete from st_role_permission where ROLE_ID = #{roleId}
+  </delete>
 </mapper>

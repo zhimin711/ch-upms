@@ -73,6 +73,15 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         return stPermissionMapper.findByTypeAndRoleId(types, roleId);
     }
 
+    @Override
+    public int updateRolePermissions(Long roleId, List<Long> permissionIds) {
+        int c1 = stPermissionMapper.deleteRolePermissions(roleId);
+        if (!permissionIds.isEmpty()) {
+            c1 += stPermissionMapper.insertRolePermissions(roleId, permissionIds);
+        }
+        return c1;
+    }
+
     public List<StPermission> findChildrenByPidAndStatusAndType(String pid, String status, String type) {
         if (CommonUtils.isEmpty(pid)) {
             return Lists.newArrayList();
