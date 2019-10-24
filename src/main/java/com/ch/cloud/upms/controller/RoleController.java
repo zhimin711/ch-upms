@@ -1,6 +1,8 @@
 package com.ch.cloud.upms.controller;
 
+import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.model.StRole;
+import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.e.PubError;
 import com.ch.result.InvokerPage;
@@ -9,6 +11,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,18 +29,20 @@ public class RoleController {
 
     @Autowired
     private IRoleService roleService;
+    @Autowired
+    private IPermissionService permissionService;
 
     @GetMapping(value = {"{num}/{size}"})
     public PageResult<StRole> page(StRole record,
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
-            PageInfo<StRole> pageInfo = roleService.findPage(pageNum, pageSize, record);
+            PageInfo<StRole> pageInfo = roleService.findPage(record, pageNum, pageSize);
             return new InvokerPage.Page<>(pageInfo.getTotal(), pageInfo.getList());
         });
     }
 
-    @PostMapping("save")
+    @PostMapping
     public Result<Integer> add(@RequestBody StRole record) {
         StRole r = roleService.findByCode(record.getCode());
         if (r != null) {
@@ -48,17 +53,24 @@ public class RoleController {
         return ResultUtils.wrapFail(() -> roleService.save(record));
     }
 
-    @PostMapping({"save/{id}"})
-    public Result<Integer> edit(@PathVariable int id, @RequestBody StRole record) {
+    @PutMapping("{id}")
+    public Result<Integer> edit(@PathVariable Long id, @RequestBody StRole record) {
         if (CommonUtils.isEquals("0", record.getType())) {
             return Result.error(PubError.NOT_ALLOWED, "角色类型错误！");
         }
         return ResultUtils.wrapFail(() -> roleService.update(record));
     }
 
-    @PostMapping({"delete"})
-    public Result<Integer> delete(Long id) {
+    @DeleteMapping("{id}")
+    public Result<Integer> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> roleService.delete(id));
     }
+
+
+    @GetMapping({"{roleId}/permissions"})
+    public Result<StPermission> findPermissionByRoleId(@PathVariable Long roleId) {
+        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(null, roleId));
+    }
+
 
 }

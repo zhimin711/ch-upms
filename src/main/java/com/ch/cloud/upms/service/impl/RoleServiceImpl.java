@@ -9,6 +9,7 @@ import com.ch.mybatis.utils.ExampleUtils;
 import com.ch.utils.CommonUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
@@ -73,10 +74,12 @@ public class RoleServiceImpl extends BaseService<Long, StRole> implements IRoleS
     }
 
     @Override
-    public PageInfo<StRole> findPage(int pageNum, int pageSize, StRole record) {
+    public PageInfo<StRole> findPage(StRole record, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         Example e = getExample();
-        ExampleUtils.dynCond(e.createCriteria(), record);
+        Example.Criteria criteria = e.createCriteria();
+        ExampleUtils.dynCond(criteria, record);
+        criteria.andIn("type", Lists.newArrayList("1", "2"));
         e.orderBy("type").asc()
                 .orderBy("id").asc();
         List<StRole> records = getMapper().selectByExample(e);
