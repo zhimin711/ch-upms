@@ -48,7 +48,7 @@ public class RoleServiceImpl extends BaseService<Long, StRole> implements IRoleS
 
     @Override
     public List<StRole> findRoleForUser(Long userId) {
-        List<StRole> records = this.findValid();
+        List<StRole> records = this.findEnabled();
         List<StRole> roles = this.findByUserId(userId);
         if (roles != null && !roles.isEmpty()) {
             List<Long> roleIds = roles.stream().map(StRole::getId).collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class RoleServiceImpl extends BaseService<Long, StRole> implements IRoleS
                 }
             });
         }
-        return records;
+        return roles;
     }
 
     @Override
@@ -66,7 +66,8 @@ public class RoleServiceImpl extends BaseService<Long, StRole> implements IRoleS
         return stRoleMapper.findByUserId(userId);
     }
 
-    private List<StRole> findValid() {
+    @Override
+    public List<StRole> findEnabled() {
         Example e = getExample();
         e.createCriteria().andEqualTo("status", "1").andNotEqualTo("type", "0");
         e.orderBy("code").asc().orderBy("id").asc();

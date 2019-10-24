@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.controller;
 
+import com.ch.StatusS;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.model.StUser;
 import com.ch.cloud.upms.service.IRoleService;
@@ -82,9 +83,14 @@ public class UserController {
         }
     }
 
+    @GetMapping({"roles"})
+    public Result<StRole> findEnableRoles() {
+        return ResultUtils.wrapList(() -> roleService.findEnabled());
+    }
+
     @GetMapping({"{id}/roles"})
     public Result<StRole> findRoleForUser(@PathVariable Long id) {
-        return ResultUtils.wrapList(() -> roleService.findRoleForUser(id));
+        return ResultUtils.wrapList(() -> roleService.findByUserId(id));
     }
 
     @PostMapping({"{id}/roles"})

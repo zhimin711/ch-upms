@@ -18,4 +18,6 @@ public interface IRoleService extends IService<Long, StRole> {
     List<StRole> findRoleForUser(Long userId);
 
     List<StRole> findByUserId(Long userId);
+
+    List<StRole> findEnabled();
 }
