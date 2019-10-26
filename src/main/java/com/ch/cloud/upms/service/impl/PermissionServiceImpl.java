@@ -62,7 +62,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         }
         if (!CommonUtils.isEquals(type, NumS._1))
             records.forEach(r -> {
-                List<StPermission> children = findChildrenByPidAndStatusAndType(r.getId().toString(), status.getCode(), type);
+                List<StPermission> children = findChildrenByPidAndStatusAndType(r.getId().toString(), status != Status.UNKNOWN ? status.getCode() : null, type);
                 r.setChildren(children);
             });
         return records;
