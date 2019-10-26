@@ -42,9 +42,13 @@ public class PermissionDto {
      */
     private String type;
     /**
-     * 地址
+     * （页面或请求）地址
      */
     private String url;
+    /**
+     * 请求方法
+     */
+    private String method;
 
     /**
      * 菜单顺序

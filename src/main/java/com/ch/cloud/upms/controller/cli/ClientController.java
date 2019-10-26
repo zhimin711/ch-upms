@@ -1,4 +1,4 @@
-package com.ch.cloud.upms.controller;
+package com.ch.cloud.upms.controller.cli;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ch.Constants;
@@ -115,6 +115,7 @@ public class ClientController implements UpmsClientService {
             PermissionDto dto = new PermissionDto();
             BeanUtils.copyProperties(r, dto);
             dto.setPid(r.getParentId());
+            dto.setMethod(r.getDescription());
             if (dto.getSort() == null) dto.setSort(0);
             return dto;
         }).collect(Collectors.toList());
