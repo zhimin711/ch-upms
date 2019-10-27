@@ -74,8 +74,8 @@ public class StPermission {
     /**
      * 描述
      */
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Column(name = "METHOD")
+    private String method;
 
     /**
      * 状态: 0.禁用 1.启用
@@ -306,8 +306,8 @@ public class StPermission {
      *
      * @return DESCRIPTION - 描述
      */
-    public String getDescription() {
-        return description;
+    public String getMethod() {
+        return method;
     }
 
     /**
@@ -315,8 +315,8 @@ public class StPermission {
      *
      * @param description 描述
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMethod(String description) {
+        this.method = description;
     }
 
     /**

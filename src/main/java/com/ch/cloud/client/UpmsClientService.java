@@ -17,23 +17,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface UpmsClientService {
 
     @GetMapping("user/{username}/info")
-    Result<UserDto> findUserByUsername(@PathVariable("username") String username);
+    Result<UserDto> findUserByUsername(@PathVariable String username);
 
-    @GetMapping("user/{id}/role")
-    Result<RoleDto> findRoleByUserId(@PathVariable("id") Long userId);
+    @GetMapping({"user/{username}/role"})
+    Result<RoleDto> findRoleByUsername(@PathVariable String username);
 
-    @GetMapping("user/{id}/roleCode")
-    Result<String> findRoleCodeByUserId(@PathVariable("id") Long userId);
+    @GetMapping({"user/{userId}/roles"})
+    Result<RoleDto> findRolesByUserId(@PathVariable Long userId);
 
-    @GetMapping("user/{id}/permission")
-    Result<PermissionDto> findPermissionByUserId(@PathVariable("id") Long userId);
+    @GetMapping({"role/{roleId}/menus"})
+    Result<PermissionDto> findMenusByRoleId(@PathVariable Long roleId);
 
-    @GetMapping({"role/{roleId}/menu"})
-    Result<PermissionDto> findMenuByRoleId(@PathVariable Long roleId);
+    @GetMapping({"role/{roleId}/permissions"})
+    Result<PermissionDto> findPermissionsByRoleId(@PathVariable Long roleId);
 
-    @GetMapping({"role/{roleId}/permission"})
-    Result<PermissionDto> findPermissionByRoleId(@PathVariable Long roleId);
-
-    @GetMapping("user/{id}/permissionUrl")
-    Result<String> findPermissionUrlByUserId(@PathVariable("id") Long userId);
 }

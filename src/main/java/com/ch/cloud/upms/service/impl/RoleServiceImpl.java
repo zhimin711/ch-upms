@@ -34,8 +34,8 @@ public class RoleServiceImpl extends BaseService<Long, StRole> implements IRoleS
     }
 
     @Override
-    public StRole findDefault(String username) {
-        return stRoleMapper.findDefault(username);
+    public StRole getCurrent(String username) {
+        return stRoleMapper.getCurrent(username);
     }
 
     @Override

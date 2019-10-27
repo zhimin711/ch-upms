@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @author zhimin
  * @date 2019/4/22 8:42 PM
  */
-@RestController
+//@RestController
 public class ClientController implements UpmsClientService {
 
 
@@ -50,10 +50,8 @@ public class ClientController implements UpmsClientService {
     @Autowired
     private IPermissionService permissionService;
 
-
     @Override
-    @GetMapping({"user/{username}/info"})
-    public Result<UserDto> findUserByUsername(@PathVariable String username) {
+    public Result<UserDto> findUserByUsername(String username) {
         return ResultUtils.wrapFail(() -> {
             StUser user = userService.findByUsername(username);
             if (user == null) return null;
@@ -65,8 +63,21 @@ public class ClientController implements UpmsClientService {
         });
     }
 
-    @GetMapping({"user/{id}/role"})
-    public Result<RoleDto> findRoleByUserId(@PathVariable Long id) {
+    @Override
+    public Result<RoleDto> findRoleByUsername(String username) {
+        return ResultUtils.wrapFail(() -> {
+            StRole role = roleService.getCurrent(username);
+            if (role == null) return null;
+            RoleDto dto = new RoleDto();
+            dto.setId(role.getId());
+            dto.setCode(role.getCode());
+            dto.setName(role.getName());
+            return dto;
+        });
+    }
+
+    @Override
+    public Result<RoleDto> findRolesByUserId(Long id) {
         return ResultUtils.wrapList(() -> {
             List<StRole> list = roleService.findByUserId(id);
             if (list.isEmpty()) return Lists.newArrayList();
@@ -78,33 +89,21 @@ public class ClientController implements UpmsClientService {
         });
     }
 
-    @Override
-    public Result<String> findRoleCodeByUserId(Long userId) {
-        return ResultUtils.wrapList(() -> {
-            List<StRole> list = roleService.findByUserId(userId);
-            if (list.isEmpty()) return Lists.newArrayList();
-            return list.stream().map(StRole::getCode).collect(Collectors.toList());
-        });
-    }
 
-
-    @GetMapping({"user/{userId}/permission"})
-    public Result<PermissionDto> findPermissionByUserId(@PathVariable Long userId) {
+    public Result<PermissionDto> findPermissionsByUserId(Long userId) {
         //TODO get permission by user id
         StUser user = userService.find(userId);
-        StRole role = roleService.findDefault(user.getUsername());
-        return this.findPermissionByRoleId(role.getId());
+        StRole role = roleService.getCurrent(user.getUsername());
+        return this.findPermissionsByRoleId(role.getId());
     }
 
-    @GetMapping({"role/{roleId}/menu"})
     @Override
-    public Result<PermissionDto> findMenuByRoleId(@PathVariable Long roleId) {
+    public Result<PermissionDto> findMenusByRoleId(Long roleId) {
         return ResultUtils.wrapList(() -> this.findPermissionByTypeAndRoleId(Lists.newArrayList("1", "2"), roleId));
     }
 
-    @GetMapping({"role/{roleId}/permission"})
     @Override
-    public Result<PermissionDto> findPermissionByRoleId(@PathVariable Long roleId) {
+    public Result<PermissionDto> findPermissionsByRoleId(Long roleId) {
         return ResultUtils.wrapList(() -> this.findPermissionByTypeAndRoleId(Lists.newArrayList("3", "4"), roleId));
     }
 
@@ -114,25 +113,10 @@ public class ClientController implements UpmsClientService {
         return permissions.stream().map(r -> {
             PermissionDto dto = new PermissionDto();
             BeanUtils.copyProperties(r, dto);
-            dto.setPid(r.getParentId());
-            dto.setMethod(r.getDescription());
             if (dto.getSort() == null) dto.setSort(0);
             return dto;
         }).collect(Collectors.toList());
     }
-
-    @GetMapping({"user/{userId}/permissionUrl"})
-    @Override
-    public Result<String> findPermissionUrlByUserId(@PathVariable Long userId) {
-        return ResultUtils.wrapList(() -> {
-            StUser user = userService.find(userId);
-            StRole role = roleService.findDefault(user.getUsername());
-            List<StMenu> permissions = menuService.findPermissionByRoleId(role.getId());
-            if (permissions.isEmpty()) return Lists.newArrayList();
-            return permissions.stream().map(StMenu::getUrl).collect(Collectors.toList());
-        });
-    }
-
 
     @GetMapping({"user/info"})
     public Result<?> getAuthInfo(@RequestHeader(Constants.TOKEN_USER) String username) {
@@ -141,7 +125,7 @@ public class ClientController implements UpmsClientService {
             StUser user = userService.findByUsername(username);
 
             info.put("user", covertUserVo(user));
-            StRole role = roleService.findDefault(username);
+            StRole role = roleService.getCurrent(username);
             if (role == null) return info;
             List<Menu> menus;
             List<StMenu> routers;
@@ -187,7 +171,7 @@ public class ClientController implements UpmsClientService {
     public Result<Menu> menu(@RequestHeader(Constants.TOKEN_USER) String username) {
         logger.debug("fetch menu by username: {}", username);
         return ResultUtils.wrapList(() -> {
-            StRole role = roleService.findDefault(username);
+            StRole role = roleService.getCurrent(username);
             List<Menu> menus = Lists.newArrayList();
             if (role == null) return menus;
             if (CommonUtils.isEquals(role.getType(), NumS._0)) {

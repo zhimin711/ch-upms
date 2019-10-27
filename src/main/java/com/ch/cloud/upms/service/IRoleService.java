@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface IRoleService extends IService<Long, StRole> {
 
-    StRole findDefault(String username);
+    StRole getCurrent(String username);
 
     StRole findByCode(String code);
 

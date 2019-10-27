@@ -20,7 +20,7 @@ public class PermissionDto {
     /**
      * 上级菜单ID
      */
-    private String pid;
+    private String parentId;
 
     /**
      * 菜单名称

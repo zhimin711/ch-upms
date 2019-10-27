@@ -20,7 +20,7 @@
     ID, NAME, CODE, TYPE, DESCRIPTION, STATUS, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
   </sql>
 
-  <select id="findDefault" resultMap="BaseResultMap">
+  <select id="getCurrent" resultMap="BaseResultMap">
     SELECT t.*,t1.status sort
     FROM st_role t
     INNER JOIN st_user_role t1
@@ -28,7 +28,7 @@
     INNER JOIN st_user t2
     on t2.ID = t1.USER_ID
     WHERE t2.USERNAME = #{username}
-	ORDER BY sort DESC LIMIT 1
+	ORDER BY sort DESC,t.type,t.id asc	LIMIT 1
   </select>
   <select id="findByUserId" resultMap="BaseResultMap">
     SELECT t.*

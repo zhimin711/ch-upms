@@ -16,7 +16,7 @@
     <result column="IS_SYS" property="isSys" jdbcType="CHAR" />
     <result column="PARENT_ID" property="parentId" jdbcType="VARCHAR" />
     <result column="PARENT_NAME" property="parentName" jdbcType="VARCHAR" />
-    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="METHOD" property="method" jdbcType="VARCHAR" />
     <result column="STATUS" property="status" jdbcType="CHAR" />
     <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
     <result column="CREATE_AT" property="createAt" jdbcType="TIMESTAMP" />
@@ -24,7 +24,7 @@
     <result column="UPDATE_AT" property="updateAt" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    ID, NAME, CODE, URL, TYPE, ICON, SORT, IS_SHOW, IS_SYS, PARENT_ID, PARENT_NAME, DESCRIPTION, 
+    ID, NAME, CODE, URL, TYPE, ICON, SORT, IS_SHOW, IS_SYS, PARENT_ID, PARENT_NAME, METHOD,
     STATUS, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
   </sql>
 

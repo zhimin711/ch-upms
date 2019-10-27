@@ -98,4 +98,14 @@ public class UserController {
         return ResultUtils.wrap(() -> userService.assignRole(id, roleIds));
     }
 
+    @GetMapping("{username}/info")
+    public Result<StUser> findByUsername(@PathVariable String username) {
+        return ResultUtils.wrapFail(() -> userService.findByUsername(username));
+    }
+
+    @GetMapping({"{username}/role"})
+    public Result<StRole> findRolesByUsername(@PathVariable String username) {
+        return ResultUtils.wrap(() -> roleService.getCurrent(username));
+    }
+
 }

@@ -66,6 +66,10 @@ public class RoleController {
         return ResultUtils.wrapFail(() -> roleService.delete(id));
     }
 
+    @GetMapping({"{roleId}/menus"})
+    public Result<StPermission> findMenusByRoleId(@PathVariable Long roleId) {
+        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(Lists.newArrayList("1", "2"), roleId));
+    }
 
     @GetMapping({"{roleId}/permissions"})
     public Result<StPermission> findPermissions(@PathVariable Long roleId) {
