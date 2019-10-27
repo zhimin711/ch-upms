@@ -8,20 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = UpmsApplication.class)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = UpmsApplication.class)
 public class ClientTests {
 
-	@Autowired
+//	@Autowired
 	UpmsClientService upmsClientService;
 
 	Object o;
 
-	@Test
+//	@Test
 	public void contextLoads() {
 
-//		o = upmsClientService.findPermissionByRoleId(0L);
-		o = upmsClientService.findMenuByRoleId(0L);
+//		o = upmsClientService.findPermissionsByRoleId(0L);
+		o = upmsClientService.findMenusByRoleId(0L);
 
 		System.out.println(o);
 	}
