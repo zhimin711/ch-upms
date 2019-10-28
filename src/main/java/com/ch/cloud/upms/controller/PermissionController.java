@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.controller;
 
+import com.ch.NumS;
 import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
@@ -11,6 +12,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -46,7 +48,7 @@ public class PermissionController {
         return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
     }
 
-    @PostMapping("")
+    @PostMapping
     public Result<Integer> add(@RequestBody StPermission record) {
         StPermission r = permissionService.findByCode(record.getCode());
         if (r != null) {
@@ -55,22 +57,34 @@ public class PermissionController {
         if (CommonUtils.isEmpty(record.getParentId())) {
             record.setParentId("0");
         }
+        if (CommonUtils.isEmpty(record.getIsShow())) {
+            record.setIsShow("1");
+        }
+        if (CommonUtils.isEmpty(record.getIsSys())) {
+            record.setIsSys("0");
+        }
+        if (CommonUtils.isNotEmpty(record.getUrl())) {
+            record.setUrl(record.getUrl().trim());
+        }
         return ResultUtils.wrapFail(() -> permissionService.save(record));
     }
 
     @PutMapping({"{id}"})
-    public Result<Integer> edit(@PathVariable int id, @RequestBody StPermission record) {
+    public Result<Integer> edit(@PathVariable Long id, @RequestBody StPermission record) {
         return ResultUtils.wrapFail(() -> {
 
             if (CommonUtils.isEmpty(record.getParentId())) {
                 record.setParentId("0");
             }
+            if (CommonUtils.isNotEmpty(record.getUrl())) {
+                record.setUrl(record.getUrl().trim());
+            }
             return permissionService.updateWithNull(record);
         });
     }
 
-    @DeleteMapping({"delete"})
-    public Result<Integer> delete(Long id) {
+    @DeleteMapping({"{id}"})
+    public Result<Integer> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> permissionService.delete(id));
     }
 
@@ -83,12 +97,9 @@ public class PermissionController {
             return VueRecordUtils.convertParentsByType(records, type);
         });
     }
-/*
-    @GetMapping({"routes"})
-    public Result<VueRecord> routes() {
-        return ResultUtils.wrapList(() -> {
-            List<StMenu> records = permissionService.findTreeByType(null);
-            return VueRecordUtils.convertMenusByType(records, "1");
-        });
-    }*/
+
+    @GetMapping({"hidden"})
+    public Result<StPermission> hidden() {
+        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(Lists.newArrayList(NumS._5), null));
+    }
 }

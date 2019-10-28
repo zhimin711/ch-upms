@@ -38,7 +38,7 @@ public class UserController {
     public PageResult<StUser> page(StUser record,
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
-        PageInfo<StUser> pageInfo = userService.findPage(pageNum, pageSize, record);
+        PageInfo<StUser> pageInfo = userService.findPage(record, pageNum, pageSize);
         return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
     }
 
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @PutMapping({"{id}"})
-    public Result<Integer> edit(@PathVariable int id, @RequestBody StUser record) {
+    public Result<Integer> edit(@PathVariable Long id, @RequestBody StUser record) {
         return ResultUtils.wrapFail(() -> userService.update(record));
     }
 

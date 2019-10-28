@@ -31,4 +31,7 @@ public interface UpmsClientService {
     @GetMapping({"role/{roleId}/permissions"})
     Result<PermissionDto> findPermissionsByRoleId(@PathVariable Long roleId);
 
+    @GetMapping({"permission/hidden"})
+    Result<PermissionDto> findHiddenPermissions();
+
 }

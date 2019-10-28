@@ -107,6 +107,11 @@ public class ClientController implements UpmsClientService {
         return ResultUtils.wrapList(() -> this.findPermissionByTypeAndRoleId(Lists.newArrayList("3", "4"), roleId));
     }
 
+    @Override
+    public Result<PermissionDto> findHiddenPermissions() {
+        return null;
+    }
+
     private List<PermissionDto> findPermissionByTypeAndRoleId(List<String> types, Long roleId) {
         List<StPermission> permissions = permissionService.findByTypeAndRoleId(types, roleId);
         if (permissions.isEmpty()) return Lists.newArrayList();

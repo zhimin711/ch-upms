@@ -96,6 +96,8 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
             criteria.andEqualTo("type", type);
         } else if (CommonUtils.isEquals(NumS._2, type)) {
             criteria.andIn("type", Lists.newArrayList(NumS._1, NumS._2));
+        } else if(!CommonUtils.isEquals(NumS._0, type)) {
+            criteria.andNotEqualTo("type", NumS._5);
         }
         example.orderBy("sort").asc();
         example.orderBy("id").asc();
