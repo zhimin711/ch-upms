@@ -1,7 +1,7 @@
 -- ----------------------------
--- Table structure for st_menu
+-- Table structure for st_permission
 -- ----------------------------
-DROP TABLE if EXISTS `st_menu`;
+DROP TABLE if EXISTS `st_permission`;
 CREATE TABLE `st_permission` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `NAME` varchar(50) NOT NULL COMMENT '名称',
@@ -23,16 +23,9 @@ CREATE TABLE `st_permission` (
   PRIMARY KEY (`ID`) USING BTREE,
   UNIQUE KEY `UK_ST_P_CODE` (`CODE`) USING BTREE,
   KEY `IDX_ST_P_URL` (`URL`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='后台权限表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统表-权限信息';
+
+
 -- ----------------------------
--- Records of st_menu
+-- Records of st_permission
 -- ----------------------------
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('1', NULL, '系统管理', 'sys', 'el-icon-lx-settings', NULL, '1', '1', NULL, '1', 'sys', '2018-12-22 21:46:57', NULL, NULL);
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('2', '1', '用户管理', 'sysUser', NULL, NULL, '1', '2', NULL, '1', 'sys', '2018-12-22 21:47:17', NULL, NULL);
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('3', '1', '角色管理', 'sysRole', NULL, NULL, '2', '2', NULL, '1', 'sys', '2018-12-22 21:47:58', NULL, NULL);
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('4', '1', '菜单管理', 'sysPermission', NULL, NULL, '3', '2', NULL, '1', 'sys', '2018-12-22 21:48:19', NULL, NULL);
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('5', NULL, '博客管理', 'blog', 'el-icon-tickets', NULL, '2', '2', NULL, '1', NULL, '2018-12-28 20:14:25', 'admin', '2019-02-28 14:01:21');
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('6', '5', '分类管理', 'category', '', '2', '0', '2', NULL, '1', 'admin', '2019-02-28 11:41:21', 'admin', '2019-02-28 14:27:11');
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('7', '5', '文章管理', 'Article', NULL, '1', '0', '2', NULL, '1', 'admin', '2019-02-28 14:05:47', 'admin', '2019-02-28 14:29:12');
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('8', NULL, '其他', 'other', 'el-icon-star-on', NULL, '3', '2', NULL, '1', 'admin', '2019-02-28 14:30:39', 'admin', '2019-02-28 14:36:07');
-INSERT INTO `st_menu` (`ID`, `PID`, `NAME`, `CODE`, `ICON`, `URL`, `SORT`, `TYPE`, `DESCRIPTION`, `STATUS`, `CREATE_BY`, `CREATE_AT`, `UPDATE_BY`, `UPDATE_AT`) VALUES ('9', '8', '书签管理', 'bookmark', NULL, NULL, '1', '2', NULL, '1', 'admin', '2019-02-28 14:36:56', 'admin', '2019-02-28 14:38:01');
