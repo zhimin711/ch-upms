@@ -52,7 +52,7 @@ public class PermissionController {
     public Result<Integer> add(@RequestBody StPermission record) {
         StPermission r = permissionService.findByCode(record.getCode());
         if (r != null) {
-            return Result.error(PubError.EXISTS);
+            return Result.error(PubError.EXISTS,"权限代码已存在！");
         }
         if (CommonUtils.isEmpty(record.getParentId())) {
             record.setParentId("0");

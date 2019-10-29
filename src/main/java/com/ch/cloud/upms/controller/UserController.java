@@ -46,7 +46,7 @@ public class UserController {
     public Result<Integer> add(@RequestBody StUser record) {
         StUser r = userService.findByUsername(record.getUsername());
         if (r != null) {
-            return Result.error(PubError.EXISTS);
+            return Result.error(PubError.EXISTS, "用户名已存在！");
         }
         return ResultUtils.wrapFail(() -> userService.save(record));
     }

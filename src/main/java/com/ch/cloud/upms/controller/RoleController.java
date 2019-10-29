@@ -46,7 +46,7 @@ public class RoleController {
     public Result<Integer> add(@RequestBody StRole record) {
         StRole r = roleService.findByCode(record.getCode());
         if (r != null) {
-            return Result.error(PubError.EXISTS);
+            return Result.error(PubError.EXISTS, "角色代码已存在！");
         } else if (CommonUtils.isEquals("0", record.getType())) {
             return Result.error(PubError.NOT_ALLOWED, "角色类型错误！");
         }
