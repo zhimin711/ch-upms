@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.controller;
 
+import com.ch.Constants;
 import com.ch.NumS;
 import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.service.IPermissionService;
@@ -11,6 +12,7 @@ import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.DateUtils;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
@@ -49,7 +51,8 @@ public class PermissionController {
     }
 
     @PostMapping
-    public Result<Integer> add(@RequestBody StPermission record) {
+    public Result<Integer> add(@RequestBody StPermission record,
+                               @RequestHeader(Constants.TOKEN_USER) String username) {
         StPermission r = permissionService.findByCode(record.getCode());
         if (r != null) {
             return Result.error(PubError.EXISTS,"权限代码已存在！");
@@ -66,11 +69,13 @@ public class PermissionController {
         if (CommonUtils.isNotEmpty(record.getUrl())) {
             record.setUrl(record.getUrl().trim());
         }
+        record.setCreateBy(username);
         return ResultUtils.wrapFail(() -> permissionService.save(record));
     }
 
     @PutMapping({"{id}"})
-    public Result<Integer> edit(@PathVariable Long id, @RequestBody StPermission record) {
+    public Result<Integer> edit(@PathVariable Long id, @RequestBody StPermission record,
+                                @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
 
             if (CommonUtils.isEmpty(record.getParentId())) {
@@ -79,6 +84,8 @@ public class PermissionController {
             if (CommonUtils.isNotEmpty(record.getUrl())) {
                 record.setUrl(record.getUrl().trim());
             }
+            record.setUpdateBy(username);
+            record.setUpdateAt(DateUtils.current());
             return permissionService.updateWithNull(record);
         });
     }
