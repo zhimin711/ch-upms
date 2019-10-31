@@ -82,6 +82,11 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         return c1;
     }
 
+    @Override
+    public List<StPermission> findByPid(String pid) {
+        return findChildrenByPidAndStatusAndType(pid, null, NumS._0);
+    }
+
     public List<StPermission> findChildrenByPidAndStatusAndType(String pid, String status, String type) {
         if (CommonUtils.isEmpty(pid)) {
             return Lists.newArrayList();
@@ -96,7 +101,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
             criteria.andEqualTo("type", type);
         } else if (CommonUtils.isEquals(NumS._2, type)) {
             criteria.andIn("type", Lists.newArrayList(NumS._1, NumS._2));
-        } else if(!CommonUtils.isEquals(NumS._0, type)) {
+        } else if (!CommonUtils.isEquals(NumS._0, type)) {
             criteria.andNotEqualTo("type", NumS._5);
         }
         example.orderBy("sort").asc();
@@ -115,5 +120,20 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
     @Override
     protected Mapper<StPermission> getMapper() {
         return stPermissionMapper;
+    }
+
+
+    @Override
+    public int updateWithNull(StPermission record) {
+        int c = super.updateWithNull(record);
+        if (CommonUtils.isNotEmpty(record.getChildren())) {
+            record.getChildren().forEach(e -> {
+                e.setParentId(record.getParentId() + "," + record.getId());
+                e.setUpdateBy(record.getUpdateBy());
+                e.setUpdateAt(record.getUpdateAt());
+                super.update(e);
+            });
+        }
+        return c;
     }
 }

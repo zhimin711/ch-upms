@@ -22,4 +22,6 @@ public interface IPermissionService extends IService<Long, StPermission> {
     List<StPermission> findByTypeAndRoleId(List<String> types, Long roleId);
 
     int updateRolePermissions(Long roleId, List<Long> permissionIds);
+
+    List<StPermission> findByPid(String pid);
 }

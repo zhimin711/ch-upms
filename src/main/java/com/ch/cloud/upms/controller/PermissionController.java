@@ -13,6 +13,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
+import com.ch.utils.ExceptionUtils;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
@@ -86,6 +87,22 @@ public class PermissionController {
             }
             record.setUpdateBy(username);
             record.setUpdateAt(DateUtils.current());
+            StPermission orig = permissionService.find(id);
+            if (orig == null) {
+                throw ExceptionUtils.create(PubError.NOT_EXISTS, "权限不存在！");
+            }
+            record.setCode(orig.getCode());//code 不允许修改赋原值
+            if (!CommonUtils.isEquals(record.getParentId(), orig.getParentId()) && Lists.newArrayList(NumS._1, NumS._2).contains(orig.getType())) {
+                String pid = id + "";
+                if (!CommonUtils.isEquals(NumS._0, orig.getParentId())) {
+                    pid = orig.getParentId() + "," + id;
+                }
+                List<StPermission> children = permissionService.findByPid(pid);
+                if (CommonUtils.isEquals(NumS._1, orig.getType()) && !children.isEmpty()) {
+                    throw ExceptionUtils.create(PubError.NOT_EXISTS, "权限目录存在子菜单不允许调整上级！");
+                }
+                record.setChildren(children);
+            }
             return permissionService.updateWithNull(record);
         });
     }
