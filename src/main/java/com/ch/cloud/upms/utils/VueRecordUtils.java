@@ -91,13 +91,14 @@ public class VueRecordUtils {
             if (r.getChildren() == null || r.getChildren().isEmpty()) {
                 return;
             }
-            r.getChildren().forEach(e -> {
+//            vueRecord.setChildren(r.getChildren().stream().map(e-> convertCategory(r.getChildren())));
+            /*r.getChildren().forEach(e -> {
                 if (CommonUtils.isEquals(NumS._1, e.getType())) {
                     VueRecord vueRecord1 = convertPermission(e);
-                    vueRecord1.setLabel("  " + e.getName());
+                    vueRecord1.setLabel(r.getName() + " >> " + e.getName());
                     categories.add(vueRecord1);
                 }
-            });
+            });*/
         });
         return categories;
     }

@@ -110,7 +110,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         if (CommonUtils.isEmpty(children)) return null;
         children.forEach(r -> {
             String pid1 = StringExtUtils.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
-            if (CommonUtils.isEquals(NumS._2, r.getType()) && CommonUtils.isEquals(type, NumS._0)) {
+            if ((CommonUtils.isEquals(NumS._1, r.getType()) || CommonUtils.isEquals(NumS._2, r.getType())) && CommonUtils.isEquals(type, NumS._0)) {
                 r.setChildren(findChildrenByPidAndStatusAndType(pid1, status, type));
             }
         });
