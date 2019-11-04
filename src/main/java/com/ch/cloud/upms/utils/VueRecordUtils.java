@@ -85,13 +85,17 @@ public class VueRecordUtils {
 
     private static List<VueRecord> convertCategory(List<StPermission> records) {
         List<VueRecord> categories = Lists.newArrayList();
-        records.forEach(r -> {
+        records.stream().filter(r -> CommonUtils.isEquals(NumS._1, r.getType())).forEach(r -> {
             VueRecord vueRecord = convertPermission(r);
             categories.add(vueRecord);
             if (r.getChildren() == null || r.getChildren().isEmpty()) {
                 return;
             }
-//            vueRecord.setChildren(r.getChildren().stream().map(e-> convertCategory(r.getChildren())));
+            List<StPermission> list = r.getChildren().stream().filter(e -> CommonUtils.isEquals(NumS._1, e.getType())).collect(Collectors.toList());
+            if (list.isEmpty()) {
+                return;
+            }
+            vueRecord.setChildren(convertCategory(list));
             /*r.getChildren().forEach(e -> {
                 if (CommonUtils.isEquals(NumS._1, e.getType())) {
                     VueRecord vueRecord1 = convertPermission(e);

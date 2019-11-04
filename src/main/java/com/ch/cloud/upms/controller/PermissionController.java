@@ -92,6 +92,7 @@ public class PermissionController {
                 throw ExceptionUtils.create(PubError.NOT_EXISTS, "权限不存在！");
             }
             record.setCode(orig.getCode());//code 不允许修改赋原值
+            record.setChildren(null);
             if (!CommonUtils.isEquals(record.getParentId(), orig.getParentId()) && Lists.newArrayList(NumS._1, NumS._2).contains(orig.getType())) {
                 String pid = id + "";
                 if (!CommonUtils.isEquals(NumS._0, orig.getParentId())) {
