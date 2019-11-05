@@ -38,7 +38,7 @@ public class UploadRecordController {
                                          @PathVariable(value = "num") int pageNum,
                                          @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
-            PageInfo<BtUploadFile> pageInfo = uploadFileService.findPage(pageNum, pageSize, record);
+            PageInfo<BtUploadFile> pageInfo = uploadFileService.findPage(record, pageNum, pageSize);
             return new InvokerPage.Page<>(pageInfo.getTotal(), pageInfo.getList());
         });
     }
