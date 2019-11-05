@@ -38,6 +38,6 @@
     INSERT INTO st_user_role (USER_ID,ROLE_ID) VALUES (#{userId},#{roleId})
   </insert>
   <delete id="deleteAssignRole">
-    DELETE FROM st_user_role WHERE USER_ID=#{userId} AND ROLE_ID=#{roleId}
+    DELETE FROM st_user_role WHERE USER_ID=#{userId} AND ROLE_ID=#{roleId} and ROLE_ID != 1
   </delete>
 </mapper>
