@@ -3,19 +3,24 @@ package com.ch.cloud.upms.controller;
 import com.ch.StatusS;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.model.StUser;
+import com.ch.cloud.upms.pojo.UserInfo;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.e.PubError;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.CharUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.EncryptUtils;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户管理
@@ -106,6 +111,27 @@ public class UserController {
     @GetMapping({"{username}/role"})
     public Result<StRole> findRolesByUsername(@PathVariable String username) {
         return ResultUtils.wrap(() -> roleService.getCurrent(username));
+    }
+
+    @GetMapping("valid")
+    public Result<UserInfo> findValid(@RequestParam(value = "name",required = false) String idOrUsernameOrRealname) {
+        return ResultUtils.wrapList(() -> {
+            List<StUser> users;
+            if (CommonUtils.isEmpty(idOrUsernameOrRealname)) {
+                users = userService.findAllValid();
+            } else if (CommonUtils.isNumeric(idOrUsernameOrRealname)) {
+                users = userService.findByLikeUserId(idOrUsernameOrRealname);
+            } else if (CharUtils.containsChinese(idOrUsernameOrRealname)) {
+                users = userService.findByLikeRealname(idOrUsernameOrRealname);
+            } else {
+                users = userService.findByLikeUsername(idOrUsernameOrRealname);
+            }
+            return users.stream().map(r -> {
+                UserInfo info = new UserInfo();
+                BeanUtils.copyProperties(r, info);
+                return info;
+            }).collect(Collectors.toList());
+        });
     }
 
 }

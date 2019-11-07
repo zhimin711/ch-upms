@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("menu")
-public class MenuController {
+public class DepartmentController {
 
     @Autowired
     IRoleService roleService;

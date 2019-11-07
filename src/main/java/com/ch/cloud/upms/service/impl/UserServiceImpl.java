@@ -11,6 +11,8 @@ import com.ch.mybatis.service.BaseService;
 import com.ch.mybatis.utils.ExampleUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.EncryptUtils;
+import com.ch.utils.SQLUtils;
+import com.ch.utils.StringExtUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.RandomStringUtils;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.util.Sqls;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -76,6 +79,32 @@ public class UserServiceImpl extends BaseService<Long, StUser> implements IUserS
             uRoleIds.forEach(r -> c.getAndAdd(userMapper.deleteAssignRole(id, r)));
         }
         return c.get();
+    }
+
+    @Override
+    public List<StUser> findByLikeUserId(String userId) {
+        Example e = Example.builder(StUser.class).andWhere(Sqls.custom().andLike("userId", SQLUtils.likeAny(userId))).build();
+        return getMapper().selectByExample(e);
+    }
+
+    @Override
+    public List<StUser> findByLikeRealname(String realname) {
+        Example e = Example.builder(StUser.class).andWhere(Sqls.custom().andLike("realName", SQLUtils.likeAny(realname))
+                .andEqualTo("status", StatusS.ENABLED)).build();
+        return getMapper().selectByExample(e);
+    }
+
+    @Override
+    public List<StUser> findByLikeUsername(String username) {
+        Example e = Example.builder(StUser.class).andWhere(Sqls.custom().andLike("username", SQLUtils.likeAny(username))
+                .andEqualTo("status", StatusS.ENABLED)).build();
+        return getMapper().selectByExample(e);
+    }
+
+    @Override
+    public List<StUser> findAllValid() {
+        Example e = Example.builder(StUser.class).andWhere(Sqls.custom().andEqualTo("status", StatusS.ENABLED)).build();
+        return getMapper().selectByExample(e);
     }
 
     @Override

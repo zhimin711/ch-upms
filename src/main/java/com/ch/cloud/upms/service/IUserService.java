@@ -16,4 +16,12 @@ public interface IUserService extends IService<Long, StUser> {
     int updatePassword(StUser user);
 
     int assignRole(Long id, List<Long> roleIds);
+
+    List<StUser> findByLikeUserId(String userId);
+
+    List<StUser> findByLikeRealname(String realname);
+
+    List<StUser> findByLikeUsername(String username);
+
+   List<StUser> findAllValid();
 }
