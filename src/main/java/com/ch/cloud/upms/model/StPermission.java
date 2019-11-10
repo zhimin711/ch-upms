@@ -33,6 +33,12 @@ public class StPermission {
     private String url;
 
     /**
+     * 转发地址
+     */
+    @Column(name = "REDIRECT")
+    private String redirect;
+
+    /**
      * 类型(1.目录 2.菜单页 3.按钮)
      */
     @Column(name = "TYPE")
@@ -419,5 +425,13 @@ public class StPermission {
 
     public void setChildren(List<StPermission> children) {
         this.children = children;
+    }
+
+    public String getRedirect() {
+        return redirect;
+    }
+
+    public void setRedirect(String redirect) {
+        this.redirect = redirect;
     }
 }

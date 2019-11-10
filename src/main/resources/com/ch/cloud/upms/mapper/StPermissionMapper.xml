@@ -9,6 +9,7 @@
     <result column="NAME" property="name" jdbcType="VARCHAR" />
     <result column="CODE" property="code" jdbcType="VARCHAR" />
     <result column="URL" property="url" jdbcType="VARCHAR" />
+    <result column="REDIRECT" property="redirect" jdbcType="VARCHAR" />
     <result column="TYPE" property="type" jdbcType="VARCHAR" />
     <result column="ICON" property="icon" jdbcType="VARCHAR" />
     <result column="SORT" property="sort" jdbcType="INTEGER" />
@@ -24,7 +25,7 @@
     <result column="UPDATE_AT" property="updateAt" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    ID, NAME, CODE, URL, TYPE, ICON, SORT, IS_SHOW, IS_SYS, PARENT_ID, PARENT_NAME, METHOD,
+    ID, NAME, CODE, URL, REDIRECT, TYPE, ICON, SORT, IS_SHOW, IS_SYS, PARENT_ID, PARENT_NAME, METHOD,
     STATUS, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
   </sql>
 
