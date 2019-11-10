@@ -33,7 +33,8 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
     @Override
     public PageInfo<StPermission> findTreePage(StPermission record, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<StPermission> records = findTopCategory(Status.UNKNOWN);
+
+        List<StPermission> records = findTopCategory(Status.forEnabled(record.getStatus()));
         if (CommonUtils.isNotEmpty(records)) {
             records.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, "0")));
         }
@@ -41,7 +42,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
     }
 
 
-    public List<StPermission> findTopCategory(Status status) {
+    private List<StPermission> findTopCategory(Status status) {
         Sqls sqls = Sqls.custom();
         sqls.andEqualTo("type", NumS._1).andEqualTo("parentId", NumS._0);
         if (status == Status.ENABLED) {
