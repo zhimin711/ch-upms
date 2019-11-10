@@ -46,6 +46,10 @@ public class PermissionDto {
      */
     private String url;
     /**
+     * 重定向地址
+     */
+    private String redirect;
+    /**
      * 请求方法
      */
     private String method;

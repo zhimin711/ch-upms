@@ -34,6 +34,11 @@ public class PermissionDto implements Serializable {
     private String url;
 
     /**
+     * 重定向地址
+     */
+    private String redirect;
+
+    /**
      * 类型(1.目录 2.菜单页 3.按钮)
      */
     private String type;
@@ -232,5 +237,13 @@ public class PermissionDto implements Serializable {
 
     public Date getUpdateAt() {
         return this.updateAt;
+    }
+
+    public String getRedirect() {
+        return redirect;
+    }
+
+    public void setRedirect(String redirect) {
+        this.redirect = redirect;
     }
 }
