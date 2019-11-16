@@ -1,6 +1,5 @@
 package com.ch.cloud.upms.service.impl;
 
-import com.ch.Constants;
 import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.StUserMapper;
 import com.ch.cloud.upms.model.StRole;
@@ -9,7 +8,10 @@ import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.mybatis.service.BaseService;
 import com.ch.mybatis.utils.ExampleUtils;
-import com.ch.utils.*;
+import com.ch.utils.CommonUtils;
+import com.ch.utils.DateUtils;
+import com.ch.utils.EncryptUtils;
+import com.ch.utils.SQLUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.RandomStringUtils;
@@ -19,6 +21,7 @@ import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.Sqls;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -30,16 +33,13 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl extends BaseService<Long, StUser> implements IUserService {
 
-    @Autowired(required = false)
+    @Resource
     private StUserMapper userMapper;
 
     @Override
     protected Mapper<StUser> getMapper() {
         return userMapper;
     }
-
-//    @Autowired(required = false)
-//    private PasswordService passwordService;
 
     @Autowired
     private IRoleService roleService;
@@ -122,6 +122,8 @@ public class UserServiceImpl extends BaseService<Long, StUser> implements IUserS
 
     @Override
     public int update(StUser record) {
+        record.setUserId(null);
+        record.setUsername(null);
         //不更新密码
         record.setPassword(null);
         return super.update(record);
