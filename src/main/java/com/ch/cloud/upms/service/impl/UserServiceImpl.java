@@ -68,12 +68,14 @@ public class UserServiceImpl extends BaseService<Long, StUser> implements IUserS
     @Override
     public int assignRole(Long id, List<Long> roleIds) {
         List<StRole> roleList = roleService.findByUserId(id);
+
         List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(StRole::getId).collect(Collectors.toList());
+        List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(StRole::getId).collect(Collectors.toList());
 
         AtomicInteger c = new AtomicInteger();
         if (!roleIds.isEmpty()) {
-            roleIds.stream().filter(r -> !uRoleIds.contains(r)).forEach(r -> c.getAndAdd(userMapper.insertAssignRole(id, r)));
-            uRoleIds.stream().filter(r -> !roleIds.contains(r)).forEach(r -> c.getAndAdd(userMapper.deleteAssignRole(id, r)));
+            roleIds.stream().filter(r -> !uRoleIds.contains(r) && !uRoleIds2.contains(r)).forEach(r -> c.getAndAdd(userMapper.insertAssignRole(id, r)));
+            uRoleIds.stream().filter(r -> !roleIds.contains(r) &&  !uRoleIds2.contains(r)).forEach(r -> c.getAndAdd(userMapper.deleteAssignRole(id, r)));
         } else if (!uRoleIds.isEmpty()) {
             uRoleIds.forEach(r -> c.getAndAdd(userMapper.deleteAssignRole(id, r)));
         }
