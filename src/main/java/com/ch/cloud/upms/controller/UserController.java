@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.controller;
 
+import com.ch.Constants;
 import com.ch.StatusS;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.model.StUser;
@@ -12,6 +13,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CharUtils;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.DateUtils;
 import com.ch.utils.EncryptUtils;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -48,32 +50,32 @@ public class UserController {
     }
 
     @PostMapping
-    public Result<Integer> add(@RequestBody StUser record) {
+    public Result<Integer> add(@RequestBody StUser record,
+                               @RequestHeader(Constants.TOKEN_USER) String username) {
         StUser r = userService.findByUsername(record.getUsername());
         if (r != null) {
             return Result.error(PubError.EXISTS, "用户名已存在！");
         }
+        record.setCreateBy(username);
         return ResultUtils.wrapFail(() -> userService.save(record));
     }
 
     @PutMapping({"{id}"})
-    public Result<Integer> edit(@PathVariable Long id, @RequestBody StUser record) {
+    public Result<Integer> edit(@PathVariable Long id, @RequestBody StUser record,
+                                @RequestHeader(Constants.TOKEN_USER) String username) {
+        record.setUpdateBy(username);
+        record.setUpdateAt(DateUtils.current());
         return ResultUtils.wrapFail(() -> userService.update(record));
     }
 
-    @PostMapping({"delete"})
+    //    @PostMapping({"delete"})
     public Result<Integer> delete(Long id) {
         return ResultUtils.wrapFail(() -> userService.delete(id));
     }
 
-    @PostMapping("initPwd")
-    public Result<String> initPwd(@RequestBody Long[] userIds) {
-
-        if (CommonUtils.isEmpty(userIds) || userIds.length > 1) {
-            return Result.error(PubError.ARGS, "不支持批量更新!");
-        }
-        Long userId = userIds[0];
-        StUser user = userService.find(userId);
+    @PostMapping("{id}/initPwd")
+    public Result<String> initPwd(@PathVariable Long id) {
+        StUser user = userService.find(id);
         if (CommonUtils.isNotEmpty(user)) {
             String pwd = EncryptUtils.generate(8);
             user.setPassword(pwd);
@@ -114,7 +116,7 @@ public class UserController {
     }
 
     @GetMapping("valid")
-    public Result<UserInfo> findValid(@RequestParam(value = "name",required = false) String idOrUsernameOrRealname) {
+    public Result<UserInfo> findValid(@RequestParam(value = "name", required = false) String idOrUsernameOrRealname) {
         return ResultUtils.wrapList(() -> {
             List<StUser> users;
             if (CommonUtils.isEmpty(idOrUsernameOrRealname)) {

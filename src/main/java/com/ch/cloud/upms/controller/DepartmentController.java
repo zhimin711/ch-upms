@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.controller;
 
+import com.ch.Constants;
 import com.ch.cloud.upms.model.StMenu;
 import com.ch.cloud.upms.service.IMenuService;
 import com.ch.cloud.upms.service.IRoleService;
@@ -39,7 +40,8 @@ public class DepartmentController {
     }
 
     @PostMapping("save")
-    public Result<Integer> add(@RequestBody StMenu record) {
+    public Result<Integer> add(@RequestBody StMenu record,
+                               @RequestHeader(Constants.TOKEN_USER) String username) {
         StMenu r = menuService.findByCode(record.getCode());
         if (r != null) {
             return Result.error(PubError.EXISTS);
@@ -48,7 +50,8 @@ public class DepartmentController {
     }
 
     @PostMapping({"save/{id}"})
-    public Result<Integer> edit(@PathVariable int id, @RequestBody StMenu record) {
+    public Result<Integer> edit(@PathVariable int id, @RequestBody StMenu record,
+                                @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> menuService.updateWithNull(record));
     }
 
