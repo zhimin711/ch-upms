@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
-import com.ch.StatusS;
+import com.ch.cloud.upms.fclient.SsoClientService;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.model.StUser;
 import com.ch.cloud.upms.pojo.UserInfo;
@@ -11,12 +11,8 @@ import com.ch.e.PubError;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.CharUtils;
-import com.ch.utils.CommonUtils;
-import com.ch.utils.DateUtils;
-import com.ch.utils.EncryptUtils;
+import com.ch.utils.*;
 import com.github.pagehelper.PageInfo;
-import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +36,9 @@ public class UserController {
     private IUserService userService;
     @Autowired
     private IRoleService roleService;
+
+    @Autowired
+    private SsoClientService ssoClientService;
 
     @GetMapping(value = {"{num}/{size}"})
     public PageResult<StUser> page(StUser record,
@@ -74,20 +73,27 @@ public class UserController {
     }
 
     @PostMapping("{id}/initPwd")
-    public Result<String> initPwd(@PathVariable Long id) {
-        StUser user = userService.find(id);
-        if (CommonUtils.isNotEmpty(user)) {
-            String pwd = EncryptUtils.generate(8);
-            user.setPassword(pwd);
-            int c = userService.updatePassword(user);
-            if (c > 0) {
-                return Result.success(pwd);
-            } else {
-                return Result.error(PubError.UPDATE, "更新密码失败!");
+    public Result<String> initPwd(@PathVariable Long id,
+                                  @RequestHeader(Constants.TOKEN_USER) String username) {
+        return ResultUtils.wrapFail(() -> {
+            StUser user = userService.find(id);
+            if (user == null) {
+                ExceptionUtils._throw(PubError.NOT_EXISTS);
             }
-        } else {
-            return Result.error(PubError.NOT_EXISTS);
-        }
+            String pwd = EncryptUtils.generate(8);
+            Result<String> res = ssoClientService.encrypt(pwd);
+            if (!res.isSuccess()) {
+                ExceptionUtils._throw(PubError.UPDATE, "加密错误，请稍后重试!");
+            }
+            user.setPassword(res.get());
+            user.setUpdateBy(username);
+            user.setUpdateAt(DateUtils.current());
+            int c = userService.updatePassword(user);
+            if (c <= 0) {
+                ExceptionUtils._throw(PubError.UPDATE, "更新密码失败!");
+            }
+            return pwd;
+        });
     }
 
     @GetMapping({"roles"})

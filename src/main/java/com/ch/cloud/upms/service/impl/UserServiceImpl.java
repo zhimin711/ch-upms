@@ -9,10 +9,7 @@ import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.mybatis.service.BaseService;
 import com.ch.mybatis.utils.ExampleUtils;
-import com.ch.utils.CommonUtils;
-import com.ch.utils.EncryptUtils;
-import com.ch.utils.SQLUtils;
-import com.ch.utils.StringExtUtils;
+import com.ch.utils.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.RandomStringUtils;
@@ -60,7 +57,9 @@ public class UserServiceImpl extends BaseService<Long, StUser> implements IUserS
         if (record != null && CommonUtils.isNotEmpty(record.getId(), record.getPassword())) {
             StUser r = new StUser();
             r.setId(record.getId());
-//            r.setPassword(passwordService.encryptPassword(record.getPassword()));
+            r.setPassword(record.getPassword());
+            r.setUpdateBy(record.getUpdateBy());
+            r.setUpdateAt(DateUtils.current());
             return super.update(r);
         }
         return 0;
