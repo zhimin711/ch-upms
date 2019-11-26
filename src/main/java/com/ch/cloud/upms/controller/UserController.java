@@ -8,6 +8,7 @@ import com.ch.cloud.upms.pojo.UserInfo;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.e.PubError;
+import com.ch.pojo.KeyValue;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
@@ -93,6 +94,26 @@ public class UserController {
                 ExceptionUtils._throw(PubError.UPDATE, "更新密码失败!");
             }
             return pwd;
+        });
+    }
+
+    @PostMapping("changePwd")
+    public Result<Integer> changePwd(@RequestBody KeyValue keyValue,
+                                    @RequestHeader(Constants.TOKEN_USER) String username) {
+        return ResultUtils.wrapFail(() -> {
+            StUser user = userService.findByUsername(username);
+            if (user == null) {
+                ExceptionUtils._throw(PubError.NOT_EXISTS);
+            }
+            Result<Boolean> res = ssoClientService.matchEncrypt(keyValue.getKey(), user.getPassword());
+            if (!res.isSuccess() || !res.get()) {
+                ExceptionUtils._throw(PubError.USERNAME_OR_PASSWORD, "原密码错误，请输入正确密码!");
+            }
+            Result<String> res1 = ssoClientService.encrypt(keyValue.getValue());
+            user.setPassword(res1.get());
+            user.setUpdateBy(username);
+            user.setUpdateAt(DateUtils.current());
+           return userService.updatePassword(user);
         });
     }
 

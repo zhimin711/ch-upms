@@ -11,4 +11,7 @@ public interface SsoClientService {
     @PostMapping("encrypt")
     Result<String> encrypt(@RequestParam("str") String password);
 
+    @PostMapping("matchEncrypt")
+    Result<Boolean> matchEncrypt(@RequestParam("str") String password, @RequestParam("encryptStr") String encodedStr);
+
 }
