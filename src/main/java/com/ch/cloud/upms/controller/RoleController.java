@@ -35,7 +35,7 @@ public class RoleController {
     @Autowired
     private IPermissionService permissionService;
 
-    @GetMapping(value = {"{num}/{size}"})
+    @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<StRole> page(StRole record,
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
@@ -61,7 +61,7 @@ public class RoleController {
         });
     }
 
-    @PutMapping("{id}")
+    @PutMapping("{id:[0-9]+}")
     public Result<Integer> edit(@PathVariable Long id, @RequestBody StRole record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
@@ -74,7 +74,7 @@ public class RoleController {
         });
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("{id:[0-9]+}")
     public Result<Integer> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> roleService.delete(id));
     }

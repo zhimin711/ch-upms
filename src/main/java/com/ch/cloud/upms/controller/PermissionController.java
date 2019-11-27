@@ -43,7 +43,7 @@ public class PermissionController {
     @Autowired(required = false)
     IPermissionService permissionService;
 
-    @GetMapping(value = {"{num}/{size}"})
+    @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<StPermission> page(StPermission record,
                                          @PathVariable(value = "num") int pageNum,
                                          @PathVariable(value = "size") int pageSize) {
@@ -74,7 +74,7 @@ public class PermissionController {
         return ResultUtils.wrapFail(() -> permissionService.save(record));
     }
 
-    @PutMapping({"{id}"})
+    @PutMapping({"{id:[0-9]+}"})
     public Result<Integer> edit(@PathVariable Long id, @RequestBody StPermission record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
@@ -108,14 +108,14 @@ public class PermissionController {
         });
     }
 
-    @DeleteMapping({"{id}"})
+    @DeleteMapping({"{id:[0-9]+}"})
     public Result<Integer> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> permissionService.delete(id));
     }
 
 
     @ApiOperation(value = "获取权限树", notes = "0.全部 1.目录 2.菜单 3.按钮、链接")
-    @GetMapping({"tree/{type}"})
+    @GetMapping({"tree/{type:[0-9]+}"})
     public Result<VueRecord> tree(@PathVariable String type) {
         return ResultUtils.wrapList(() -> {
             List<StPermission> records = permissionService.findTreeByType(type);

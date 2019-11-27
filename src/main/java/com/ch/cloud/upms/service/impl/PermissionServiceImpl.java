@@ -56,7 +56,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
 
     @Override
     public List<StPermission> findTreeByType(String type) {
-        Status status = CommonUtils.isEquals(type, NumS._0) ? Status.ENABLED : Status.UNKNOWN;
+        Status status = Lists.newArrayList(NumS._0, NumS._9).contains(type) ? Status.ENABLED : Status.UNKNOWN;
         List<StPermission> records = findTopCategory(status);
         if (records.isEmpty()) {
             return Lists.newArrayList();
@@ -112,7 +112,8 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         children.forEach(r -> {
             String pid1 = StringExtUtils.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
             if (Lists.newArrayList(NumS._1, NumS._2).contains(r.getType())
-                    && (CommonUtils.isEquals(NumS._0, type) || (CommonUtils.isEquals(NumS._3, type) && CommonUtils.isEquals(NumS._1, r.getType())))) {
+                    && (CommonUtils.isEquals(NumS._0, type) || CommonUtils.isEquals(NumS._9, type)
+                    || (CommonUtils.isEquals(NumS._3, type) && CommonUtils.isEquals(NumS._1, r.getType())))) {
                 r.setChildren(findChildrenByPidAndStatusAndType(pid1, status, type));
             }
         });

@@ -41,7 +41,7 @@ public class UserController {
     @Autowired
     private SsoClientService ssoClientService;
 
-    @GetMapping(value = {"{num}/{size}"})
+    @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<StUser> page(StUser record,
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
@@ -60,7 +60,7 @@ public class UserController {
         return ResultUtils.wrapFail(() -> userService.save(record));
     }
 
-    @PutMapping({"{id}"})
+    @PutMapping({"{id:[0-9]+}"})
     public Result<Integer> edit(@PathVariable Long id, @RequestBody StUser record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         record.setUpdateBy(username);
@@ -73,7 +73,7 @@ public class UserController {
         return ResultUtils.wrapFail(() -> userService.delete(id));
     }
 
-    @PostMapping("{id}/initPwd")
+    @PostMapping("{id:[0-9]+}/initPwd")
     public Result<String> initPwd(@PathVariable Long id,
                                   @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
@@ -122,12 +122,12 @@ public class UserController {
         return ResultUtils.wrapList(() -> roleService.findEnabled());
     }
 
-    @GetMapping({"{id}/roles"})
+    @GetMapping({"{id:[0-9]+}/roles"})
     public Result<StRole> findRoleForUser(@PathVariable Long id) {
         return ResultUtils.wrapList(() -> roleService.findByUserId(id));
     }
 
-    @PostMapping({"{id}/roles"})
+    @PostMapping({"{id:[0-9]+}/roles"})
     public Result<Integer> saveUserRole(@PathVariable Long id, @RequestBody List<Long> roleIds) {
         return ResultUtils.wrap(() -> userService.assignRole(id, roleIds));
     }
