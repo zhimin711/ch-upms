@@ -29,7 +29,7 @@ spring:
       max-file-size: 100MB
 logging:
   config: classpath:config/logback.xml
-  path: logs
+  path: logs/${spring.application.name}
   level:
     com.ch: debug
     com.alibaba.nacos.client: warn
