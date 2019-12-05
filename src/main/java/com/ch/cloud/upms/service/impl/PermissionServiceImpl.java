@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.service.impl;
 
+import com.ch.Constants;
 import com.ch.NumS;
 import com.ch.Status;
 import com.ch.cloud.upms.mapper.StPermissionMapper;
@@ -27,11 +28,11 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
 
     @Override
     public StPermission findByCode(String code) {
-        if(CommonUtils.isEmpty(code)) return null;
+        if (CommonUtils.isEmpty(code)) return null;
         StPermission record = new StPermission();
         record.setCode(code);
         List<StPermission> records = getMapper().select(record);
-        if(records.isEmpty()) return null;
+        if (records.isEmpty()) return null;
         return records.get(0);
     }
 
@@ -91,6 +92,18 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
     @Override
     public List<StPermission> findByPid(String pid) {
         return findChildrenByPidAndStatusAndType(pid, null, NumS._0);
+    }
+
+    @Override
+    public String findNameByParseLastId(String parentId) {
+        if (CommonUtils.isEmpty(parentId)) return null;
+        String idStr = StringExtUtils.lastStr(parentId, Constants.SEPARATOR_2);
+        if (!CommonUtils.isNumeric(idStr)) {
+            return null;
+        }
+        StPermission record = find(Long.valueOf(idStr));
+        if (record != null) return record.getName();
+        return null;
     }
 
     public List<StPermission> findChildrenByPidAndStatusAndType(String pid, String status, String type) {

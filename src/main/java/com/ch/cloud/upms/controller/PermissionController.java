@@ -64,6 +64,8 @@ public class PermissionController {
             }
             if (CommonUtils.isEmpty(record.getParentId())) {
                 record.setParentId("0");
+            } else {
+                record.setParentName(permissionService.findNameByParseLastId(record.getParentId()));
             }
             if (CommonUtils.isEmpty(record.getIsShow())) {
                 record.setIsShow("1");
@@ -86,6 +88,9 @@ public class PermissionController {
 
             if (CommonUtils.isEmpty(record.getParentId())) {
                 record.setParentId("0");
+                record.setParentName(null);
+            } else {
+                record.setParentName(permissionService.findNameByParseLastId(record.getParentId()));
             }
             if (CommonUtils.isNotEmpty(record.getUrl())) {
                 record.setUrl(record.getUrl().trim());
@@ -105,7 +110,7 @@ public class PermissionController {
                 }
                 List<StPermission> children = permissionService.findByPid(pid);
                 if (CommonUtils.isEquals(NumS._1, orig.getType()) && !children.isEmpty()) {
-                    throw ExceptionUtils.create(PubError.NOT_EXISTS, "权限目录存在子菜单不允许调整上级！");
+                    ExceptionUtils._throw(PubError.NOT_EXISTS, "权限目录存在子菜单不允许调整上级！");
                 }
                 record.setChildren(children);
             }
