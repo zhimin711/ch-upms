@@ -54,24 +54,29 @@ public class PermissionController {
     @PostMapping
     public Result<Integer> add(@RequestBody StPermission record,
                                @RequestHeader(Constants.TOKEN_USER) String username) {
-        StPermission r = permissionService.findByCode(record.getCode());
-        if (r != null) {
-            return Result.error(PubError.EXISTS,"权限代码已存在！");
-        }
-        if (CommonUtils.isEmpty(record.getParentId())) {
-            record.setParentId("0");
-        }
-        if (CommonUtils.isEmpty(record.getIsShow())) {
-            record.setIsShow("1");
-        }
-        if (CommonUtils.isEmpty(record.getIsSys())) {
-            record.setIsSys("0");
-        }
-        if (CommonUtils.isNotEmpty(record.getUrl())) {
-            record.setUrl(record.getUrl().trim());
-        }
-        record.setCreateBy(username);
-        return ResultUtils.wrapFail(() -> permissionService.save(record));
+        return ResultUtils.wrapFail(() -> {
+            if (CommonUtils.isEmpty(record.getCode()) || CommonUtils.isEmpty(record.getName())) {
+                ExceptionUtils._throw(PubError.NON_NULL, "权限代码或名称不能为空");
+            }
+            StPermission r = permissionService.findByCode(record.getCode());
+            if (r != null) {
+                ExceptionUtils._throw(PubError.EXISTS, "权限代码已存在！");
+            }
+            if (CommonUtils.isEmpty(record.getParentId())) {
+                record.setParentId("0");
+            }
+            if (CommonUtils.isEmpty(record.getIsShow())) {
+                record.setIsShow("1");
+            }
+            if (CommonUtils.isEmpty(record.getIsSys())) {
+                record.setIsSys("0");
+            }
+            if (CommonUtils.isNotEmpty(record.getUrl())) {
+                record.setUrl(record.getUrl().trim());
+            }
+            record.setCreateBy(username);
+            return permissionService.save(record);
+        });
     }
 
     @PutMapping({"{id:[0-9]+}"})

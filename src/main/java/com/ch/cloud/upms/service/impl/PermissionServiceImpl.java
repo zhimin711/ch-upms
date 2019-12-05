@@ -27,7 +27,12 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
 
     @Override
     public StPermission findByCode(String code) {
-        return null;
+        if(CommonUtils.isEmpty(code)) return null;
+        StPermission record = new StPermission();
+        record.setCode(code);
+        List<StPermission> records = getMapper().select(record);
+        if(records.isEmpty()) return null;
+        return records.get(0);
     }
 
     @Override
@@ -108,7 +113,7 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         example.orderBy("sort").asc();
         example.orderBy("id").asc();
         List<StPermission> children = getMapper().selectByExample(example);
-        if (CommonUtils.isEmpty(children)) return null;
+        if (CommonUtils.isEmpty(children)) return Lists.newArrayList();
         children.forEach(r -> {
             String pid1 = StringExtUtils.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
             if (Lists.newArrayList(NumS._1, NumS._2).contains(r.getType())
