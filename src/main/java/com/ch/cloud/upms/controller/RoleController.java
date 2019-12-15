@@ -66,12 +66,12 @@ public class RoleController {
     public Result<Integer> edit(@PathVariable Long id, @RequestBody StRole record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
-            if (CommonUtils.isEquals("0", record.getType())) {
+            if (CommonUtils.isEquals(NumS._0, record.getType())) {
                 ExceptionUtils._throw(PubError.ARGS, "角色类型错误！");
             }
             StRole orig = roleService.find(id);
-            if (CommonUtils.isEquals(orig.getType(), NumS._0)) {
-                ExceptionUtils._throw(PubError.NOT_ALLOWED, "角色类型错误2！");
+            if (CommonUtils.isEquals(NumS._0, orig.getType())) {
+                ExceptionUtils._throw(PubError.NOT_ALLOWED, "该角色类型不允许修改！");
             }
 
             record.setUpdateBy(username);
