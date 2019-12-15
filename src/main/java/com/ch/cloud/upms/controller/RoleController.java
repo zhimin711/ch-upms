@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
+import com.ch.NumS;
 import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.service.IPermissionService;
@@ -66,8 +67,13 @@ public class RoleController {
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
             if (CommonUtils.isEquals("0", record.getType())) {
-                ExceptionUtils._throw(PubError.NOT_ALLOWED, "角色类型错误！");
+                ExceptionUtils._throw(PubError.ARGS, "角色类型错误！");
             }
+            StRole orig = roleService.find(id);
+            if (CommonUtils.isEquals(orig.getType(), NumS._0)) {
+                ExceptionUtils._throw(PubError.NOT_ALLOWED, "角色类型错误2！");
+            }
+
             record.setUpdateBy(username);
             record.setUpdateAt(DateUtils.current());
             return roleService.update(record);
@@ -76,7 +82,8 @@ public class RoleController {
 
     @DeleteMapping("{id:[0-9]+}")
     public Result<Integer> delete(@PathVariable Long id) {
-        return ResultUtils.wrapFail(() -> roleService.delete(id));
+//        return ResultUtils.wrapFail(() -> roleService.delete(id));
+        return Result.error(PubError.NOT_ALLOWED);
     }
 
     @GetMapping({"{roleId}/menus"})
