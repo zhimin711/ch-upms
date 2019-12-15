@@ -2,6 +2,7 @@ package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
 import com.ch.NumS;
+import com.ch.StatusS;
 import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.model.StRole;
 import com.ch.cloud.upms.service.IPermissionService;
@@ -54,7 +55,7 @@ public class RoleController {
             if (r != null) {
                 ExceptionUtils._throw(PubError.EXISTS, "角色代码已存在！");
             }
-            if (CommonUtils.isEquals("0", record.getType())) {
+            if (CommonUtils.isEquals(StatusS.DISABLED, record.getType())) {
                 ExceptionUtils._throw(PubError.NOT_ALLOWED, "角色类型错误！");
             }
             record.setCreateBy(username);
@@ -66,14 +67,16 @@ public class RoleController {
     public Result<Integer> edit(@PathVariable Long id, @RequestBody StRole record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
-            if (CommonUtils.isEquals(NumS._0, record.getType())) {
+            if (CommonUtils.isEquals(StatusS.DISABLED, record.getType())) {
                 ExceptionUtils._throw(PubError.ARGS, "角色类型错误！");
             }
             StRole orig = roleService.find(id);
-            if (CommonUtils.isEquals(NumS._0, orig.getType())) {
+            if (CommonUtils.isEquals(StatusS.DISABLED, orig.getType())) {
                 ExceptionUtils._throw(PubError.NOT_ALLOWED, "该角色类型不允许修改！");
             }
-
+            record.setCode(orig.getCode());
+            record.setCreateAt(orig.getCreateAt());
+            record.setCreateBy(orig.getCreateBy());
             record.setUpdateBy(username);
             record.setUpdateAt(DateUtils.current());
             return roleService.update(record);
