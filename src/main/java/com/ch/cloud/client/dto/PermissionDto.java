@@ -59,7 +59,7 @@ public class PermissionDto {
      */
     private Integer sort;
     /**
-     * 是否隐藏
+     * 是否显示
      */
-    private boolean hidden;
+    private String isShow;
 }
