@@ -3,6 +3,7 @@ package com.ch.cloud.upms.controller.cli;
 import com.alibaba.fastjson.JSONObject;
 import com.ch.Constants;
 import com.ch.NumS;
+import com.ch.StatusS;
 import com.ch.cloud.client.UpmsClientService;
 import com.ch.cloud.client.dto.PermissionDto;
 import com.ch.cloud.client.dto.RoleDto;
@@ -118,6 +119,7 @@ public class ClientController implements UpmsClientService {
         return permissions.stream().map(r -> {
             PermissionDto dto = new PermissionDto();
             BeanUtils.copyProperties(r, dto);
+            dto.setHidden(CommonUtils.isEquals(r.getIsShow(), StatusS.DISABLED));
             if (dto.getSort() == null) dto.setSort(0);
             return dto;
         }).collect(Collectors.toList());

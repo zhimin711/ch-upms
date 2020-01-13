@@ -58,4 +58,8 @@ public class PermissionDto {
      * 菜单顺序
      */
     private Integer sort;
+    /**
+     * 是否隐藏
+     */
+    private boolean hidden;
 }
