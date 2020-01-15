@@ -91,12 +91,12 @@ public class RoleController {
 
     @GetMapping({"{roleId}/menus"})
     public Result<StPermission> findMenusByRoleId(@PathVariable Long roleId) {
-        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(Lists.newArrayList("1", "2"), roleId));
+        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(Lists.newArrayList("1", "2", "4"), roleId));
     }
 
     @GetMapping({"{roleId}/permissions"})
     public Result<StPermission> findPermissions(@PathVariable Long roleId) {
-        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(Lists.newArrayList("3", "4"), roleId));
+        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(Lists.newArrayList("3"), roleId));
     }
 
     @PostMapping({"{roleId}/permissions"})
