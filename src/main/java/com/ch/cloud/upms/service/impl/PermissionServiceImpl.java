@@ -8,6 +8,7 @@ import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.mybatis.service.BaseService;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.SQLUtils;
 import com.ch.utils.StringExtUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -104,6 +105,15 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         StPermission record = find(Long.valueOf(idStr));
         if (record != null) return record.getName();
         return null;
+    }
+
+    @Override
+    public List<StPermission> match(String urlPrefix, String method) {
+        Sqls sqls = Sqls.custom();
+        sqls.andLike("url", SQLUtils.likeSuffix(urlPrefix));
+        if (CommonUtils.isNotEmpty(method)) sqls.andEqualTo("method", method.toUpperCase());
+        Example example = Example.builder(StPermission.class).andWhere(sqls).build();
+        return getMapper().selectByExample(example);
     }
 
     public List<StPermission> findChildrenByPidAndStatusAndType(String pid, String status, String type) {

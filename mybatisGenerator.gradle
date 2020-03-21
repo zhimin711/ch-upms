@@ -1,18 +1,7 @@
-ext {
-    configPath= "${projectDir}"
-}
-
 configurations {
     mybatisGenerator
 }
 
-
-[compileJava, compileTestJava, javadoc]*.options*.encoding = "UTF-8"
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
 
 dependencies {
     mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.2'
@@ -24,13 +13,14 @@ dependencies {
 def dbProperties = {
     def properties = new Properties()
     // src/main/resources/
-    file("$configPath/db.properties").withInputStream { inputStream ->
+    file("generatorConfig.properties").withInputStream { inputStream ->
         properties.load(inputStream)
     }
     properties
 }
 
 task mybatisGenerate {
+    group 'mybatis'
     doLast {
         def properties = dbProperties()
 
@@ -39,9 +29,9 @@ task mybatisGenerate {
         ant.properties['connectionURL'] = properties.getProperty("jdbc.url")
         ant.properties['userId'] = properties.getProperty("jdbc.username")
         ant.properties['password'] = properties.getProperty("jdbc.password")
-        ant.properties['package'] = properties.getProperty("target.package")
-        ant.properties['tableName'] = properties.getProperty("table.name")
-        ant.properties['tablePk'] = properties.getProperty("table.pk")
+        ant.properties['package'] = properties.getProperty("my.package")
+        ant.properties['table'] = properties.getProperty("my.table")
+        ant.properties['modelName'] = properties.getProperty("my.pojo.name")
         ant.properties['src_main_java'] = sourceSets.main.java.srcDirs[0].path
         ant.properties['src_main_resources'] = sourceSets.main.resources.srcDirs[0].path
 
@@ -51,7 +41,8 @@ task mybatisGenerate {
                 classpath: configurations.mybatisGenerator.asPath
         )
         ant.mbgenerator(overwrite: true,
-                configfile: "$configPath/" + properties.getProperty("config.file.name"), verbose: true) {
+//                configfile: "$parent.projectDir/" + properties.getProperty("config.file.name"), verbose: true) {
+                configfile: "$projectDir/" + properties.getProperty("config.file.name"), verbose: true) {
             propertyset {
                 propertyref(name: 'targetProject')
                 propertyref(name: 'userId')
@@ -59,13 +50,12 @@ task mybatisGenerate {
                 propertyref(name: 'connectionURL')
                 propertyref(name: 'password')
                 propertyref(name: 'package')
-                propertyref(name: 'tableName')
-                propertyref(name: 'tablePk')
+                propertyref(name: 'table')
+                propertyref(name: 'modelName')
                 propertyref(name: 'src_main_java')
                 propertyref(name: 'src_main_resources')
 
             }
         }
     }
-    group 'mybatis'
 }

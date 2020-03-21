@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="javaFileEncoding" value="UTF-8"/>
+
+        <!-- 格式化java代码-->
+        <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
+        <!-- 格式化XML代码-->
+        <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
+        <!-- generate entity时，生成serialVersionUID -->
+        <!--<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />-->
+        <!-- 这个插件只会增加字符串字段映射到一个JDBC字符的方法 -->
+        <plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin"/>
+        <!-- genenat entity时,生成toString -->
+        <!--<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />-->
+        <!-- <plugin type="tk.mybatis.mapper.generator.MapperPlugin"> -->
+        <plugin type="com.ch.generator.mybatis.TkMapperPluginExtend">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+            <!-- caseSensitive默认false，当数据库表名区分大小写时，可以将该属性设置为true -->
+            <property name="caseSensitive" value="true"/>
+            <property name="dtoMode" value="lombok"/>
+        </plugin>
+
+        <commentGenerator type="com.ch.generator.mybatis.MyCommentGenerator">
+            <!--<property name="suppressDate" value="true"/>-->
+            <!--<property name="suppressAllComments" value="true"/>-->
+            <!-- <property name="suppressJpa" value="true"/> -->
+            <!--<property name="suppressSwagger" value="false"/>-->
+        </commentGenerator>
+
+        <jdbcConnection driverClass="${driverClass}"
+                        connectionURL="${connectionURL}"
+                        userId="${userId}"
+                        password="${password}">
+        </jdbcConnection>
+
+        <!-- 类型解析器 -->
+        <!-- <javaTypeResolver type="org.mybatis.generator.MyJavaTypeResolver"> -->
+        <javaTypeResolver type="com.ch.generator.mybatis.MyJavaTypeResolver">
+            <!--<property name="forceBigDecimals" value="true"/>-->
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="${package}.model" targetProject="${src_main_java}">
+            <!--  for MyBatis3/MyBatis3Simple
+           自动为每一个生成的类创建一个构造方法，构造方法包含了所有的field；而不是使用setter；
+            -->
+            <!--<property name="constructorBased" value="false"/>-->
+            <!-- 在targetPackage的基础上，根据数据库的schema再生成一层package，最终生成的类放在这个package下，默认为false -->
+            <!--<property name="enableSubPackages" value="true"/>-->
+            <!-- for MyBatis3 / MyBatis3Simple
+                是否创建一个不可变的类，如果为true，
+                那么MBG会创建一个没有setter方法的类，取而代之的是类似constructorBased的类
+             -->
+            <!--<property name="immutable" value="false"/>-->
+
+            <!-- 设置一个根对象，
+                如果设置了这个根对象，那么生成的keyClass或者recordClass会继承这个类；在Table的rootClass属性中可以覆盖该选项
+                注意：如果在key class或者record class中有root class相同的属性，MBG就不会重新生成这些属性了，包括：
+                    1，属性名相同，类型相同，有相同的getter/setter方法；
+             -->
+            <!--<property name="rootClass" value="com._520it.mybatis.domain.BaseDomain"/>-->
+
+            <!-- 设置是否在getter方法中，对String类型字段调用trim()方法 -->
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="${package}.mapper" targetProject="${src_main_resources}">
+            <!-- 在targetPackage的基础上，根据数据库的schema再生成一层package，最终生成的类放在这个package下，默认为false -->
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <!--<sqlMapGenerator targetPackage="${package}.mapper" targetProject="${src_main_java}"/>-->
+
+        <javaClientGenerator targetPackage="${package}.mapper" targetProject="${src_main_java}" type="XMLMAPPER"/>
+        <!-- sql占位符，表示所有的表 -->
+
+        <!-- 选择一个table来生成相关文件，可以有一个或多个table，必须要有table元素
+            选择的table会生成一下文件：
+            1，SQL map文件
+            2，生成一个主键类；
+            3，除了BLOB和主键的其他字段的类；
+            4，包含BLOB的类；
+            5，一个用户生成动态查询的条件类（selectByExample, deleteByExample），可选；
+            6，Mapper接口（可选）
+
+            tableName（必要）：要生成对象的表名；
+            注意：大小写敏感问题。正常情况下，MBG会自动的去识别数据库标识符的大小写敏感度，在一般情况下，MBG会
+                根据设置的schema，catalog或tablename去查询数据表，按照下面的流程：
+                1，如果schema，catalog或tablename中有空格，那么设置的是什么格式，就精确的使用指定的大小写格式去查询；
+                2，否则，如果数据库的标识符使用大写的，那么MBG自动把表名变成大写再查找；
+                3，否则，如果数据库的标识符使用小写的，那么MBG自动把表名变成小写再查找；
+                4，否则，使用指定的大小写格式查询；
+            另外的，如果在创建表的时候，使用的""把数据库对象规定大小写，就算数据库标识符是使用的大写，在这种情况下也会使用给定的大小写来创建表名；
+            这个时候，请设置delimitIdentifiers="true"即可保留大小写格式；
+
+            可选：
+            1，schema：数据库的schema；
+            2，catalog：数据库的catalog；
+            3，alias：为数据表设置的别名，如果设置了alias，那么生成的所有的SELECT SQL语句中，列名会变成：alias_actualColumnName
+            4，domainObjectName：生成的domain类的名字，如果不设置，直接使用表名作为domain类的名字；可以设置为somepck.domainName，那么会自动把domainName类再放到somepck包里面；
+            5，enableInsert（默认true）：指定是否生成insert语句；
+            6，enableSelectByPrimaryKey（默认true）：指定是否生成按照主键查询对象的语句（就是getById或get）；
+            7，enableSelectByExample（默认true）：MyBatis3Simple为false，指定是否生成动态查询语句；
+            8，enableUpdateByPrimaryKey（默认true）：指定是否生成按照主键修改对象的语句（即update)；
+            9，enableDeleteByPrimaryKey（默认true）：指定是否生成按照主键删除对象的语句（即delete）；
+            10，enableDeleteByExample（默认true）：MyBatis3Simple为false，指定是否生成动态删除语句；
+            11，enableCountByExample（默认true）：MyBatis3Simple为false，指定是否生成动态查询总条数语句（用于分页的总条数查询）；
+            12，enableUpdateByExample（默认true）：MyBatis3Simple为false，指定是否生成动态修改语句（只修改对象中不为空的属性）；
+            13，modelType：参考context元素的defaultModelType，相当于覆盖；
+            14，delimitIdentifiers：参考tableName的解释，注意，默认的delimitIdentifiers是双引号，如果类似MYSQL这样的数据库，使用的是`（反引号，那么还需要设置context的beginningDelimiter和endingDelimiter属性）
+            15，delimitAllColumns：设置是否所有生成的SQL中的列名都使用标识符引起来。默认为false，delimitIdentifiers参考context的属性
+
+            注意，table里面很多参数都是对javaModelGenerator，context等元素的默认属性的一个复写；
+         -->
+        <table tableName="${table}" domainObjectName="${modelName}">
+            <generatedKey column="ID" sqlStatement="Mysql" identity="true"/>
+            <!-- 参考 javaModelGenerator 的 constructorBased属性-->
+            <!--<property name="constructorBased" value="false"/>-->
+
+            <!-- 默认为false，如果设置为true，在生成的SQL中，table名字不会加上catalog或schema； -->
+            <!--<property name="ignoreQualifiersAtRuntime" value="false"/>-->
+
+            <!-- 参考 javaModelGenerator 的 immutable 属性 -->
+            <!--<property name="immutable" value="false"/>-->
+
+            <!-- 指定是否只生成domain类，如果设置为true，只生成domain类，如果还配置了sqlMapGenerator，那么在mapper XML文件中，只生成resultMap元素 -->
+            <!--<property name="modelOnly" value="false"/>-->
+
+            <!-- 参考 javaModelGenerator 的 rootClass 属性
+            <property name="rootClass" value=""/>
+            -->
+        </table>
+
+    </context>
+</generatorConfiguration>

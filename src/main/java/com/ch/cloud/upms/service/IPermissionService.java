@@ -26,4 +26,6 @@ public interface IPermissionService extends IService<Long, StPermission> {
     List<StPermission> findByPid(String pid);
 
     String findNameByParseLastId(String parentId);
+
+    List<StPermission> match(String urlPrefix, String method);
 }

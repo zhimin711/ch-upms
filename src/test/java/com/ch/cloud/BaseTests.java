@@ -5,6 +5,8 @@ import com.ch.utils.CommonUtils;
 import org.junit.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Arrays;
+
 /**
  * @author 01370603
  */
@@ -24,5 +26,7 @@ public class BaseTests {
         System.out.println(CharUtils.isChinese("为c城"));
         System.out.println(CharUtils.containsChinese("co为"));
         System.out.println(CharUtils.isChineseByCJK("工"));
+
+        System.out.println(Arrays.toString("/abc/a/1".split("/")));
     }
 }
