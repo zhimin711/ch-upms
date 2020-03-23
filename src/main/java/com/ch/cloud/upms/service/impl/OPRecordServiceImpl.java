@@ -33,7 +33,7 @@ public class OPRecordServiceImpl extends BaseService<Long, OPRecord> implements 
         PageHelper.startPage(pageNum, pageSize);
         Sqls sqls = Sqls.custom();
         if (CommonUtils.isNotEmpty(record.getAuthCode())) {
-            sqls.andNotLike("authCode", SQLUtils.likeSuffix(record.getAuthCode()));
+            sqls.andLike("authCode", SQLUtils.likeSuffix(record.getAuthCode()));
         } else {
             sqls.andNotLike("authCode", SQLUtils.likeSuffix("LOGIN_"));
         }

@@ -33,7 +33,7 @@ public class LoginRecordController {
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
-            if(CommonUtils.isEmpty(record.getAuthCode()) || record.getAuthCode().startsWith("LOGIN_")){
+            if(CommonUtils.isEmpty(record.getAuthCode()) || !record.getAuthCode().startsWith("LOGIN_")){
                 record.setAuthCode("LOGIN_");
             }
             PageInfo<OPRecord> pageInfo = opRecordService.findPageBy(record, pageNum, pageSize);
