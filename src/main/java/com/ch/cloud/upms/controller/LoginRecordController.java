@@ -5,6 +5,7 @@ import com.ch.cloud.upms.service.IOPRecordService;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.ResultUtils;
+import com.ch.utils.CommonUtils;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,9 @@ public class LoginRecordController {
                                    @PathVariable(value = "num") int pageNum,
                                    @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
-            record.setAuthCode("login");
+            if(CommonUtils.isEmpty(record.getAuthCode()) || record.getAuthCode().startsWith("SSO_")){
+                record.setAuthCode("login");
+            }
             PageInfo<OPRecord> pageInfo = opRecordService.findPageBy(record, pageNum, pageSize);
             return new InvokerPage.Page<>(pageInfo.getTotal(), pageInfo.getList());
         });

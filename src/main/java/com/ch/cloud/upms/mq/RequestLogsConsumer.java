@@ -28,6 +28,10 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
 
     private final static String REQUEST_PROCESS_SEPARATOR = "\n\\[REQUEST_PROCESS_SEPARATOR\\]\n";
 
+    public static final String LOGIN_ACCESS = "/auth/login/token/access";
+    public static final String LOGIN_USER = "/auth/login/token/user";
+    public static final String LOGIN_REFRESH = "/auth/login/token/refresh";
+
     @Resource
     private IPermissionService permissionService;
 
@@ -36,7 +40,7 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
 
     @Override
     public void onMessage(String message) {
-        log.info("接收到消息：{}", message);
+        log.info("接收到消息：\n{}", message);
         try {
             String[] infos = message.split(REQUEST_PROCESS_SEPARATOR);
             OPRecord record = new OPRecord();
@@ -54,6 +58,13 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
                 } else if (object.containsKey("record")) {
                     copyProperties(object.getJSONObject("record"), record);
                 }
+            }
+            if (CommonUtils.isEquals(record.getUrl(), LOGIN_ACCESS)) {
+                record.setAuthCode("SSO_LOGIN_ACCESS");
+            } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_USER)) {
+                record.setAuthCode("SSO_LOGIN_USER");
+            } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_REFRESH)) {
+                record.setAuthCode("SSO_LOGIN_REFRESH");
             }
             opRecordService.save(record);
         } catch (Exception e) {
