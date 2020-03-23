@@ -60,11 +60,11 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
                 }
             }
             if (CommonUtils.isEquals(record.getUrl(), LOGIN_ACCESS)) {
-                record.setAuthCode("SSO_LOGIN_ACCESS");
+                record.setAuthCode("LOGIN_ACCESS");
             } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_USER)) {
-                record.setAuthCode("SSO_LOGIN_USER");
+                record.setAuthCode("LOGIN_USER");
             } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_REFRESH)) {
-                record.setAuthCode("SSO_LOGIN_REFRESH");
+                record.setAuthCode("LOGIN_REFRESH");
             }
             opRecordService.save(record);
         } catch (Exception e) {

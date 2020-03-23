@@ -32,14 +32,10 @@ public class OPRecordServiceImpl extends BaseService<Long, OPRecord> implements 
     public PageInfo<OPRecord> findPageBy(OPRecord record, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         Sqls sqls = Sqls.custom();
-        if ("login".equals(record.getAuthCode())) {
-//            sqls.andLike("url", SQLUtils.likeSuffix("/auth")).andIsNull("authCode");
-            sqls.andLike("authCode", SQLUtils.likeSuffix("SSO_"));
-            record.setAuthCode(null);
-        } else if (CommonUtils.isNotEmpty(record.getAuthCode())) {
+        if (CommonUtils.isNotEmpty(record.getAuthCode())) {
             sqls.andNotLike("authCode", SQLUtils.likeSuffix(record.getAuthCode()));
         } else {
-            sqls.andNotLike("authCode", SQLUtils.likeSuffix("SSO_"));
+            sqls.andNotLike("authCode", SQLUtils.likeSuffix("LOGIN_"));
         }
         ExampleUtils.dynEqual(sqls, record);
         Example ex = Example.builder(OPRecord.class).where(sqls).orderByDesc("requestTime").build();
