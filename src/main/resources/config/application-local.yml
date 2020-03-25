@@ -18,7 +18,6 @@ spring:
       auto-commit: true
       idle-timeout: 30000
       pool-name: DatebookHikariCP
-      max-lifetime: 1800000
       connection-timeout: 30000
       connection-test-query: SELECT 1
   thymeleaf:
