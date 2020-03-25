@@ -26,6 +26,7 @@ repositories {
 
 ext {
     set('springCloudVersion', "Hoxton.SR1")
+    set('seataVersion', "2.2.2.RELEASE")
 
     springOauth2 = '2.3.4.RELEASE'
     alicloudVersion = '0.9.0.RELEASE' //0.2.1.RELEASE
@@ -46,8 +47,16 @@ dependencies {
     }
 //    implementation('org.springframework.boot:spring-boot-starter-jetty')
 
-    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-config:${alicloudVersion}"
-    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-discovery:${alicloudVersion}"
+//            <!--seata-->
+//    implementation "org.springframework.boot:spring-boot-starter-seata:${seataVersion}"
+//    implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-seata"
+
+//    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-config:${alicloudVersion}"
+//    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-discovery:${alicloudVersion}"
+    // https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-nacos-discovery
+    implementation group: 'com.alibaba.cloud', name: 'spring-cloud-starter-alibaba-nacos-discovery', version: '2.2.0.RELEASE'
+    implementation group: 'com.alibaba.cloud', name: 'spring-cloud-starter-alibaba-nacos-config', version: '2.2.0.RELEASE'
+
 
     implementation "org.springframework.cloud:spring-cloud-starter-alibaba-sentinel:${alicloudVersion}"
     

@@ -6,8 +6,10 @@ import com.ch.Status;
 import com.ch.cloud.upms.mapper.StPermissionMapper;
 import com.ch.cloud.upms.model.StPermission;
 import com.ch.cloud.upms.service.IPermissionService;
+import com.ch.e.PubError;
 import com.ch.mybatis.service.BaseService;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.ExceptionUtils;
 import com.ch.utils.SQLUtils;
 import com.ch.utils.StringExtUtils;
 import com.github.pagehelper.PageHelper;
@@ -166,5 +168,15 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
             });
         }
         return c;
+    }
+
+    @Override
+    public int delete(Long id) {
+        if (id == null) return 0;
+        List<StPermission> records = this.findByPid(id + "");
+        if (!records.isEmpty()) {
+            ExceptionUtils._throw(PubError.NOT_ALLOWED,"存在下级权限，不允许删除！");
+        }
+        return super.delete(id);
     }
 }

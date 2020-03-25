@@ -40,7 +40,7 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
 
     @Override
     public void onMessage(String message) {
-        log.info("接收到消息：\n{}", message);
+//        log.info("接收到消息：\n{}", message);
         try {
             String[] infos = message.split(REQUEST_PROCESS_SEPARATOR);
             OPRecord record = new OPRecord();
