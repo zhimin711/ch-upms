@@ -1,3 +1,4 @@
+/*
 package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
@@ -16,12 +17,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+*/
 /**
  * desc:
  *
  * @author zhimin
  * @date 2018/12/21 10:40 PM
- */
+ *//*
+
 @RestController
 @RequestMapping("menu")
 public class DepartmentController {
@@ -70,3 +73,4 @@ public class DepartmentController {
     }
 
 }
+*/

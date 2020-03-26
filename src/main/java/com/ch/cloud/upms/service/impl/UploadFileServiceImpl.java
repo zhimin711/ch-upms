@@ -1,3 +1,4 @@
+/*
 package com.ch.cloud.upms.service.impl;
 
 import com.ch.Constants;
@@ -17,10 +18,12 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
+*/
 /**
  * @author 01370603
  * @date 2018/12/24 18:57
- */
+ *//*
+
 @Service
 public class UploadFileServiceImpl extends BaseService<Long, BtUploadFile> implements IUploadFileService {
 
@@ -64,3 +67,4 @@ public class UploadFileServiceImpl extends BaseService<Long, BtUploadFile> imple
         return getMapper().updateByExampleSelective(v, example);
     }
 }
+*/

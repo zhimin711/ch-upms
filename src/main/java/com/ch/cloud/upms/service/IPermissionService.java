@@ -1,31 +1,38 @@
 package com.ch.cloud.upms.service;
 
-import com.ch.cloud.upms.model.StPermission;
-import com.ch.mybatis.service.IService;
-import com.github.pagehelper.PageInfo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.cloud.upms.model.Permission;
+import com.baomidou.mybatisplus.extension.service.IService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author 01370603
- * @date 2018/12/22 20:17
+ * <p>
+ * 后台权限表 服务类
+ * </p>
+ *
+ * @author zhimin.ma
+ * @since 2020-03-26
  */
-public interface IPermissionService extends IService<Long, StPermission> {
+public interface IPermissionService extends IService<Permission> {
 
-    StPermission findByCode(String code);
+    Permission findByCode(String code);
 
-    PageInfo<StPermission> findTreePage(StPermission record, int pageNum, int pageSize);
+    Page<Permission> findTreePage(Permission record, int pageNum, int pageSize);
 
-    List<StPermission> findTreeByType(String type);
+    List<Permission> findTreeByType(String type);
 
-    List<StPermission> findByTypeAndRoleId(List<String> types, Long roleId);
+    List<Permission> findByTypeAndRoleId(List<String> types, Long roleId);
 
     int updateRolePermissions(Long roleId, List<Long> permissionIds);
 
-    List<StPermission> findByPid(String pid);
+    List<Permission> findByPid(String pid);
 
     String findNameByParseLastId(String parentId);
 
-    List<StPermission> match(String urlPrefix, String method);
+    List<Permission> match(String urlPrefix, String method);
+
+    int updateWithNull(Permission record);
+
+    boolean delete(Long id);
 }

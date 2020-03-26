@@ -1,57 +1,46 @@
 package com.ch.cloud.upms.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.Constants;
-import com.ch.cloud.upms.mapper.StRoleMapper;
-import com.ch.cloud.upms.model.StRole;
+import com.ch.cloud.upms.mapper.RoleMapper;
+import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.service.IRoleService;
-import com.ch.mybatis.service.BaseService;
-import com.ch.mybatis.utils.ExampleUtils;
 import com.ch.utils.CommonUtils;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.common.Mapper;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author 01370603
- * @date 2018/12/22 20:17
+ * <p>
+ * 后台角色表 服务实现类
+ * </p>
+ *
+ * @author zhimin.ma
+ * @since 2020-03-25
  */
 @Service
-public class RoleServiceImpl extends BaseService<Long, StRole> implements IRoleService {
-
-    @Autowired(required = false)
-    private StRoleMapper stRoleMapper;
+public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
 
     @Override
-    protected Mapper<StRole> getMapper() {
-        return stRoleMapper;
+    public Role getCurrent(String username) {
+        return getBaseMapper().getCurrent(username);
     }
 
     @Override
-    public StRole getCurrent(String username) {
-        return stRoleMapper.getCurrent(username);
-    }
-
-    @Override
-    public StRole findByCode(String code) {
+    public Role findByCode(String code) {
         if (CommonUtils.isEmpty(code)) return null;
-        StRole record = new StRole();
-        record.setCode(code);
-        return getMapper().selectOne(record);
+        return super.query().eq("code", code).one();
     }
 
     @Override
-    public List<StRole> findRoleForUser(Long userId) {
-        List<StRole> records = this.findEnabled();
-        List<StRole> roles = this.findByUserId(userId);
+    public List<Role> findRoleForUser(Long userId) {
+        List<Role> records = this.findEnabled();
+        List<Role> roles = this.findByUserId(userId);
         if (roles != null && !roles.isEmpty()) {
-            List<Long> roleIds = roles.stream().map(StRole::getId).collect(Collectors.toList());
+            List<Long> roleIds = roles.stream().map(Role::getId).collect(Collectors.toList());
             records.forEach(r -> {
                 if (roleIds.contains(r.getId())) {
                     r.setStatus(Constants.DISABLED);
@@ -62,30 +51,22 @@ public class RoleServiceImpl extends BaseService<Long, StRole> implements IRoleS
     }
 
     @Override
-    public List<StRole> findByUserId(Long userId) {
-        return stRoleMapper.findByUserId(userId);
+    public List<Role> findByUserId(Long userId) {
+        return getBaseMapper().findByUserId(userId);
     }
 
     @Override
-    public List<StRole> findEnabled() {
-        Example e = getExample();
-        e.createCriteria().andEqualTo("status", "1").andNotEqualTo("type", "0");
-        e.orderBy("code").asc().orderBy("id").asc();
-        return getMapper().selectByExample(e);
+    public List<Role> findEnabled() {
+        return super.query().eq("status", "1").ne("type", "0").orderByAsc("code", "id").list();
     }
 
     @Override
-    public PageInfo<StRole> findPage(StRole record, int pageNum, int pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-        Example e = getExample();
-        Example.Criteria criteria = e.createCriteria();
-        ExampleUtils.dynCond(criteria, record);
-        criteria.andIn("type", Lists.newArrayList("1", "2"));
-        e.orderBy("type").asc()
-                .orderBy("id").asc();
-        List<StRole> records = getMapper().selectByExample(e);
-
-        return new PageInfo<>(records);
+    public Page<Role> page(Role record, int pageNum, int pageSize) {
+        return super.query()
+                .like(CommonUtils.isNotEmpty(record.getCode()), "code", record.getCode())
+                .like(CommonUtils.isNotEmpty(record.getName()), "name", record.getName())
+                .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
+                .in("type", Lists.newArrayList("1", "2"))
+                .orderByAsc("type", "id").page(new Page<>(pageNum, pageSize));
     }
-
 }

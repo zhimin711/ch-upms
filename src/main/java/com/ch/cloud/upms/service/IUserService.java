@@ -1,27 +1,33 @@
 package com.ch.cloud.upms.service;
 
-import com.ch.cloud.upms.model.StUser;
-import com.ch.mybatis.service.IService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.cloud.upms.model.User;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
 /**
- * @author 01370603
- * @date 2018/12/21 18:00
+ * <p>
+ * 后台用户表 服务类
+ * </p>
+ *
+ * @author zhimin.ma
+ * @since 2020-03-25
  */
-public interface IUserService extends IService<Long, StUser> {
+public interface IUserService extends IService<User> {
+    User findByUsername(String username);
 
-    StUser findByUsername(String username);
-
-    int updatePassword(StUser user);
+    int updatePassword(User user);
 
     int assignRole(Long id, List<Long> roleIds);
 
-    List<StUser> findByLikeUserId(String userId);
+    List<User> findByLikeUserId(String userId);
 
-    List<StUser> findByLikeRealname(String realname);
+    List<User> findByLikeRealName(String realName);
 
-    List<StUser> findByLikeUsername(String username);
+    List<User> findByLikeUsername(String username);
 
-   List<StUser> findAllValid();
+    List<User> findAllValid();
+
+    Page<User> page(User record, int pageNum, int pageSize);
 }

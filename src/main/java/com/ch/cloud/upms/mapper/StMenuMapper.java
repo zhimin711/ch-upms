@@ -1,3 +1,4 @@
+/*
 package com.ch.cloud.upms.mapper;
 
 import com.ch.cloud.upms.model.StMenu;
@@ -15,4 +16,4 @@ public interface StMenuMapper extends Mapper<StMenu> {
     List<StMenu> findTopMenuByRoleId(Long roleId);
 
     List<StMenu> findMenuByRoleIdAndPid(@Param("roleId") Long roleId, @Param("pid") String pid);
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
@@ -29,6 +30,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+*/
 /**
  * 描述：com.ch.cloud.upms.controller
  *
@@ -36,7 +38,8 @@ import java.util.List;
  * 2017/3/21.
  * @version 1.0
  * @since 1.8
- */
+ *//*
+
 @RestController
 public class UploadController {
 
@@ -199,13 +202,15 @@ public class UploadController {
         return ResultUtils.wrapFail(() -> uploadFileService.remove(uid, username));
     }
 
-    /**
+    */
+/**
      * 下载服务器已存在的文件
      *
      * @param request  请求
      * @param response 响应
      * @param fileName 文件名
-     */
+     *//*
+
     @RequestMapping("download/{fileName}")
     public void downloadExistsFile(HttpServletRequest request,
                                    HttpServletResponse response,
@@ -430,3 +435,4 @@ public class UploadController {
         });
     }
 }
+*/

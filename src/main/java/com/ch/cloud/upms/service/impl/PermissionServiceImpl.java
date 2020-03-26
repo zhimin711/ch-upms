@@ -1,99 +1,95 @@
+
 package com.ch.cloud.upms.service.impl;
 
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
 import com.ch.NumS;
 import com.ch.Status;
-import com.ch.cloud.upms.mapper.StPermissionMapper;
-import com.ch.cloud.upms.model.StPermission;
+import com.ch.cloud.upms.mapper.PermissionMapper;
+import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.e.PubError;
-import com.ch.mybatis.service.BaseService;
+import com.ch.utils.BeanExtUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.ExceptionUtils;
-import com.ch.utils.SQLUtils;
 import com.ch.utils.StringExtUtils;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.common.Mapper;
-import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.util.Sqls;
 
-import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
+/**
+ * <p>
+ * 后台权限表 服务实现类
+ * </p>
+ *
+ * @author zhimin.ma
+ * @since 2020-03-26
+ */
 @Service
-public class PermissionServiceImpl extends BaseService<Long, StPermission> implements IPermissionService {
-
-    @Resource
-    private StPermissionMapper stPermissionMapper;
+public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission> implements IPermissionService {
 
     @Override
-    public StPermission findByCode(String code) {
+    public Permission findByCode(String code) {
         if (CommonUtils.isEmpty(code)) return null;
-        StPermission record = new StPermission();
-        record.setCode(code);
-        List<StPermission> records = getMapper().select(record);
-        if (records.isEmpty()) return null;
-        return records.get(0);
+        return super.query().eq("code", code).one();
     }
 
     @Override
-    public PageInfo<StPermission> findTreePage(StPermission record, int pageNum, int pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-
-        List<StPermission> records = findTopCategory(Status.forEnabled(record.getStatus()));
-        if (CommonUtils.isNotEmpty(records)) {
-            records.forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, "0")));
+    public Page<Permission> findTreePage(Permission record, int pageNum, int pageSize) {
+        Status status = Status.forEnabled(record.getStatus());
+        Page<Permission> page = super.query().eq("type", NumS._1).eq("parent_id", NumS._0)
+                .eq(status == Status.ENABLED, "status", status.getCode())
+                .orderByAsc("sort", "parent_id", "id").page(new Page<>(pageNum, pageSize));
+        if (page.getTotal() > 0) {
+            page.getRecords().forEach(r -> r.setChildren(findChildrenByPidAndStatusAndType(r.getId().toString(), null, "0")));
         }
-        return new PageInfo<>(records);
+
+        return page;
     }
 
 
-    private List<StPermission> findTopCategory(Status status) {
-        Sqls sqls = Sqls.custom();
-        sqls.andEqualTo("type", NumS._1).andEqualTo("parentId", NumS._0);
-        if (status == Status.ENABLED) {
-            sqls.andEqualTo("status", status.getCode());
-        }
-        Example example = Example.builder(StPermission.class)
-                .andWhere(sqls)
-                .orderByAsc("sort", "parentId", "id").build();
-        return getMapper().selectByExample(example);
+    private List<Permission> findTopCategory(Status status) {
+        return super.query().eq("type", NumS._1).eq("parent_id", NumS._0)
+                .eq(status == Status.ENABLED, "status", status.getCode())
+                .orderByAsc("sort", "parent_id", "id").list();
     }
 
     @Override
-    public List<StPermission> findTreeByType(String type) {
+    public List<Permission> findTreeByType(String type) {
         Status status = Lists.newArrayList(NumS._0, NumS._9).contains(type) ? Status.ENABLED : Status.UNKNOWN;
-        List<StPermission> records = findTopCategory(status);
+        List<Permission> records = findTopCategory(status);
         if (records.isEmpty()) {
             return Lists.newArrayList();
         }
         if (!CommonUtils.isEquals(type, NumS._1))
             records.forEach(r -> {
-                List<StPermission> children = findChildrenByPidAndStatusAndType(r.getId().toString(), status != Status.UNKNOWN ? status.getCode() : null, type);
+                List<Permission> children = findChildrenByPidAndStatusAndType(r.getId().toString(), status != Status.UNKNOWN ? status.getCode() : null, type);
                 r.setChildren(children);
             });
         return records;
     }
 
     @Override
-    public List<StPermission> findByTypeAndRoleId(List<String> types, Long roleId) {
-        return stPermissionMapper.findByTypeAndRoleId(types, roleId);
+    public List<Permission> findByTypeAndRoleId(List<String> types, Long roleId) {
+        return getBaseMapper().findByTypeAndRoleId(types, roleId);
     }
 
     @Override
     public int updateRolePermissions(Long roleId, List<Long> permissionIds) {
-        int c1 = stPermissionMapper.deleteRolePermissions(roleId);
+        int c1 = getBaseMapper().deleteRolePermissions(roleId);
         if (!permissionIds.isEmpty()) {
-            c1 += stPermissionMapper.insertRolePermissions(roleId, permissionIds);
+            c1 += getBaseMapper().insertRolePermissions(roleId, permissionIds);
         }
         return c1;
     }
 
     @Override
-    public List<StPermission> findByPid(String pid) {
+    public List<Permission> findByPid(String pid) {
         return findChildrenByPidAndStatusAndType(pid, null, NumS._0);
     }
 
@@ -104,40 +100,34 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         if (!CommonUtils.isNumeric(idStr)) {
             return null;
         }
-        StPermission record = find(Long.valueOf(idStr));
+        Permission record = super.getById(Long.valueOf(idStr));
         if (record != null) return record.getName();
         return null;
     }
 
     @Override
-    public List<StPermission> match(String urlPrefix, String method) {
-        Sqls sqls = Sqls.custom();
-        sqls.andLike("url", SQLUtils.likeSuffix(urlPrefix));
-        if (CommonUtils.isNotEmpty(method)) sqls.andEqualTo("method", method.toUpperCase());
-        Example example = Example.builder(StPermission.class).andWhere(sqls).build();
-        return getMapper().selectByExample(example);
+    public List<Permission> match(String urlPrefix, String method) {
+        return super.query().likeRight("url", urlPrefix)
+                .eq(CommonUtils.isNotEmpty(method), "method", method)
+                .list();
     }
 
-    public List<StPermission> findChildrenByPidAndStatusAndType(String pid, String status, String type) {
+    public List<Permission> findChildrenByPidAndStatusAndType(String pid, String status, String type) {
         if (CommonUtils.isEmpty(pid)) {
             return Lists.newArrayList();
         }
-        Example example = new Example(StPermission.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("parentId", pid);
-        if (CommonUtils.isNotEmpty(status)) {
-            criteria.andEqualTo("status", status);
-        }
+
+        QueryChainWrapper<Permission> wrapper = super.query().eq("parent_id", pid).eq(CommonUtils.isNotEmpty(status), "status", status);
+
         if (CommonUtils.isEquals(NumS._1, type)) {
-            criteria.andEqualTo("type", type);
+            wrapper.eq("type", type);
         } else if (CommonUtils.isEquals(NumS._2, type)) {
-            criteria.andIn("type", Lists.newArrayList(NumS._1, NumS._2));
+            wrapper.in("type", Lists.newArrayList(NumS._1, NumS._2));
         } else if (!CommonUtils.isEquals(NumS._0, type)) {
-            criteria.andNotEqualTo("type", NumS._5);
+            wrapper.ne("type", NumS._5);
         }
-        example.orderBy("sort").asc();
-        example.orderBy("id").asc();
-        List<StPermission> children = getMapper().selectByExample(example);
+        wrapper.orderByAsc("sort", "id");
+        List<Permission> children = wrapper.list();
         if (CommonUtils.isEmpty(children)) return Lists.newArrayList();
         children.forEach(r -> {
             String pid1 = StringExtUtils.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
@@ -150,33 +140,31 @@ public class PermissionServiceImpl extends BaseService<Long, StPermission> imple
         return children;
     }
 
-    @Override
-    protected Mapper<StPermission> getMapper() {
-        return stPermissionMapper;
-    }
-
 
     @Override
-    public int updateWithNull(StPermission record) {
-        int c = super.updateWithNull(record);
+    public int updateWithNull(Permission record) {
+        UpdateChainWrapper<Permission> wrapper = super.update().eq("id", record.getId());
+        Map<String, Object> valueMap = BeanExtUtils.getDeclaredFieldValueMap(record, false);
+        valueMap.forEach(wrapper::set);
+        boolean isUpdated = wrapper.update();
         if (CommonUtils.isNotEmpty(record.getChildren())) {
             record.getChildren().forEach(e -> {
                 e.setParentId(record.getParentId() + "," + record.getId());
                 e.setUpdateBy(record.getUpdateBy());
                 e.setUpdateAt(record.getUpdateAt());
-                super.update(e);
+                super.updateById(e);
             });
         }
-        return c;
+        return isUpdated ? 1 : 0;
     }
 
     @Override
-    public int delete(Long id) {
-        if (id == null) return 0;
-        List<StPermission> records = this.findByPid(id + "");
+    public boolean delete(Long id) {
+        if (id == null) return false;
+        List<Permission> records = this.findByPid(id + "");
         if (!records.isEmpty()) {
-            ExceptionUtils._throw(PubError.NOT_ALLOWED,"存在下级权限，不允许删除！");
+            ExceptionUtils._throw(PubError.NOT_ALLOWED, "存在下级权限，不允许删除！");
         }
-        return super.delete(id);
+        return super.removeById(id);
     }
 }

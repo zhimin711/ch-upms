@@ -39,7 +39,7 @@ ext {
 dependencies {
     implementation(fileTree("${rootDir}/libs"))
     implementation("com.ch:ch-core:${chVersion}")
-    implementation("com.ch:ch-mybatis:${chVersion}")
+//    implementation("com.ch:ch-mybatis:${chVersion}")
 
     implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-web') {
@@ -64,7 +64,11 @@ dependencies {
 //    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
-    implementation('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2')
+//    implementation('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2')
+    implementation 'com.baomidou:mybatis-plus:3.3.1'
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.3.1'
+    implementation 'org.mybatis:mybatis-typehandlers-jsr310:1.0.1'
+
 //    https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-spring-boot-starter
     implementation 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.1.0'
 
@@ -79,6 +83,10 @@ dependencies {
 
 //    runtimeOnly('org.springframework.boot:spring-boot-devtools')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+    // https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-generator
+    testImplementation group: 'com.baomidou', name: 'mybatis-plus-generator', version: '3.3.1'
+// <!-- mybatisplus逆向工程需要模板引擎，用freemaker也行 -->
+    testImplementation 'org.apache.velocity:velocity-engine-core:2.0'
     annotationProcessor 'org.projectlombok:lombok'
 }
 

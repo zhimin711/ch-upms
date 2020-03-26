@@ -1,3 +1,4 @@
+/*
 package com.ch.cloud.upms.service.impl;
 
 import com.ch.Constants;
@@ -23,10 +24,12 @@ import tk.mybatis.mapper.entity.Example;
 import java.util.List;
 import java.util.stream.Collectors;
 
+*/
 /**
  * @author 01370603
  * @date 2018/12/22 20:18
- */
+ *//*
+
 @Service
 public class MenuServiceImpl extends BaseService<Long, StMenu> implements IMenuService {
 
@@ -242,3 +245,4 @@ public class MenuServiceImpl extends BaseService<Long, StMenu> implements IMenuS
     }
 
 }
+*/

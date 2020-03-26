@@ -1,3 +1,4 @@
+/*
 package com.ch.cloud.upms.controller;
 
 import com.baidu.ueditor.define.ActionMap;
@@ -33,12 +34,14 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+*/
 /**
  * desc:
  *
  * @author zhimin
  * @date 2018/12/21 10:40 PM
- */
+ *//*
+
 @RestController
 @RequestMapping("ue")
 public class UEditorController {
@@ -112,7 +115,8 @@ public class UEditorController {
         }
     }
 
-    /*
+    */
+/*
     {
         "state": "SUCCESS",
         "list": [{
@@ -123,7 +127,8 @@ public class UEditorController {
         "start": 20,
         "total": 100
     }
-    */
+    *//*
+
     @RequestMapping("listImage")
     public UEListResult imageList(HttpServletRequest request) {
 
@@ -148,13 +153,15 @@ public class UEditorController {
     }
 
 
-    /**
+    */
+/**
      * 下载服务器已存在的文件
      *
      * @param request  请求
      * @param response 响应
      * @param fileName 文件名
-     */
+     *//*
+
 //    @RequestMapping("upload/image/{dir}/{fileName}")
     public BufferedImage getImage(HttpServletRequest request,
                                   HttpServletResponse response,
@@ -165,3 +172,4 @@ public class UEditorController {
     }
 
 }
+*/

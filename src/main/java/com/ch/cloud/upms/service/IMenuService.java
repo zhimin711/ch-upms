@@ -1,16 +1,10 @@
 package com.ch.cloud.upms.service;
 
-import com.ch.cloud.upms.model.StMenu;
-import com.ch.cloud.upms.pojo.Menu;
-import com.ch.mybatis.service.IService;
-import com.github.pagehelper.PageInfo;
-
-import java.util.List;
-
 /**
  * @author 01370603
  * @date 2018/12/22 20:17
  */
+/*
 public interface IMenuService extends IService<Long, StMenu> {
 
     List<StMenu> findTopByStatus(String status);
@@ -29,3 +23,4 @@ public interface IMenuService extends IService<Long, StMenu> {
 
     List<Menu> findMenuTreeByRoleId(Long roleId);
 }
+*/

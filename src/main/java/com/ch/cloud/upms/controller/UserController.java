@@ -1,9 +1,12 @@
 package com.ch.cloud.upms.controller;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
 import com.ch.cloud.upms.fclient.SsoClientService;
-import com.ch.cloud.upms.model.StRole;
-import com.ch.cloud.upms.model.StUser;
+import com.ch.cloud.upms.model.Role;
+import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.UserInfo;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
@@ -13,7 +16,6 @@ import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.*;
-import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
+/*
+ *
  * 用户管理
  *
  * @author 01370603
@@ -42,17 +45,21 @@ public class UserController {
     private SsoClientService ssoClientService;
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
-    public PageResult<StUser> page(StUser record,
-                                   @PathVariable(value = "num") int pageNum,
-                                   @PathVariable(value = "size") int pageSize) {
-        PageInfo<StUser> pageInfo = userService.findPage(record, pageNum, pageSize);
-        return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
+    public PageResult<User> page(User record,
+                                 @PathVariable(value = "num") int pageNum,
+                                 @PathVariable(value = "size") int pageSize) {
+
+
+        Page<User> page = userService.page(record, pageNum, pageSize);
+        return PageResult.success(page.getTotal(), page.getRecords());
     }
 
     @PostMapping
-    public Result<Integer> add(@RequestBody StUser record,
+    public Result<Boolean> add(@RequestBody User record,
                                @RequestHeader(Constants.TOKEN_USER) String username) {
-        StUser r = userService.findByUsername(record.getUsername());
+
+        User r = userService.findByUsername(record.getUsername());
+
         if (r != null) {
             return Result.error(PubError.EXISTS, "用户名已存在！");
         }
@@ -61,23 +68,23 @@ public class UserController {
     }
 
     @PutMapping({"{id:[0-9]+}"})
-    public Result<Integer> edit(@PathVariable Long id, @RequestBody StUser record,
+    public Result<Boolean> edit(@PathVariable Long id, @RequestBody User record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         record.setUpdateBy(username);
         record.setUpdateAt(DateUtils.current());
-        return ResultUtils.wrapFail(() -> userService.update(record));
+        return ResultUtils.wrapFail(() -> userService.updateById(record));
     }
 
     //    @PostMapping({"delete"})
-    public Result<Integer> delete(Long id) {
-        return ResultUtils.wrapFail(() -> userService.delete(id));
+    public Result<Boolean> delete(Long id) {
+        return ResultUtils.wrapFail(() -> userService.removeById(id));
     }
 
     @PostMapping("{id:[0-9]+}/initPwd")
     public Result<String> initPwd(@PathVariable Long id,
                                   @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
-            StUser user = userService.find(id);
+            User user = userService.getById(id);
             if (user == null) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
             }
@@ -99,9 +106,9 @@ public class UserController {
 
     @PostMapping("changePwd")
     public Result<Integer> changePwd(@RequestBody KeyValue keyValue,
-                                    @RequestHeader(Constants.TOKEN_USER) String username) {
+                                     @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
-            StUser user = userService.findByUsername(username);
+            User user = userService.findByUsername(username);
             if (user == null) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
             }
@@ -113,17 +120,17 @@ public class UserController {
             user.setPassword(res1.get());
             user.setUpdateBy(username);
             user.setUpdateAt(DateUtils.current());
-           return userService.updatePassword(user);
+            return userService.updatePassword(user);
         });
     }
 
     @GetMapping({"roles"})
-    public Result<StRole> findEnableRoles() {
+    public Result<Role> findEnableRoles() {
         return ResultUtils.wrapList(() -> roleService.findEnabled());
     }
 
     @GetMapping({"{id:[0-9]+}/roles"})
-    public Result<StRole> findRoleForUser(@PathVariable Long id) {
+    public Result<Role> findRoleForUser(@PathVariable Long id) {
         return ResultUtils.wrapList(() -> roleService.findByUserId(id));
     }
 
@@ -133,27 +140,27 @@ public class UserController {
     }
 
     @GetMapping("{username}/info")
-    public Result<StUser> findByUsername(@PathVariable String username) {
+    public Result<User> findByUsername(@PathVariable String username) {
         return ResultUtils.wrapFail(() -> userService.findByUsername(username));
     }
 
     @GetMapping({"{username}/role"})
-    public Result<StRole> findRolesByUsername(@PathVariable String username) {
+    public Result<Role> findRolesByUsername(@PathVariable String username) {
         return ResultUtils.wrap(() -> roleService.getCurrent(username));
     }
 
     @GetMapping("valid")
-    public Result<UserInfo> findValid(@RequestParam(value = "name", required = false) String idOrUsernameOrRealname) {
+    public Result<UserInfo> findValid(@RequestParam(value = "name", required = false) String idOrUsernameOrRealName) {
         return ResultUtils.wrapList(() -> {
-            List<StUser> users;
-            if (CommonUtils.isEmpty(idOrUsernameOrRealname)) {
+            List<User> users;
+            if (CommonUtils.isEmpty(idOrUsernameOrRealName)) {
                 users = userService.findAllValid();
-            } else if (CommonUtils.isNumeric(idOrUsernameOrRealname)) {
-                users = userService.findByLikeUserId(idOrUsernameOrRealname);
-            } else if (CharUtils.containsChinese(idOrUsernameOrRealname)) {
-                users = userService.findByLikeRealname(idOrUsernameOrRealname);
+            } else if (CommonUtils.isNumeric(idOrUsernameOrRealName)) {
+                users = userService.findByLikeUserId(idOrUsernameOrRealName);
+            } else if (CharUtils.containsChinese(idOrUsernameOrRealName)) {
+                users = userService.findByLikeRealName(idOrUsernameOrRealName);
             } else {
-                users = userService.findByLikeUsername(idOrUsernameOrRealname);
+                users = userService.findByLikeUsername(idOrUsernameOrRealName);
             }
             return users.stream().map(r -> {
                 UserInfo info = new UserInfo();

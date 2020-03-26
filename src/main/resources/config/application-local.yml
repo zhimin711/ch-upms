@@ -1,14 +1,13 @@
-server:
-  port: 7002
-
 jasypt:
   encryptor:
     password: abc123
     algorithm: PBEWithMD5AndDES
 spring:
+  application:
+    name: ch-upms
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://www.zhaohuajike.cn:3306/dev_ch_upms
+    url: jdbc:mysql://106.12.140.185:3306/dev_ch_upms
     username: admin
     password: ENC(hfO3JFDCY2HB6x+j1obZOg==)
     type: com.zaxxer.hikari.HikariDataSource
@@ -45,3 +44,12 @@ rocketmq:
   producer:
     send-message-timeout: 300000
     group: ch-upms
+#====================================mybatis-plus config===============================================
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  typeAliasesPackage: com.ch.cloud.upms.model
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto

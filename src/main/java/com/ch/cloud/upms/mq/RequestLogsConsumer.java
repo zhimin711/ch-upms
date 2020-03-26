@@ -4,7 +4,7 @@ package com.ch.cloud.upms.mq;
 import com.alibaba.fastjson.JSONObject;
 import com.ch.Constants;
 import com.ch.cloud.upms.model.OPRecord;
-import com.ch.cloud.upms.model.StPermission;
+import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IOPRecordService;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.utils.CommonUtils;
@@ -87,12 +87,12 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
         target.setResponseTime(Long.valueOf(endTimestamp));
 
         String[] urls = url.split(Constants.SEPARATOR_3);
-        List<StPermission> permissions = permissionService.match(Constants.SEPARATOR_3 + urls[1], null);
+        List<Permission> permissions = permissionService.match(Constants.SEPARATOR_3 + urls[1], null);
         if (permissions.isEmpty()) {
             return;
         }
         AntPathMatcher pathMatcher = new AntPathMatcher(Constants.SEPARATOR_3);
-        for (StPermission r : permissions) {
+        for (Permission r : permissions) {
             if (pathMatcher.match(r.getUrl(), url)) {
                 if (CommonUtils.isNotEmpty(r.getMethod()) && CommonUtils.isEquals(r.getMethod(), method) || CommonUtils.isEmpty(r.getMethod())) {
                     target.setAuthCode(r.getCode());

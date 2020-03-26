@@ -1,23 +1,30 @@
 package com.ch.cloud.upms.service;
 
-import com.ch.cloud.upms.model.StRole;
-import com.ch.mybatis.service.IService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.cloud.upms.model.Role;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
 /**
- * @author 01370603
- * @date 2018/12/22 20:17
+ * <p>
+ * 后台角色表 服务类
+ * </p>
+ *
+ * @author zhimin.ma
+ * @since 2020-03-25
  */
-public interface IRoleService extends IService<Long, StRole> {
+public interface IRoleService extends IService<Role> {
 
-    StRole getCurrent(String username);
+    Role getCurrent(String username);
 
-    StRole findByCode(String code);
+    Role findByCode(String code);
 
-    List<StRole> findRoleForUser(Long userId);
+    List<Role> findRoleForUser(Long userId);
 
-    List<StRole> findByUserId(Long userId);
+    List<Role> findByUserId(Long userId);
 
-    List<StRole> findEnabled();
+    List<Role> findEnabled();
+
+    Page<Role> page(Role record, int pageNum, int pageSize);
 }

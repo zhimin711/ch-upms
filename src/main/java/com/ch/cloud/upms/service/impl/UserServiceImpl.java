@@ -1,25 +1,20 @@
 package com.ch.cloud.upms.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.StatusS;
-import com.ch.cloud.upms.mapper.StUserMapper;
-import com.ch.cloud.upms.model.StRole;
-import com.ch.cloud.upms.model.StUser;
+import com.ch.cloud.upms.mapper.UserMapper;
+import com.ch.cloud.upms.model.Role;
+import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
-import com.ch.mybatis.service.BaseService;
-import com.ch.mybatis.utils.ExampleUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.EncryptUtils;
-import com.ch.utils.SQLUtils;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.common.Mapper;
-import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.util.Sqls;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -27,115 +22,108 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
- * @author 01370603
- * @date 2018/12/21 18:06
+ * <p>
+ * 后台用户表 服务实现类
+ * </p>
+ *
+ * @author zhimin.ma
+ * @since 2020-03-25
  */
 @Service
-public class UserServiceImpl extends BaseService<Long, StUser> implements IUserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     @Resource
-    private StUserMapper userMapper;
-
-    @Override
-    protected Mapper<StUser> getMapper() {
-        return userMapper;
-    }
-
-    @Autowired
     private IRoleService roleService;
 
     @Override
-    public StUser findByUsername(String username) {
+    public User findByUsername(String username) {
         if (CommonUtils.isEmpty(username)) return null;
-        StUser record = new StUser();
+        User record = new User();
         record.setUsername(username);
-        return getMapper().selectOne(record);
+        return super.getOne(Wrappers.query(record));
     }
 
     @Override
-    public int updatePassword(StUser record) {
+    public int updatePassword(User record) {
         if (record != null && CommonUtils.isNotEmpty(record.getId(), record.getPassword())) {
-            StUser r = new StUser();
+            User r = new User();
             r.setId(record.getId());
             r.setPassword(record.getPassword());
             r.setUpdateBy(record.getUpdateBy());
             r.setUpdateAt(DateUtils.current());
-            return super.update(r);
+            boolean isUpdated = super.updateById(r);
+            if (isUpdated) return 1;
         }
         return 0;
     }
 
     @Override
     public int assignRole(Long id, List<Long> roleIds) {
-        List<StRole> roleList = roleService.findByUserId(id);
+        List<Role> roleList = roleService.findByUserId(id);
 
-        List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(StRole::getId).collect(Collectors.toList());
-        List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(StRole::getId).collect(Collectors.toList());
+        List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(Role::getId).collect(Collectors.toList());
+        List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(Role::getId).collect(Collectors.toList());
 
         AtomicInteger c = new AtomicInteger();
         if (!roleIds.isEmpty()) {
-            roleIds.stream().filter(r -> !uRoleIds.contains(r) && !uRoleIds2.contains(r)).forEach(r -> c.getAndAdd(userMapper.insertAssignRole(id, r)));
-            uRoleIds.stream().filter(r -> !roleIds.contains(r) &&  !uRoleIds2.contains(r)).forEach(r -> c.getAndAdd(userMapper.deleteAssignRole(id, r)));
+            roleIds.stream().filter(r -> !uRoleIds.contains(r) && !uRoleIds2.contains(r)).forEach(r -> c.getAndAdd(getBaseMapper().insertAssignRole(id, r)));
+            uRoleIds.stream().filter(r -> !roleIds.contains(r) && !uRoleIds2.contains(r)).forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignRole(id, r)));
         } else if (!uRoleIds.isEmpty()) {
-            uRoleIds.forEach(r -> c.getAndAdd(userMapper.deleteAssignRole(id, r)));
+            uRoleIds.forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignRole(id, r)));
         }
         return c.get();
     }
 
     @Override
-    public List<StUser> findByLikeUserId(String userId) {
-        Example e = Example.builder(StUser.class).andWhere(Sqls.custom().andLike("userId", SQLUtils.likeAny(userId))).build();
-        return getMapper().selectByExample(e);
+    public List<User> findByLikeUserId(String userId) {
+        if(CommonUtils.isEmpty(userId)) return Lists.newArrayList();
+        return super.query().like("user_id", userId).eq("status", StatusS.ENABLED).list();
     }
 
     @Override
-    public List<StUser> findByLikeRealname(String realname) {
-        Example e = Example.builder(StUser.class).andWhere(Sqls.custom().andLike("realName", SQLUtils.likeAny(realname))
-                .andEqualTo("status", StatusS.ENABLED)).build();
-        return getMapper().selectByExample(e);
+    public List<User> findByLikeRealName(String realName) {
+        return super.query().like("real_name", realName).eq("status", StatusS.ENABLED).list();
     }
 
     @Override
-    public List<StUser> findByLikeUsername(String username) {
-        Example e = Example.builder(StUser.class).andWhere(Sqls.custom().andLike("username", SQLUtils.likeAny(username))
-                .andEqualTo("status", StatusS.ENABLED)).build();
-        return getMapper().selectByExample(e);
+    public List<User> findByLikeUsername(String username) {
+        return super.query().likeRight("username", username).eq("status", StatusS.ENABLED).list();
     }
 
     @Override
-    public List<StUser> findAllValid() {
-        Example e = Example.builder(StUser.class).andWhere(Sqls.custom().andEqualTo("status", StatusS.ENABLED)).build();
-        return getMapper().selectByExample(e);
+    public List<User> findAllValid() {
+        return super.query().eq("status", StatusS.ENABLED).list();
     }
 
     @Override
-    public int save(StUser record) {
+    public boolean save(User record) {
         if (record != null) {
             if (CommonUtils.isEmpty(record.getPassword())) {
                 record.setPassword(EncryptUtils.generate());
             }
-//            record.setPassword(passwordService.encryptPassword(record.getPassword()));
             record.setUserId(RandomStringUtils.randomNumeric(10));
         }
         return super.save(record);
     }
 
     @Override
-    public int update(StUser record) {
+    public boolean updateById(User record) {
         record.setUserId(null);
         record.setUsername(null);
         //不更新密码
         record.setPassword(null);
-        return super.update(record);
+
+        return super.updateById(record);
     }
 
     @Override
-    public PageInfo<StUser> findPage(StUser record, int pageNum, int pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-        Example e = getExample();
-        ExampleUtils.dynCond(e.createCriteria(), record);
-        e.orderBy("userId").asc();
-        List<StUser> records = getMapper().selectByExample(e);
-        return new PageInfo<>(records);
+    public Page<User> page(User record, int pageNum, int pageSize) {
+        return super.query()
+                .like(CommonUtils.isNotEmpty(record.getUserId()), "user_id", record.getUserId())
+                .like(CommonUtils.isNotEmpty(record.getUsername()), "username", record.getUsername())
+                .like(CommonUtils.isNotEmpty(record.getRealName()), "real_name", record.getRealName())
+                .like(CommonUtils.isNotEmpty(record.getEmail()), "email", record.getEmail())
+                .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
+                .orderByAsc("user_id").page(new Page<>(pageNum, pageSize));
     }
 }

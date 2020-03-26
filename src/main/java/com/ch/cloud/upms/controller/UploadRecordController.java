@@ -1,3 +1,4 @@
+/*
 package com.ch.cloud.upms.controller;
 
 import com.ch.cloud.upms.model.BtUploadFile;
@@ -13,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+*/
 /**
  * 角色管理
  *
  * @author 01370603
  * @date 2018/12/22 22:35
- */
+ *//*
+
 
 @RestController
 @RequestMapping("upload/record")
@@ -60,3 +63,4 @@ public class UploadRecordController {
     }
 
 }
+*/

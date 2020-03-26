@@ -1,45 +1,32 @@
 package com.ch.cloud.upms.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.cloud.upms.mapper.OPRecordMapper;
 import com.ch.cloud.upms.model.OPRecord;
+import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.service.IOPRecordService;
-import com.ch.mybatis.service.BaseService;
-import com.ch.mybatis.utils.ExampleUtils;
-import com.ch.utils.SQLUtils;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import org.jasypt.commons.CommonUtils;
+import com.ch.utils.CommonUtils;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.common.Mapper;
-import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.util.Sqls;
 
-import javax.annotation.Resource;
-import java.util.List;
-
+/**
+ * <p>
+ * 日志表-操作记录 服务实现类
+ * </p>
+ *
+ * @author zhimin.ma
+ * @since 2020-03-25
+ */
 @Service
-public class OPRecordServiceImpl extends BaseService<Long, OPRecord> implements IOPRecordService {
-
-    @Resource
-    private OPRecordMapper opRecordMapper;
+public class OPRecordServiceImpl extends ServiceImpl<OPRecordMapper, OPRecord> implements IOPRecordService {
 
     @Override
-    protected Mapper<OPRecord> getMapper() {
-        return opRecordMapper;
-    }
-
-    @Override
-    public PageInfo<OPRecord> findPageBy(OPRecord record, int pageNum, int pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-        Sqls sqls = Sqls.custom();
-        if (CommonUtils.isNotEmpty(record.getAuthCode())) {
-            sqls.andLike("authCode", SQLUtils.likeSuffix(record.getAuthCode()));
-        } else {
-            sqls.andNotLike("authCode", SQLUtils.likeSuffix("LOGIN_"));
-        }
-        ExampleUtils.dynEqual(sqls, record);
-        Example ex = Example.builder(OPRecord.class).where(sqls).orderByDesc("requestTime").build();
-        List<OPRecord> records = getMapper().selectByExample(ex);
-        return new PageInfo<>(records);
+    public Page<OPRecord> page(OPRecord record, int pageNum, int pageSize) {
+        return super.query()
+                .likeRight(CommonUtils.isNotEmpty(record.getAuthCode()), "auth_code", record.getAuthCode())
+                .notLike(CommonUtils.isEmpty(record.getAuthCode()), "auth_code", "LOGIN_")
+                .likeRight(CommonUtils.isNotEmpty(record.getUrl()), "url", record.getUrl())
+                .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
+                .orderByDesc("request_time").page(new Page<>(pageNum, pageSize));
     }
 }
