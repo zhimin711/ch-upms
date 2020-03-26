@@ -72,6 +72,10 @@ public class OPRecord extends Model<OPRecord> {
     private String operator;
 
     /**
+     * 请求IP
+     */
+    private String requestIp;
+    /**
      * 请求时间
      */
     private Long requestTime;

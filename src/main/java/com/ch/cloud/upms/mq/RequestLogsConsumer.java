@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -48,6 +49,7 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
                 JSONObject object = JSONObject.parseObject(info);
                 if (object.containsKey("request")) {
                     record.setRequest(object.getJSONObject("request").toJSONString());
+                    record.setRequestIp(getIP(object.getJSONObject("request")));
                 } else if (object.containsKey("proxy")) {
                     record.setProxy(object.getJSONObject("proxy").toJSONString());
                 } else if (object.containsKey("response")) {
@@ -101,4 +103,25 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
             }
         }
     }
+
+
+    public static String getIP(JSONObject request) {
+        if (!request.containsKey("headers")) return "N/A";
+        JSONObject headers = request.getJSONObject("headers");
+        String ip = headers.getString("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = headers.getString("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = headers.getString("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = headers.getString("X-Real-IP");
+        }
+        /*if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }*/
+        return ip;
+    }
+
 }

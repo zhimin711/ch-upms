@@ -49,7 +49,6 @@ public class UserController {
                                  @PathVariable(value = "num") int pageNum,
                                  @PathVariable(value = "size") int pageSize) {
 
-
         Page<User> page = userService.page(record, pageNum, pageSize);
         return PageResult.success(page.getTotal(), page.getRecords());
     }

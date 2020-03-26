@@ -13,13 +13,14 @@
         <result column="AUTH_CODE" property="authCode" />
         <result column="STATUS" property="status" />
         <result column="OPERATOR" property="operator" />
+        <result column="REQUEST_IP" property="requestIp" />
         <result column="REQUEST_TIME" property="requestTime" />
         <result column="RESPONSE_TIME" property="responseTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, URL, METHOD, REQUEST, PROXY, RESPONSE, AUTH_CODE, STATUS, OPERATOR, REQUEST_TIME, RESPONSE_TIME
+        ID, URL, METHOD, REQUEST, PROXY, RESPONSE, AUTH_CODE, STATUS, OPERATOR, REQUEST_IP, REQUEST_TIME, RESPONSE_TIME
     </sql>
 
 </mapper>
