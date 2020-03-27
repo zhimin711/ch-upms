@@ -1,6 +1,8 @@
 
 package com.ch.cloud.upms.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -143,10 +145,27 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public int updateWithNull(Permission record) {
-        UpdateChainWrapper<Permission> wrapper = super.update().eq("id", record.getId());
-        Map<String, Object> valueMap = BeanExtUtils.getDeclaredFieldValueMap(record, false);
-        valueMap.forEach(wrapper::set);
-        boolean isUpdated = wrapper.update();
+//        UpdateChainWrapper<Permission> wrapper = super.update().eq("id", record.getId());
+//        Map<String, Object> valueMap = BeanExtUtils.getDeclaredFieldValueMap(record, false);
+//        valueMap.forEach(wrapper::set);
+        LambdaUpdateWrapper<Permission> wrapper = Wrappers.<Permission>lambdaUpdate().eq(Permission::getId, record.getId())
+                .set(Permission::getCode, record.getCode())
+                .set(Permission::getMethod, record.getMethod())
+                .set(Permission::getIcon, record.getIcon())
+                .set(Permission::getIsShow, record.getIsShow())
+                .set(Permission::getIsSys, record.getIsSys())
+                .set(Permission::getName, record.getName())
+                .set(Permission::getParentId, record.getParentId())
+                .set(Permission::getParentName, record.getParentName())
+                .set(Permission::getRedirect, record.getRedirect())
+                .set(Permission::getSort, record.getSort())
+                .set(Permission::getStatus, record.getStatus())
+                .set(Permission::getType, record.getType())
+                .set(Permission::getUpdateAt, record.getUpdateAt())
+                .set(Permission::getUpdateBy, record.getUpdateBy())
+                .set(Permission::getUrl, record.getUrl());
+
+        boolean isUpdated = super.update(wrapper);
         if (CommonUtils.isNotEmpty(record.getChildren())) {
             record.getChildren().forEach(e -> {
                 e.setParentId(record.getParentId() + "," + record.getId());
