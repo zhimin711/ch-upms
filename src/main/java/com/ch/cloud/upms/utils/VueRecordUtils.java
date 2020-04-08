@@ -47,7 +47,7 @@ public class VueRecordUtils {
                 if (CommonUtils.isEquals(NumS._1, e.getType())) {
                     VueRecord vueRecord1 = convertPermission(e);
                     vueRecord1.setLabel(r.getName() + " >> " + e.getName());
-                    categories.add(vueRecord1);
+//                    categories.add(vueRecord1);
                 }
             });
 
