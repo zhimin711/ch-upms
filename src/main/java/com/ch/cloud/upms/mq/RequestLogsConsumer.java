@@ -57,6 +57,7 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
 
                     String status = object.getJSONObject("response").getString("status");
                     record.setStatus(CommonUtils.isNumeric(status) ? Integer.valueOf(status) : null);
+                    parseError(object.getJSONObject("response"), record);
                 } else if (object.containsKey("record")) {
                     copyProperties(object.getJSONObject("record"), record);
                 }
@@ -68,9 +69,29 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
             } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_REFRESH)) {
                 record.setAuthCode("LOGIN_REFRESH");
             }
+
             opRecordService.save(record);
         } catch (Exception e) {
             log.error("parse log error!~", e);
+        }
+    }
+
+    private void parseError(JSONObject source, OPRecord target) {
+        if (!source.containsKey("data")) {
+            return;
+        }
+        try {
+            JSONObject data = source.getJSONObject("data");
+            if (data.containsKey("success") && data.getBoolean("success")) {
+                if (data.containsKey("code")) {
+                    target.setErrorCode(data.getString("code"));
+                }
+                if (data.containsKey("message")) {
+                    target.setErrorMessage(data.getString("message"));
+                }
+            }
+        } catch (Exception e) {
+            log.warn("parse response data json object error!", e);
         }
     }
 

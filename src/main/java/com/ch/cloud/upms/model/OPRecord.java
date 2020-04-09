@@ -84,6 +84,14 @@ public class OPRecord extends Model<OPRecord> {
      * 响应时间
      */
     private Long responseTime;
+    /**
+     * 错误代码
+     */
+    private String errorCode;
+    /**
+     * 错误消息
+     */
+    private String errorMessage;
 
 
     @Override
