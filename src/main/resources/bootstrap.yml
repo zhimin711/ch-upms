@@ -1,13 +1,16 @@
+nacos:
+  config:
+    namespace:
+    server-addr: 192.168.199.194:8848
 spring:
   application:
     name: ch-upms
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.1.104:8848
-        namespace: ${nacos.namespace:}
+        server-addr: ${nacos.config.server-addr}
+        namespace: ${nacos.config.namespace:}
       config:
-        server-addr: 192.168.1.104:8848
-        namespace: ${nacos.namespace:}
-#        shared-dataids: ch-upms.yml #,ch-sentinel.properties
+        server-addr: ${nacos.config.server-addr}
+        namespace: ${nacos.config.namespace:}
         file-extension: yml

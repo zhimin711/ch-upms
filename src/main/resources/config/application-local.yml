@@ -35,7 +35,7 @@ logging:
 path:
   temp: share/tmp
   root: D:\\git\\ch-cloud-new\\ch-admin2
-  upload: D:\\git\\ch-cloud-new\\ch-admin2\\upload
+  upload: ${path.root}\\upload
   download: share/download
 
 

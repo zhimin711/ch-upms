@@ -27,13 +27,11 @@ repositories {
 ext {
     set('springCloudVersion', "Hoxton.SR1")
     set('seataVersion', "2.2.2.RELEASE")
+    set('springOauth2', "2.3.4.RELEASE")
+    set('alicloudVersion', "0.9.0.RELEASE")//0.2.1.RELEASE
+    set('chVersion', "1.0.3-SNAPSHOT")
+    set('swagger2Version', "2.9.2")
 
-    springOauth2 = '2.3.4.RELEASE'
-    alicloudVersion = '0.9.0.RELEASE' //0.2.1.RELEASE
-
-    chVersion = '1.0.3-SNAPSHOT'
-    
-    swagger2Version = '2.9.2'
 }
 
 dependencies {
