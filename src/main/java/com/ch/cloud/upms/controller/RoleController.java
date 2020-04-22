@@ -2,6 +2,7 @@ package com.ch.cloud.upms.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
+import com.ch.NumS;
 import com.ch.StatusS;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.model.Role;
@@ -49,13 +50,18 @@ public class RoleController {
     public Result<Boolean> add(@RequestBody Role record,
                                @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
-            Role r = roleService.findByCode(record.getCode());
+            if(CommonUtils.isEmpty(record.getCode())){
+                ExceptionUtils._throw(PubError.EXISTS, "角色代码不能为空！");
+            }
+            String code = record.getCode().trim().toUpperCase();
+            Role r = roleService.findByCode(code);
             if (r != null) {
                 ExceptionUtils._throw(PubError.EXISTS, "角色代码已存在！");
             }
-            if (CommonUtils.isEquals(StatusS.DISABLED, record.getType())) {
+            if (CommonUtils.isEquals(NumS._0, record.getType())) {
                 ExceptionUtils._throw(PubError.NOT_ALLOWED, "角色类型错误！");
             }
+            record.setCode(code);
             record.setCreateBy(username);
             return roleService.save(record);
         });
@@ -65,7 +71,7 @@ public class RoleController {
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody Role record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
-            if (CommonUtils.isEquals(StatusS.DISABLED, record.getType())) {
+            if (CommonUtils.isEquals(NumS._0, record.getType())) {
                 ExceptionUtils._throw(PubError.ARGS, "角色类型错误！");
             }
             Role orig = roleService.getById(id);
