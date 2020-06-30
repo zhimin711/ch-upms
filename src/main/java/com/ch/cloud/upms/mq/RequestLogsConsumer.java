@@ -8,18 +8,13 @@ import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IOPRecordService;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.DateUtils;
-import jdk.nashorn.internal.ir.annotations.Reference;
 import lombok.extern.log4j.Log4j2;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service

@@ -4,17 +4,15 @@ package com.ch.cloud.upms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.Constants;
 import com.ch.NumS;
 import com.ch.Status;
 import com.ch.cloud.upms.mapper.PermissionMapper;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.e.PubError;
-import com.ch.utils.BeanExtUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.ExceptionUtils;
 import com.ch.utils.StringExtUtils;
@@ -22,7 +20,6 @@ import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>

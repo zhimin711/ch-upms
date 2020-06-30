@@ -20,9 +20,8 @@ docker run --name ch-upms \
 
 docker run --name ch-upms \
 -p 7002:7002 \
--v /home/zhimin/share:/mnt/share  \
--v /home/zhimin/docker/hosts:/etc/hosts  \
--m 512M --memory-swap -1 \
+-v /home/zhimin/share:/mnt/share \
+-m 550M --memory-swap -1 \
 -d ch-upms:v1;
 ```
 ####  重启 停止 删除

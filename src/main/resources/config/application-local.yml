@@ -40,7 +40,7 @@ path:
 
 
 rocketmq:
-  name-server: 192.168.1.104:9876 # 自己的RocketMQ服务地址
+  name-server: 192.168.199.194:9876 # 自己的RocketMQ服务地址
   producer:
     send-message-timeout: 300000
     group: ch-upms
