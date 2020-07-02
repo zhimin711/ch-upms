@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  * @since 2020-03-25
  */
 @RestController
-@RequestMapping("op/record")
+@RequestMapping("/op/record")
 public class OPRecordController {
 
     @Resource

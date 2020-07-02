@@ -30,7 +30,7 @@ import java.util.List;
  * @since 2018/12/21 10:40 PM
  */
 @RestController
-@RequestMapping("permission")
+@RequestMapping("/permission")
 //@Slf4j
 @Api("系统权限管理")
 public class PermissionController {

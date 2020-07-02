@@ -30,7 +30,7 @@ import java.util.List;
  * @since 2018/12/22 22:35
  */
 @RestController
-@RequestMapping("role")
+@RequestMapping("/role")
 public class RoleController {
 
 

@@ -1,76 +1,60 @@
-/*
 package com.ch.cloud.upms.controller;
 
+
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
-import com.ch.cloud.upms.model.StMenu;
-import com.ch.cloud.upms.service.IMenuService;
-import com.ch.cloud.upms.service.IRoleService;
-import com.ch.cloud.upms.utils.VueRecordUtils;
-import com.ch.e.PubError;
-import com.ch.pojo.VueRecord;
+import com.ch.cloud.upms.service.IDepartmentService;
+import com.ch.cloud.upms.model.Department;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.github.pagehelper.PageInfo;
+import com.ch.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
-*/
 /**
- * desc:
+ * <p>
+ * 部门表 前端控制器
+ * </p>
  *
- * @author zhimin
- * @date 2018/12/21 10:40 PM
- *//*
-
+ * @author zhimin.ma
+ * @since 2020-07-02
+ */
 @RestController
-@RequestMapping("menu")
+@RequestMapping("/department")
 public class DepartmentController {
-
     @Autowired
-    IRoleService roleService;
-    @Autowired
-    IMenuService menuService;
+    private IDepartmentService departmentService;
 
-    @PostMapping(value = {"{num}/{size}"})
-    public PageResult<StMenu> page(@RequestBody StMenu record,
-                                   @PathVariable(value = "num") int pageNum,
-                                   @PathVariable(value = "size") int pageSize) {
-        PageInfo<StMenu> pageInfo = menuService.findTreePage(record, pageNum, pageSize);
-        return PageResult.success(pageInfo.getTotal(), pageInfo.getList());
+    @GetMapping(value = {"/{num:[0-9]+}/{size:[0-9]+}"})
+    public PageResult<Department> page(Department  record,
+                                            @PathVariable(value = "num") int pageNum,
+                                            @PathVariable(value = "size") int pageSize) {
+
+        Page<Department> page = departmentService.page(new Page<>(pageNum,pageSize), Wrappers.query(record));
+        return PageResult.success(page.getTotal(), page.getRecords());
     }
 
-    @PostMapping("save")
-    public Result<Integer> add(@RequestBody StMenu record,
-                               @RequestHeader(Constants.TOKEN_USER) String username) {
-        StMenu r = menuService.findByCode(record.getCode());
-        if (r != null) {
-            return Result.error(PubError.EXISTS);
-        }
-        return ResultUtils.wrapFail(() -> menuService.save(record));
-    }
-
-    @PostMapping({"save/{id}"})
-    public Result<Integer> edit(@PathVariable int id, @RequestBody StMenu record,
+    @PostMapping
+    public Result<Boolean> add(@RequestBody Department record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
-        return ResultUtils.wrapFail(() -> menuService.updateWithNull(record));
+        record.setCreateBy(username);
+        return ResultUtils.wrapFail(() -> departmentService.save(record));
     }
 
-    @PostMapping({"delete"})
-    public Result<Integer> delete(Long id) {
-        return ResultUtils.wrapFail(() -> menuService.delete(id));
+    @PutMapping({"/{id:[0-9]+}"})
+    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Department record,
+                                @RequestHeader(Constants.TOKEN_USER) String username) {
+        record.setUpdateBy(username);
+        return ResultUtils.wrapFail(() -> departmentService.updateById(record));
     }
 
-
-    @GetMapping({"tree/{type}"})
-    public Result<VueRecord> tree(@PathVariable String type) {
-        return ResultUtils.wrapList(() -> {
-            List<StMenu> records = menuService.findTreeByType(type);
-            return VueRecordUtils.convertMenusByType(records, type);
-        });
+    @DeleteMapping({"/delete"})
+    public Result<Boolean> delete(Long id) {
+        return ResultUtils.wrapFail(() -> departmentService.removeById(id));
     }
-
 }
-*/
+

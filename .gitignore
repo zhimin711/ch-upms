@@ -65,6 +65,7 @@ gradle-app.setting
 build/
 ##libs/
 logs/
+*.log
 
 ## OS Specific
 .DS_Store
