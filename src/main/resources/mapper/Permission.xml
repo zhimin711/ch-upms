@@ -12,12 +12,13 @@
         <result column="REDIRECT" property="redirect" />
         <result column="ICON" property="icon" />
         <result column="SORT" property="sort" />
-        <result column="IS_SHOW" property="isShow" />
-        <result column="IS_SYS" property="isSys" />
+        <result column="hidden" property="hidden" />
+        <result column="IS_SYS" property="sys" />
         <result column="PARENT_ID" property="parentId" />
         <result column="PARENT_NAME" property="parentName" />
         <result column="METHOD" property="method" />
         <result column="STATUS" property="status" />
+        <result column="deleted" property="deleted" />
         <result column="CREATE_BY" property="createBy" />
         <result column="CREATE_AT" property="createAt" />
         <result column="UPDATE_BY" property="updateBy" />
@@ -26,7 +27,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, TYPE, NAME, CODE, URL, REDIRECT, ICON, SORT, IS_SHOW, IS_SYS, PARENT_ID, PARENT_NAME, METHOD, STATUS, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
+        ID, TYPE, NAME, CODE, URL, REDIRECT, ICON, SORT, hidden, IS_SYS, PARENT_ID, PARENT_NAME, METHOD, STATUS, deleted, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
     </sql>
 
     <select id="findByTypeAndRoleId" resultMap="BaseResultMap">

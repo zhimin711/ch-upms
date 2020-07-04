@@ -90,10 +90,10 @@ public class RoleController {
         });
     }
 
-    @DeleteMapping("{id:[0-9]+}")
-    public Result<Integer> delete(@PathVariable Long id) {
-//        return ResultUtils.wrapFail(() -> roleService.delete(id));
-        return Result.error(PubError.NOT_ALLOWED);
+
+    @DeleteMapping({"/{id:[0-9]+}"})
+    public Result<Boolean> delete(@PathVariable Long id) {
+        return ResultUtils.wrapFail(() -> roleService.removeById(id));
     }
 
     @GetMapping({"{roleId}/menus"})

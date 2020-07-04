@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ch.cloud.upms.mapper.UserMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.ch.cloud.upms.model.User">
         <id column="ID" property="id" />
@@ -17,6 +16,7 @@
         <result column="EXPIRED" property="expired" />
         <result column="TYPE" property="type" />
         <result column="STATUS" property="status" />
+        <result column="deleted" property="deleted" />
         <result column="LAST_LOGIN_AT" property="lastLoginAt" />
         <result column="LAST_LOGIN_IP" property="lastLoginIp" />
         <result column="ERROR_COUNT" property="errorCount" />
@@ -29,7 +29,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, USER_ID, USERNAME, PASSWORD, REAL_NAME, BIRTH, SEX, EMAIL, MOBILE, LOCKED, EXPIRED, TYPE, STATUS, LAST_LOGIN_AT, LAST_LOGIN_IP, ERROR_COUNT, REMARK, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
+        ID, USER_ID, USERNAME, PASSWORD, REAL_NAME, BIRTH, SEX, EMAIL, MOBILE, LOCKED, EXPIRED, TYPE, STATUS, deleted, LAST_LOGIN_AT, LAST_LOGIN_IP, ERROR_COUNT, REMARK, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
     </sql>
 
     <insert id="insertAssignRole">

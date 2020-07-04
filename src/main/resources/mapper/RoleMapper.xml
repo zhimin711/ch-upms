@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ch.cloud.upms.mapper.RoleMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.ch.cloud.upms.model.Role">
         <id column="ID" property="id" />
@@ -10,6 +9,7 @@
         <result column="TYPE" property="type" />
         <result column="DESCRIPTION" property="description" />
         <result column="STATUS" property="status" />
+        <result column="deleted" property="deleted" />
         <result column="CREATE_BY" property="createBy" />
         <result column="CREATE_AT" property="createAt" />
         <result column="UPDATE_BY" property="updateBy" />
@@ -18,8 +18,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, NAME, CODE, TYPE, DESCRIPTION, STATUS, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
+        ID, NAME, CODE, TYPE, DESCRIPTION, STATUS, deleted, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
     </sql>
+
 
     <select id="getCurrent" resultMap="BaseResultMap">
     SELECT t.*,t1.status sort

@@ -1,19 +1,19 @@
 package com.ch.cloud.upms.controller;
 
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
-import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.model.Department;
+import com.ch.cloud.upms.service.IDepartmentService;
+import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.DateUtils;
+import com.ch.utils.VueRecordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 /**
  * <p>
@@ -30,17 +30,16 @@ public class DepartmentController {
     private IDepartmentService departmentService;
 
     @GetMapping(value = {"/{num:[0-9]+}/{size:[0-9]+}"})
-    public PageResult<Department> page(Department  record,
-                                            @PathVariable(value = "num") int pageNum,
-                                            @PathVariable(value = "size") int pageSize) {
-
-        Page<Department> page = departmentService.page(new Page<>(pageNum,pageSize), Wrappers.query(record));
-        return PageResult.success(page.getTotal(), page.getRecords());
+    public PageResult<Department> page(Department record,
+                                       @PathVariable(value = "num") int pageNum,
+                                       @PathVariable(value = "size") int pageSize) {
+        Page<Department> pageInfo = departmentService.findTreePage(record, pageNum, pageSize);
+        return PageResult.success(pageInfo.getTotal(), pageInfo.getRecords());
     }
 
     @PostMapping
     public Result<Boolean> add(@RequestBody Department record,
-                                @RequestHeader(Constants.TOKEN_USER) String username) {
+                               @RequestHeader(Constants.TOKEN_USER) String username) {
         record.setCreateBy(username);
         return ResultUtils.wrapFail(() -> departmentService.save(record));
     }
@@ -52,9 +51,17 @@ public class DepartmentController {
         return ResultUtils.wrapFail(() -> departmentService.updateById(record));
     }
 
-    @DeleteMapping({"/delete"})
-    public Result<Boolean> delete(Long id) {
+    @DeleteMapping("/{id:[0-9]+}")
+    public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> departmentService.removeById(id));
+    }
+
+    @GetMapping({"/tree/{pid:[0-9]+}"})
+    public Result<VueRecord> tree(@PathVariable String pid) {
+        return ResultUtils.wrapList(() -> {
+            List<Department> records = departmentService.findTreeByPid(pid, true);
+            return VueRecordUtils.covertIdTree(records);
+        });
     }
 }
 

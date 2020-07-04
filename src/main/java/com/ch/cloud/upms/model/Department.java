@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -22,7 +23,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("st_department")
-@ApiModel(value="Department对象", description="部门表")
+@ApiModel(value = "Department对象", description = "部门表")
 public class Department extends Model<Department> {
 
     private static final long serialVersionUID = 1L;
@@ -49,14 +50,14 @@ public class Department extends Model<Department> {
     @ApiModelProperty(value = "邮箱")
     private String email;
 
-    @ApiModelProperty(value = "部门状态（0正常 1停用）")
+    @ApiModelProperty(value = "部门状态（0停用 1正常）")
     private String status;
 
-    @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）")
-    @TableLogic  //逻辑删除注解
-    @JsonIgnore  //忽略
-    @TableField(fill = FieldFill.INSERT)  //新增的时候自动插入，MetaObjectHandlerConfig配置文件
-    private Boolean delFlag;
+    @JsonIgnore  //json忽略
+    @ApiModelProperty(value = "已删除（0否 1是）")
+    @TableLogic(value = "0", delval = "1")  //逻辑删除注解
+//    @TableField(fill = FieldFill.INSERT)  //新增的时候自动插入，MetaObjectHandlerConfig配置文件
+    private Boolean deleted;
 
     @ApiModelProperty(value = "创建者")
     private String createBy;
@@ -75,5 +76,8 @@ public class Department extends Model<Department> {
     protected Serializable pkVal() {
         return this.id;
     }
+
+    @TableField(exist = false)
+    List<Department> children;
 
 }

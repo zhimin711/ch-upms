@@ -1,12 +1,11 @@
 package com.ch.cloud.upms.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,118 +20,80 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @TableName("st_user")
+@ApiModel(value="User对象", description="后台用户表")
 public class User extends Model<User> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键ID
-     */
-      @TableId(value = "ID", type = IdType.AUTO)
+    @ApiModelProperty(value = "主键ID")
+    @TableId(value = "ID", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * 用户编号
-     */
+    @ApiModelProperty(value = "用户编号")
     private String userId;
 
-    /**
-     * 用户帐号
-     */
+    @ApiModelProperty(value = "用户帐号")
     private String username;
 
-    /**
-     * 密码
-     */
+    @ApiModelProperty(value = "密码")
     private String password;
 
-    /**
-     * 真实姓名
-     */
+    @ApiModelProperty(value = "真实姓名")
     private String realName;
 
-    /**
-     * 出生日期
-     */
+    @ApiModelProperty(value = "出生日期")
     private Date birth;
 
-    /**
-     * 性别: 0.女 1.男
-     */
+    @ApiModelProperty(value = "性别: 0.女 1.男")
     private Boolean sex;
 
-    /**
-     * 电子邮箱
-     */
+    @ApiModelProperty(value = "电子邮箱")
     private String email;
 
-    /**
-     * 手机号码
-     */
+    @ApiModelProperty(value = "手机号码")
     private String mobile;
 
-    /**
-     * 用户是否锁定: 0.否 1.是
-     */
+    @ApiModelProperty(value = "用户是否锁定: 0.否 1.是")
     private String locked;
 
-    /**
-     * 过期日期
-     */
+    @ApiModelProperty(value = "过期日期")
     private Date expired;
 
-    /**
-     * 类型: 0.系统 1.普通
-     */
+    @ApiModelProperty(value = "类型: 0.系统 1.普通")
     private String type;
 
-    /**
-     * 状态: 0.禁用 1.启动
-     */
+    @ApiModelProperty(value = "状态: 0.禁用 1.启动")
     private String status;
 
-    /**
-     * 登录时间
-     */
+    @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）")
+    @TableField(fill = FieldFill.INSERT)
+    @TableLogic
+    private Boolean deleted;
+
+    @ApiModelProperty(value = "登录时间")
     private Date lastLoginAt;
 
-    /**
-     * 用户登录IP地址
-     */
+    @ApiModelProperty(value = "用户登录IP地址")
     private String lastLoginIp;
 
-    /**
-     * 当天登录错误次数
-     */
+    @ApiModelProperty(value = "当天登录错误次数")
     private Integer errorCount;
 
-    /**
-     * 备注
-     */
+    @ApiModelProperty(value = "备注")
     private String remark;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "创建时间")
     private Date createAt;
 
-    /**
-     * 创建人
-     */
+    @ApiModelProperty(value = "创建人")
     private String createBy;
 
-    /**
-     * 更新时间
-     */
+    @ApiModelProperty(value = "更新时间")
     private Date updateAt;
 
-    /**
-     * 更新人
-     */
+    @ApiModelProperty(value = "更新人")
     private String updateBy;
-
 
     @Override
     protected Serializable pkVal() {

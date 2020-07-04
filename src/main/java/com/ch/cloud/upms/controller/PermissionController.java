@@ -65,12 +65,6 @@ public class PermissionController {
             } else {
                 record.setParentName(permissionService.findNameByParseLastId(record.getParentId()));
             }
-            if (CommonUtils.isEmpty(record.getIsShow())) {
-                record.setIsShow("1");
-            }
-            if (CommonUtils.isEmpty(record.getIsSys())) {
-                record.setIsSys("0");
-            }
             if (CommonUtils.isNotEmpty(record.getUrl())) {
                 record.setUrl(record.getUrl().trim());
             }
