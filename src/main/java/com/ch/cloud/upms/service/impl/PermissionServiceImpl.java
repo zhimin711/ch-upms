@@ -3,6 +3,7 @@ package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,13 +14,17 @@ import com.ch.cloud.upms.mapper.PermissionMapper;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.e.PubError;
+import com.ch.utils.BeanExtUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.ExceptionUtils;
 import com.ch.utils.StringExtUtils;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -49,6 +54,38 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         }
 
         return page;
+    }
+
+    @Override
+    public Page<Permission> findTreePage2(Permission record, int pageNum, int pageSize) {
+        if (CommonUtils.isEmpty(record.getParentId())) {
+            record.setParentId("0");
+        }
+        LambdaQueryChainWrapper<Permission> query = super.lambdaQuery()
+                .eq(CommonUtils.isNotEmpty(record.getStatus()), Permission::getStatus, record.getStatus())
+                .eq(CommonUtils.isNotEmpty(record.getParentId()), Permission::getParentId, record.getParentId())
+                .eq(CommonUtils.isNotEmpty(record.getType()), Permission::getType, record.getType())
+                .likeRight(CommonUtils.isNotEmpty(record.getUrl()), Permission::getUrl, record.getUrl())
+                .eq(CommonUtils.isNotEmpty(record.getCode()), Permission::getCode, record.getCode());
+//        Map<String, Object> params = BeanExtUtils.getDeclaredFieldValueMap(record);
+        Page<Permission> page = query.page(new Page<>(pageNum, pageSize));
+        if (page.getTotal() > 0) {
+            findChildren(page.getRecords());
+        }
+
+        return page;
+    }
+
+    private void findChildren(List<Permission> records) {
+        if (records == null || records.isEmpty()) return;
+        records.forEach(r -> {
+            String pid2 = StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString());
+            List<Permission> subList = super.query().likeRight("parent_id", pid2).list();
+            if (subList.isEmpty()) return;
+            Map<String, List<Permission>> subMap = assembleTree(subList);
+            r.setChildren(subMap.get(pid2));
+            if (r.getChildren() != null) r.getChildren().sort(Comparator.comparing(Permission::getSort));
+        });
     }
 
 
@@ -137,6 +174,27 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             }
         });
         return children;
+    }
+
+    public List<Permission> findTreeBy(Permission record) {
+        if (CommonUtils.isEmpty(record.getParentId())) {
+            record.setParentId("0");
+        }
+        Map<String, Object> params = BeanExtUtils.getDeclaredFieldValueMap(record);
+        List<Permission> list = super.query().allEq(params).list();
+        if (list.isEmpty()) return list;
+        findChildren(list);
+        list.sort(Comparator.comparing(Permission::getSort));
+        return list;
+    }
+
+    private Map<String, List<Permission>> assembleTree(List<Permission> subList) {
+        Map<String, List<Permission>> subMap = subList.stream().collect(Collectors.groupingBy(Permission::getParentId));
+        subMap.forEach((k, v) -> v.forEach(r -> {
+            r.setChildren(subMap.get(StringExtUtils.linkStr(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString())));
+            if (r.getChildren() != null) r.getChildren().sort(Comparator.comparing(Permission::getSort));
+        }));
+        return subMap;
     }
 
 

@@ -37,14 +37,14 @@ public class PermissionController {
 
     @Autowired
     IRoleService roleService;
-    @Autowired(required = false)
+    @Autowired
     IPermissionService permissionService;
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Permission> page(Permission record,
                                        @PathVariable(value = "num") int pageNum,
                                        @PathVariable(value = "size") int pageSize) {
-        Page<Permission> pageInfo = permissionService.findTreePage(record, pageNum, pageSize);
+        Page<Permission> pageInfo = permissionService.findTreePage2(record, pageNum, pageSize);
         return PageResult.success(pageInfo.getTotal(), pageInfo.getRecords());
     }
 

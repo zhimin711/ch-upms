@@ -24,3 +24,4 @@ create table st_department
 -- ----------------------------
 -- 初始化-部门表数据
 -- ----------------------------
+INSERT INTO `st_department`(`id`, `pid`, `name`, `sort`, `leader`, `phone`, `email`, `status`, `deleted`, `create_by`, `create_at`, `update_by`, `update_at`) VALUES (1, '0', '朝华科技', 1, '朝华', '17600807713', NULL, '0', 0, 'sys', '2020-07-03 14:24:05', 'admin', '2020-07-03 14:24:15');
