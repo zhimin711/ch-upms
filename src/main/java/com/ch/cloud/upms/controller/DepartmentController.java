@@ -4,7 +4,9 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
 import com.ch.cloud.upms.model.Department;
+import com.ch.cloud.upms.model.Position;
 import com.ch.cloud.upms.service.IDepartmentService;
+import com.ch.cloud.upms.service.IPositionService;
 import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
@@ -28,6 +30,8 @@ import java.util.List;
 public class DepartmentController {
     @Autowired
     private IDepartmentService departmentService;
+    @Autowired
+    private IPositionService positionService;
 
     @GetMapping(value = {"/{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Department> page(Department record,
@@ -62,6 +66,16 @@ public class DepartmentController {
             List<Department> records = departmentService.findTreeByPid(pid, true);
             return VueRecordUtils.covertIdTree(records);
         });
+    }
+
+    @GetMapping("/{id:[0-9]+}/positions")
+    public Result<Position> positions(@PathVariable Long id) {
+        return ResultUtils.wrapList(() -> positionService.findByDepartmentId(id));
+    }
+
+    @PostMapping("/{id:[0-9]+}/positions")
+    public Result<Integer> positions(@PathVariable Long id, @RequestBody List<Long> positionIds) {
+        return ResultUtils.wrapFail(() -> positionService.saveDepartmentPositions(id, positionIds));
     }
 }
 
