@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.service;
 
+import com.ch.Status;
 import com.ch.cloud.upms.model.Dict;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,5 +18,5 @@ public interface IDictService extends IService<Dict> {
 
     Dict findByCode(String code);
 
-    List<Dict> findByPid(Long pid);
+    List<Dict> findByPid(Long pid, Status status);
 }

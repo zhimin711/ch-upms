@@ -5,7 +5,7 @@ drop table if exists mt_dict;
 create table mt_dict
 (
     id        bigint(20) not null auto_increment comment '字典主键',
-    pid       varchar(50)         default '' comment '上级id',
+    pid       bigint(20)          default '0' comment '上级id',
     name      varchar(100)        default '' comment '字典名称',
     code      varchar(100)        default '' comment '字典类型',
     sort      int(4)              default 1 comment '显示顺序',
@@ -17,5 +17,5 @@ create table mt_dict
     update_by varchar(64)         default '' comment '更新者',
     update_at TIMESTAMP           DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NULL COMMENT '更新时间',
     primary key (id),
-    unique (code)
-)  comment = '数据字典表';
+    unique `uk_pid_code` (pid, code)
+) comment = '数据字典表';

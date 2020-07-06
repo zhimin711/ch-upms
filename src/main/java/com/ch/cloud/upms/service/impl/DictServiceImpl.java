@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ch.Status;
 import com.ch.cloud.upms.mapper.DictMapper;
 import com.ch.cloud.upms.model.Dict;
 import com.ch.cloud.upms.service.IDictService;
@@ -28,8 +29,8 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
     }
 
     @Override
-    public List<Dict> findByPid(Long pid) {
-        return super.lambdaQuery().eq(Dict::getPid, pid).orderByAsc(Dict::getSort).list();
+    public List<Dict> findByPid(Long pid, Status status) {
+        return super.lambdaQuery().eq(Dict::getPid, pid).eq(status != Status.UNKNOWN, Dict::getStatus, status.getCode()).orderByAsc(Dict::getSort).list();
     }
 
     @Override
@@ -49,7 +50,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
     public boolean updateById(Dict entity) {
         boolean flag = super.updateById(entity);
         if (flag && CommonUtils.isNotEmpty(entity.getChildren())) {
-            List<Dict> children = this.findByPid(entity.getId());
+            List<Dict> children = this.findByPid(entity.getId(), Status.UNKNOWN);
             List<Long> origIds = children.stream().map(Dict::getId).collect(Collectors.toList());
             List<Long> updateIds = Lists.newArrayList();
             List<Dict> updateChildren = Lists.newArrayList();
@@ -72,7 +73,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
                 super.saveBatch(addChildren);
             }
             if (CommonUtils.isNotEmpty(children)) {
-                List<Long> delIds = children.stream().filter(r -> updateIds.contains(r.getId())).map(Dict::getId).collect(Collectors.toList());
+                List<Long> delIds = children.stream().filter(r -> !updateIds.contains(r.getId())).map(Dict::getId).collect(Collectors.toList());
                 super.removeByIds(delIds);
             }
         } else {

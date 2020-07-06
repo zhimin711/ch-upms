@@ -4,16 +4,21 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
+import com.ch.Status;
 import com.ch.cloud.upms.model.Dict;
 import com.ch.cloud.upms.service.IDictService;
 import com.ch.e.PubError;
+import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.ExceptionUtils;
+import com.ch.utils.VueRecordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -55,7 +60,9 @@ public class DictController {
         record.setUpdateBy(username);
         return ResultUtils.wrapFail(() -> {
             Dict orig = dictService.findByCode(record.getCode());
-            if (orig != null && !CommonUtils.isEquals(id, orig.getId())) ExceptionUtils._throw(PubError.EXISTS, "代码已存在");
+            if (orig != null && !CommonUtils.isEquals(id, orig.getId())) {
+                ExceptionUtils._throw(PubError.EXISTS, "代码已存在");
+            }
             return dictService.updateById(record);
         });
     }
@@ -70,9 +77,20 @@ public class DictController {
         return ResultUtils.wrapFail(() -> {
             Dict record = dictService.getById(id);
             if (record != null) {
-                record.setChildren(dictService.findByPid(id));
+                record.setChildren(dictService.findByPid(id, Status.UNKNOWN));
             }
             return record;
+        });
+    }
+
+
+    @GetMapping({"/data/{code}"})
+    public Result<VueRecord> search(@PathVariable String code) {
+        return ResultUtils.wrapList(() -> {
+            Dict r = dictService.findByCode(code);
+            if (r == null) return null;
+            List<Dict> records = dictService.findByPid(r.getId(), Status.ENABLED);
+            return VueRecordUtils.covertCodeTree(records);
         });
     }
 }
