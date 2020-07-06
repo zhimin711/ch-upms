@@ -21,4 +21,6 @@ public interface PositionMapper extends BaseMapper<Position> {
     int deleteDepartmentPositions(Long departmentId);
 
     int insertDepartmentPositions(@Param("departmentId") Long departmentId, @Param("positionIds") List<Long> positionIds);
+
+    List<Position> findByDepartmentIdAndNameAndStatus(@Param("departmentId") Long departmentId, @Param("name") String name, @Param("status") String status);
 }

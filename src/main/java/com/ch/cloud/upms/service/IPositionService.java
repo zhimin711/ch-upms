@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.service;
 
+import com.ch.Status;
 import com.ch.cloud.upms.model.Position;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -18,4 +19,6 @@ public interface IPositionService extends IService<Position> {
     List<Position> findByDepartmentId(Long departmentId);
 
     int saveDepartmentPositions(Long departmentId, List<Long> positionIds);
+
+    List<Position> findByDepartmentIdAndNameAndStatus(Long departmentId, String name, Status status);
 }

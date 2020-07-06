@@ -55,7 +55,9 @@ public class PermissionController {
             if (CommonUtils.isEmpty(record.getCode()) || CommonUtils.isEmpty(record.getName())) {
                 ExceptionUtils._throw(PubError.NON_NULL, "权限代码或名称不能为空");
             }
-            record.setCode(record.getCode().toUpperCase());
+            if (!CommonUtils.isEquals("2", record.getType())) {
+                record.setCode(record.getCode().toUpperCase());
+            }
             Permission r = permissionService.findByCode(record.getCode());
             if (r != null) {
                 ExceptionUtils._throw(PubError.EXISTS, "权限代码已存在！");
@@ -89,11 +91,17 @@ public class PermissionController {
             }
             record.setUpdateBy(username);
             record.setUpdateAt(DateUtils.current());
+            Permission r = permissionService.findByCode(record.getCode());
             Permission orig = permissionService.getById(id);
             if (orig == null) {
                 throw ExceptionUtils.create(PubError.NOT_EXISTS, "权限不存在！");
             }
-            record.setCode(orig.getCode());//code 不允许修改,赋原值
+            if (r != null && !CommonUtils.isEquals(id, r.getId())) {
+                ExceptionUtils._throw(PubError.NOT_EXISTS, "权限代码已存在！");
+            }
+            if (!CommonUtils.isEquals("2", record.getType())) {
+                record.setCode(record.getCode().toUpperCase());
+            }
             record.setChildren(null);
             if (!CommonUtils.isEquals(record.getParentId(), orig.getParentId()) && Lists.newArrayList(NumS._1, NumS._2).contains(orig.getType())) {
                 String pid = id + "";

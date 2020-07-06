@@ -3,6 +3,7 @@ package com.ch.cloud.upms.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
+import com.ch.Status;
 import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Position;
 import com.ch.cloud.upms.service.IDepartmentService;
@@ -60,14 +61,6 @@ public class DepartmentController {
         return ResultUtils.wrapFail(() -> departmentService.removeById(id));
     }
 
-    @GetMapping({"/tree/{pid:[0-9]+}"})
-    public Result<VueRecord> tree(@PathVariable String pid) {
-        return ResultUtils.wrapList(() -> {
-            List<Department> records = departmentService.findTreeByPid(pid, true);
-            return VueRecordUtils.covertIdTree(records);
-        });
-    }
-
     @GetMapping("/{id:[0-9]+}/positions")
     public Result<Position> positions(@PathVariable Long id) {
         return ResultUtils.wrapList(() -> positionService.findByDepartmentId(id));
@@ -77,5 +70,19 @@ public class DepartmentController {
     public Result<Integer> positions(@PathVariable Long id, @RequestBody List<Long> positionIds) {
         return ResultUtils.wrapFail(() -> positionService.saveDepartmentPositions(id, positionIds));
     }
+
+    @GetMapping({"/tree/{pid:[0-9]+}"})
+    public Result<VueRecord> tree(@PathVariable String pid) {
+        return ResultUtils.wrapList(() -> {
+            List<Department> records = departmentService.findTreeByPid(pid, true);
+            return VueRecordUtils.covertIdTree(records);
+        });
+    }
+
+    @GetMapping("/{id:[0-9]+}/positions/{name}")
+    public Result<Position> findPositions(@PathVariable Long id, @PathVariable(required = false) String name) {
+        return ResultUtils.wrapList(() -> positionService.findByDepartmentIdAndNameAndStatus(id, name, Status.ENABLED));
+    }
+
 }
 

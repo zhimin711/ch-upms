@@ -1,9 +1,12 @@
 package com.ch.cloud.upms.service.impl;
 
+import com.ch.Status;
 import com.ch.cloud.upms.model.Position;
 import com.ch.cloud.upms.mapper.PositionMapper;
 import com.ch.cloud.upms.service.IPositionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ch.utils.CommonUtils;
+import com.ch.utils.SQLUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +24,7 @@ public class PositionServiceImpl extends ServiceImpl<PositionMapper, Position> i
 
     @Override
     public List<Position> findByDepartmentId(Long departmentId) {
-        List<Position> records = super.getBaseMapper().findByDepartmentId(departmentId);
-        return records;
+        return super.getBaseMapper().findByDepartmentId(departmentId);
     }
 
     @Override
@@ -32,5 +34,14 @@ public class PositionServiceImpl extends ServiceImpl<PositionMapper, Position> i
             c1 += getBaseMapper().insertDepartmentPositions(departmentId, positionIds);
         }
         return c1;
+    }
+
+    @Override
+    public List<Position> findByDepartmentIdAndNameAndStatus(Long departmentId, String name, Status status) {
+        String likeName = name;
+        if (CommonUtils.isNotEmpty(name)) {
+            likeName = SQLUtils.likeAny(name);
+        }
+        return getBaseMapper().findByDepartmentIdAndNameAndStatus(departmentId, likeName, status != Status.UNKNOWN ? status.getCode() : null);
     }
 }

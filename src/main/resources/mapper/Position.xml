@@ -27,6 +27,18 @@
         on t.id = t1.position_id
         where t1.department_id = #{departmentId}
     </select>
+    <select id="findByDepartmentIdAndNameAndStatus" resultMap="BaseResultMap">
+        select t.* from st_position t
+        inner join st_department_position t1
+        on t.id = t1.position_id
+        where t1.department_id = #{departmentId}
+        <if test="status != null">
+            and t.status = #{status,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null and name != ''">
+            and t.name like #{name,jdbcType=VARCHAR}
+        </if>
+    </select>
 
     <insert id="insertDepartmentPositions">
         insert into st_department_position(department_id, position_id) values
