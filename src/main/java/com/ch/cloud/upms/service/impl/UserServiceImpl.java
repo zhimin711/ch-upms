@@ -139,13 +139,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Page<User> page(User record, int pageNum, int pageSize) {
-        return super.query()
-                .like(CommonUtils.isNotEmpty(record.getUserId()), "user_id", record.getUserId())
-                .like(CommonUtils.isNotEmpty(record.getUsername()), "username", record.getUsername())
-                .like(CommonUtils.isNotEmpty(record.getRealName()), "real_name", record.getRealName())
-                .like(CommonUtils.isNotEmpty(record.getEmail()), "email", record.getEmail())
-                .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
-                .orderByAsc("user_id").page(new Page<>(pageNum, pageSize));
+
+        return getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
+//        return super.query()
+//                .like(CommonUtils.isNotEmpty(record.getUserId()), "user_id", record.getUserId())
+//                .like(CommonUtils.isNotEmpty(record.getUsername()), "username", record.getUsername())
+//                .like(CommonUtils.isNotEmpty(record.getRealName()), "real_name", record.getRealName())
+//                .like(CommonUtils.isNotEmpty(record.getEmail()), "email", record.getEmail())
+//                .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
+//                .orderByAsc("user_id").page(new Page<>(pageNum, pageSize));
     }
 
     @Override

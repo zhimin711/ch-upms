@@ -47,4 +47,28 @@
     <select id="findDepartmentPositionByUserId" resultType="com.ch.cloud.upms.pojo.DepartmentDuty">
     select user_id, department_id as department, position_id as duty FROM st_user_department_position WHERE user_id=#{userId}
   </select>
+
+    <select id="pageBy" parameterType="com.ch.cloud.upms.model.User" resultMap="BaseResultMap">
+    select t.* FROM st_user t left join  st_user_department_position t2 on t.id = t2.user_id
+    <where>
+        <if test="et.userId !=null and et.userId != ''">
+            and t.user_id like #{et.userId}
+        </if>
+        <if test="et.username !=null and et.username != ''">
+            and t.username like #{et.username}
+        </if>
+        <if test="et.realName !=null and et.realName != ''">
+            and t.real_name like #{et.realName}
+        </if>
+        <if test="et.status !=null and et.status != ''">
+            and t.status = #{et.status}
+        </if>
+        <if test="et.mobile !=null and et.mobile != ''">
+            and t.mobile = #{et.mobile}
+        </if>
+        <if test="et.departmentId !=null and et.departmentId != ''">
+            and t2.department_id like #{et.departmentId}
+        </if>
+    </where>
+  </select>
 </mapper>
