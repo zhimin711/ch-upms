@@ -3,6 +3,7 @@ package com.ch.cloud.upms.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ch.cloud.upms.pojo.DepartmentDuty;
 
 import java.util.List;
 
@@ -30,4 +31,6 @@ public interface IUserService extends IService<User> {
     List<User> findAllValid();
 
     Page<User> page(User record, int pageNum, int pageSize);
+
+    List<DepartmentDuty> findDepartmentDuty(Long id);
 }

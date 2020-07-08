@@ -7,14 +7,18 @@ import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.User;
+import com.ch.cloud.upms.pojo.DepartmentDuty;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.e.PubError;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.EncryptUtils;
+import com.ch.utils.ExceptionUtils;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -76,7 +80,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public List<User> findByLikeUserId(String userId) {
-        if(CommonUtils.isEmpty(userId)) return Lists.newArrayList();
+        if (CommonUtils.isEmpty(userId)) return Lists.newArrayList();
         return super.query().like("user_id", userId).eq("status", StatusS.ENABLED).list();
     }
 
@@ -103,17 +107,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
             record.setUserId(RandomStringUtils.randomNumeric(10));
         }
-        return super.save(record);
+        boolean c =  super.save(record);
+        saveDepartmentPosition(record);
+        return c;
     }
 
+    @Transactional
     @Override
     public boolean updateById(User record) {
         record.setUserId(null);
         record.setUsername(null);
         //不更新密码
         record.setPassword(null);
+        boolean c =  super.updateById(record);
+        saveDepartmentPosition(record);
+        return c;
+    }
 
-        return super.updateById(record);
+    private void saveDepartmentPosition(User record) {
+        if (CommonUtils.isEmpty(record.getDutyList())) {
+            ExceptionUtils._throw(PubError.NON_NULL, "组织职位不能为空！");
+        }
+        getBaseMapper().deleteDepartmentPositionByUserId(record.getId());
+        record.getDutyList().forEach(r -> {
+            if (CommonUtils.isEmpty(r.getDepartment()) || CommonUtils.isEmpty(r.getDuty())) {
+                ExceptionUtils._throw(PubError.NON_NULL, "组织或职位不能为空！");
+            }
+            getBaseMapper().insertDepartmentPosition(record.getId(), r.getDepartment(), Long.valueOf(r.getDuty()));
+        });
     }
 
     @Override
@@ -125,5 +146,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .like(CommonUtils.isNotEmpty(record.getEmail()), "email", record.getEmail())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
                 .orderByAsc("user_id").page(new Page<>(pageNum, pageSize));
+    }
+
+    @Override
+    public List<DepartmentDuty> findDepartmentDuty(Long id) {
+        return getBaseMapper().findDepartmentPositionByUserId(id);
     }
 }

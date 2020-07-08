@@ -66,6 +66,15 @@ public class UserController {
         return ResultUtils.wrapFail(() -> userService.save(record));
     }
 
+    @GetMapping({"{id:[0-9]+}"})
+    public Result<User> detail(@PathVariable Long id) {
+        return ResultUtils.wrapFail(() -> {
+            User record = userService.getById(id);
+            record.setDutyList(userService.findDepartmentDuty(id));
+            return record;
+        });
+    }
+
     @PutMapping({"{id:[0-9]+}"})
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody User record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {

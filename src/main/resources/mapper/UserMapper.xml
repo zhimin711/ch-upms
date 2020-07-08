@@ -38,4 +38,13 @@
     <delete id="deleteAssignRole">
     DELETE FROM st_user_role WHERE USER_ID=#{userId} AND ROLE_ID=#{roleId} and ROLE_ID != 1
   </delete>
+    <insert id="insertDepartmentPosition">
+    INSERT INTO st_user_department_position VALUES (#{userId},#{departmentId},#{positionId})
+  </insert>
+    <delete id="deleteDepartmentPositionByUserId">
+    DELETE FROM st_user_department_position WHERE user_id=#{userId}
+  </delete>
+    <select id="findDepartmentPositionByUserId" resultType="com.ch.cloud.upms.pojo.DepartmentDuty">
+    select user_id, department_id as department, position_id as duty FROM st_user_department_position WHERE user_id=#{userId}
+  </select>
 </mapper>

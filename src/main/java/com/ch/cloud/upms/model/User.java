@@ -2,6 +2,7 @@ package com.ch.cloud.upms.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.ch.cloud.upms.pojo.DepartmentDuty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -100,4 +102,6 @@ public class User extends Model<User> {
         return this.id;
     }
 
+    @TableField(exist = false)
+    private List<DepartmentDuty> dutyList;
 }
