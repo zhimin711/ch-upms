@@ -3,6 +3,7 @@ package com.ch.cloud.upms.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.Department;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ch.pojo.KeyValue;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface IDepartmentService extends IService<Department> {
     List<Department> findTreeByPid(String pid, boolean containsParent);
 
     Page<Department> findTreePage(Department record, int pageNum, int pageSize);
+
+    String findCascadeK(Long id);
 }

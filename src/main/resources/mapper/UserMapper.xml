@@ -66,8 +66,8 @@
         <if test="et.mobile !=null and et.mobile != ''">
             and t.mobile = #{et.mobile}
         </if>
-        <if test="et.departmentId !=null and et.departmentId != ''">
-            and t2.department_id like #{et.departmentId}
+        <if test="et.department !=null and et.department != ''">
+            and t2.department_id like #{et.department}
         </if>
     </where>
   </select>

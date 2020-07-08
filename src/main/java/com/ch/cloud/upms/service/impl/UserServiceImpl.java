@@ -8,13 +8,12 @@ import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
+import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.e.PubError;
-import com.ch.utils.CommonUtils;
-import com.ch.utils.DateUtils;
-import com.ch.utils.EncryptUtils;
-import com.ch.utils.ExceptionUtils;
+import com.ch.pojo.KeyValue;
+import com.ch.utils.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private IRoleService roleService;
+    @Resource
+    private IDepartmentService departmentService;
 
     @Override
     public User findByUsername(String username) {
@@ -107,7 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
             record.setUserId(RandomStringUtils.randomNumeric(10));
         }
-        boolean c =  super.save(record);
+        boolean c = super.save(record);
         saveDepartmentPosition(record);
         return c;
     }
@@ -119,7 +120,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         record.setUsername(null);
         //不更新密码
         record.setPassword(null);
-        boolean c =  super.updateById(record);
+        boolean c = super.updateById(record);
         saveDepartmentPosition(record);
         return c;
     }
@@ -139,7 +140,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Page<User> page(User record, int pageNum, int pageSize) {
-
+        if (CommonUtils.isNotEmpty(record.getDepartment())) {
+            if (CommonUtils.isNumeric(record.getDepartment())) {
+                String key = departmentService.findCascadeK(Long.valueOf(record.getDepartment()));
+                record.setDepartment(SQLUtils.likeSuffix(key));
+            }
+        }
         return getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
 //        return super.query()
 //                .like(CommonUtils.isNotEmpty(record.getUserId()), "user_id", record.getUserId())

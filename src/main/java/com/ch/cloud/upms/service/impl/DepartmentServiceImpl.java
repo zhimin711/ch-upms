@@ -8,6 +8,7 @@ import com.ch.Status;
 import com.ch.cloud.upms.mapper.DepartmentMapper;
 import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.service.IDepartmentService;
+import com.ch.pojo.KeyValue;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.StringExtUtils;
 import com.google.common.collect.Lists;
@@ -64,6 +65,13 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
             page.getRecords().forEach(r -> r.setChildren(findChildrenByPid(StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, r.getPid(), r.getId().toString()))));
         }
         return page;
+    }
+
+    @Override
+    public String findCascadeK(Long id) {
+        Department leaf = super.getById(id);
+        if (leaf == null) return null;
+        return StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, leaf.getPid(), leaf.getId().toString());
     }
 
     private List<Department> findChildrenByPid(String pid) {

@@ -103,7 +103,7 @@ public class User extends Model<User> {
     }
 
     @TableField(exist = false)
-    private String departmentId;
+    private String department;
     @TableField(exist = false)
     private List<DepartmentDuty> dutyList;
 }
