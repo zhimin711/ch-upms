@@ -68,6 +68,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 .likeRight(CommonUtils.isNotEmpty(record.getUrl()), Permission::getUrl, record.getUrl())
                 .eq(CommonUtils.isNotEmpty(record.getCode()), Permission::getCode, record.getCode());
 //        Map<String, Object> params = BeanExtUtils.getDeclaredFieldValueMap(record);
+        query.orderByAsc(Permission::getSort, Permission::getParentId, Permission::getId);
         Page<Permission> page = query.page(new Page<>(pageNum, pageSize));
         if (page.getTotal() > 0) {
             findChildren(page.getRecords());
