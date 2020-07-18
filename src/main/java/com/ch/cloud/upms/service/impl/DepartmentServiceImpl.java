@@ -74,6 +74,13 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         return StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, leaf.getPid(), leaf.getId().toString());
     }
 
+    @Override
+    public List<String> findNames(List<Long> ids) {
+        List<Department> list = super.query().select("name").in("id", ids).orderByAsc("pid").list();
+        if (CommonUtils.isEmpty(list)) return Lists.newArrayList();
+        return list.stream().map(Department::getName).collect(Collectors.toList());
+    }
+
     private List<Department> findChildrenByPid(String pid) {
         return findTreeByPid(pid, false);
     }

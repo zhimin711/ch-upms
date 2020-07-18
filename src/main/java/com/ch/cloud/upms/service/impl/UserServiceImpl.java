@@ -146,7 +146,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 record.setDepartment(SQLUtils.likeSuffix(key));
             }
         }
-        return getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
+        Page<User> pager = getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
 //        return super.query()
 //                .like(CommonUtils.isNotEmpty(record.getUserId()), "user_id", record.getUserId())
 //                .like(CommonUtils.isNotEmpty(record.getUsername()), "username", record.getUsername())
@@ -154,6 +154,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //                .like(CommonUtils.isNotEmpty(record.getEmail()), "email", record.getEmail())
 //                .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
 //                .orderByAsc("user_id").page(new Page<>(pageNum, pageSize));
+        if (pager.getTotal() > 0) {
+            pager.getRecords().forEach(r -> {
+                List<DepartmentDuty> ddList = getBaseMapper().findDepartmentPositionByUserId(r.getId());
+                if (ddList.isEmpty()) {
+                    return;
+                }
+                List<String> deptList = ddList.stream().map(e -> {
+                    List<String> names = departmentService.findNames(StringExtUtils.parseIds(e.getDepartment()));
+                    return String.join(".", names);
+                }).collect(Collectors.toList());
+                r.setDepartment(String.join(",", deptList));
+            });
+        }
+        return pager;
     }
 
     @Override
