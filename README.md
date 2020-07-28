@@ -189,7 +189,7 @@ gradle bootJar
         <td>新增组织</td>
     </tr>
     <tr>
-        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/department.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/dept.png"/></td>
         <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/department_add.png"/></td>
     </tr>
     <tr>
