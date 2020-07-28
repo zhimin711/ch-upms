@@ -56,6 +56,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         return page;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Page<Permission> findTreePage2(Permission record, int pageNum, int pageSize) {
         if (CommonUtils.isEmpty(record.getParentId())) {
@@ -67,7 +68,6 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 .eq(CommonUtils.isNotEmpty(record.getType()), Permission::getType, record.getType())
                 .likeRight(CommonUtils.isNotEmpty(record.getUrl()), Permission::getUrl, record.getUrl())
                 .eq(CommonUtils.isNotEmpty(record.getCode()), Permission::getCode, record.getCode());
-//        Map<String, Object> params = BeanExtUtils.getDeclaredFieldValueMap(record);
         query.orderByAsc(Permission::getSort, Permission::getParentId, Permission::getId);
         Page<Permission> page = query.page(new Page<>(pageNum, pageSize));
         if (page.getTotal() > 0) {
