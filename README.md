@@ -108,7 +108,7 @@ gradle bootJar
 ~~~
 
 #### 使用说明
-基于[ch-admin3](https://gitee.com/ch-cloud/ch-admin3)实现系统管理与日志管理
+基于前端[ch-admin3](https://gitee.com/ch-cloud/ch-admin3)实现系统管理与日志管理
 1. 用户管理
 <table>
     <tr>
@@ -139,216 +139,112 @@ gradle bootJar
 2. 权限管理
 <table>
     <tr>
-        <td>登录</td>
-        <td>首页</td>
-    </tr>
-    <tr>
-        <td><img src="./images/login.png"/></td>
-        <td><img src="./images/home.png"/></td>
-    </tr>
-    <tr>
-        <td>用户管理</td>
-        <td>角色管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/user.png"/></td>
-        <td><img src="./images/role.png"/></td>
-    </tr>
-    <tr>
         <td>权限管理</td>
-        <td>组织管理</td>
+        <td>新增权限</td>
     </tr>
     <tr>
-        <td><img src="./images/permission.png"/></td>
-        <td><img src="./images/dept.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/permission.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/permission_add.png"/></td>
     </tr>
     <tr>
-        <td>职位管理</td>
-        <td>数据字典</td>
+        <td>修改或复制权限</td>
+        <td>删除权限</td>
     </tr>
-	<tr>
-        <td><img src="./images/post.png"/></td>
-        <td><img src="./images/dict.png"/></td>
-    </tr>	
     <tr>
-        <td>登录日志</td>
-        <td>操作日志</td>
-    </tr> 
-    <tr>
-        <td><img src="./images/login_logs.png"/></td>
-        <td><img src="./images/operate_logs.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/permission_edit.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/permission_del.png"/></td>
     </tr>
 </table>
 3. 角色管理
 <table>
     <tr>
-        <td>登录</td>
-        <td>首页</td>
-    </tr>
-    <tr>
-        <td><img src="./images/login.png"/></td>
-        <td><img src="./images/home.png"/></td>
-    </tr>
-    <tr>
-        <td>用户管理</td>
         <td>角色管理</td>
+        <td>新增角色</td>
     </tr>
     <tr>
-        <td><img src="./images/user.png"/></td>
-        <td><img src="./images/role.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/role.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/role_add.png"/></td>
     </tr>
     <tr>
-        <td>权限管理</td>
-        <td>组织管理</td>
+        <td>修改角色</td>
+        <td>删除角色</td>
     </tr>
     <tr>
-        <td><img src="./images/permission.png"/></td>
-        <td><img src="./images/dept.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/role_edit.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/role_del.png"/></td>
     </tr>
     <tr>
-        <td>职位管理</td>
-        <td>数据字典</td>
+        <td>分配权限</td>
+        <td></td>
     </tr>
 	<tr>
-        <td><img src="./images/post.png"/></td>
-        <td><img src="./images/dict.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/role_permission.png"/></td>
+        <td></td>
     </tr>	
-    <tr>
-        <td>登录日志</td>
-        <td>操作日志</td>
-    </tr> 
-    <tr>
-        <td><img src="./images/login_logs.png"/></td>
-        <td><img src="./images/operate_logs.png"/></td>
-    </tr>
 </table>
 4. 组织管理
 <table>
     <tr>
-        <td>登录</td>
-        <td>首页</td>
-    </tr>
-    <tr>
-        <td><img src="./images/login.png"/></td>
-        <td><img src="./images/home.png"/></td>
-    </tr>
-    <tr>
-        <td>用户管理</td>
-        <td>角色管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/user.png"/></td>
-        <td><img src="./images/role.png"/></td>
-    </tr>
-    <tr>
-        <td>权限管理</td>
         <td>组织管理</td>
+        <td>新增组织</td>
     </tr>
     <tr>
-        <td><img src="./images/permission.png"/></td>
-        <td><img src="./images/dept.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/department.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/department_add.png"/></td>
     </tr>
     <tr>
-        <td>职位管理</td>
-        <td>数据字典</td>
+        <td>修改组织</td>
+        <td>删除组织</td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/department_edit.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/department_del.png"/></td>
+    </tr>
+    <tr>
+        <td>分配职位</td>
+        <td></td>
     </tr>
 	<tr>
-        <td><img src="./images/post.png"/></td>
-        <td><img src="./images/dict.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/department_post.png"/></td>
+        <td></td>
     </tr>	
-    <tr>
-        <td>登录日志</td>
-        <td>操作日志</td>
-    </tr> 
-    <tr>
-        <td><img src="./images/login_logs.png"/></td>
-        <td><img src="./images/operate_logs.png"/></td>
-    </tr>
 </table>
 5. 职位管理
 <table>
     <tr>
-        <td>登录</td>
-        <td>首页</td>
-    </tr>
-    <tr>
-        <td><img src="./images/login.png"/></td>
-        <td><img src="./images/home.png"/></td>
-    </tr>
-    <tr>
-        <td>用户管理</td>
-        <td>角色管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/user.png"/></td>
-        <td><img src="./images/role.png"/></td>
-    </tr>
-    <tr>
-        <td>权限管理</td>
-        <td>组织管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/permission.png"/></td>
-        <td><img src="./images/dept.png"/></td>
-    </tr>
-    <tr>
         <td>职位管理</td>
-        <td>数据字典</td>
+        <td>新增职位</td>
     </tr>
-	<tr>
-        <td><img src="./images/post.png"/></td>
-        <td><img src="./images/dict.png"/></td>
-    </tr>	
     <tr>
-        <td>登录日志</td>
-        <td>操作日志</td>
-    </tr> 
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/post.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/post_add.png"/></td>
+    </tr>
     <tr>
-        <td><img src="./images/login_logs.png"/></td>
-        <td><img src="./images/operate_logs.png"/></td>
+        <td>修改职位</td>
+        <td>删除职位</td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/post_edit.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/post_del.png"/></td>
     </tr>
 </table>
 6. 数据字典管理
 <table>
     <tr>
-        <td>登录</td>
-        <td>首页</td>
-    </tr>
-    <tr>
-        <td><img src="./images/login.png"/></td>
-        <td><img src="./images/home.png"/></td>
-    </tr>
-    <tr>
-        <td>用户管理</td>
-        <td>角色管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/user.png"/></td>
-        <td><img src="./images/role.png"/></td>
-    </tr>
-    <tr>
-        <td>权限管理</td>
-        <td>组织管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/permission.png"/></td>
-        <td><img src="./images/dept.png"/></td>
-    </tr>
-    <tr>
-        <td>职位管理</td>
         <td>数据字典</td>
+        <td>新增字典</td>
     </tr>
-	<tr>
-        <td><img src="./images/post.png"/></td>
-        <td><img src="./images/dict.png"/></td>
-    </tr>	
     <tr>
-        <td>登录日志</td>
-        <td>操作日志</td>
-    </tr> 
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/dict.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/dict_add.png"/></td>
+    </tr>
     <tr>
-        <td><img src="./images/login_logs.png"/></td>
-        <td><img src="./images/operate_logs.png"/></td>
+        <td>修改字典</td>
+        <td>删除字典</td>
+    </tr>
+    <tr>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/dict_edit.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/dict_del.png"/></td>
     </tr>
 </table>
 7. 登录日志
