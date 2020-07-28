@@ -117,23 +117,23 @@ gradle bootJar
     </tr>
     <tr>
         <td><img src="/ch-cloud/wiki/raw/master/images/user.png"/></td>
-        <td><img src="/ch-cloud/wiki/raw/master/images//user_add.png"/></td>
+        <td><img src="/ch-cloud/wiki/raw/master/images/upms/user_add.png"/></td>
     </tr>
     <tr>
         <td>修改用户</td>
         <td>删除用户</td>
     </tr>
     <tr>
-        <td><img src="/ch-cloud/wiki/raw/master/images//user_edit.png"/></td>
-        <td><img src="/ch-cloud/wiki/raw/master/images//user_del.png"/></td>
+        <td><img src="/ch-cloud/wiki/raw/master/images/upms/user_edit.png"/></td>
+        <td><img src="/ch-cloud/wiki/raw/master/images/upms/user_del.png"/></td>
     </tr>
     <tr>
         <td>分配角色</td>
         <td>初始化用户密码</td>
     </tr>
 	<tr>
-        <td><img src="/ch-cloud/wiki/raw/master/images//user_role.png"/></td>
-        <td><img src="/ch-cloud/wiki/raw/master/images//user_init_pwd.png"/></td>
+        <td><img src="/ch-cloud/wiki/raw/master/images/upms/user_role.png"/></td>
+        <td><img src="/ch-cloud/wiki/raw/master/images/upms/user_init_pwd.png"/></td>
     </tr>	
 </table>
 2. 权限管理
