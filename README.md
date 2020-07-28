@@ -247,26 +247,15 @@ gradle bootJar
         <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/upms/dict_del.png"/></td>
     </tr>
 </table>
-7. 登录日志
+7. 登录日志 & 操作日志
 <table>
     <tr>
         <td>登录日志</td>
-        <td></td>
+        <td>操作日志</td>
     </tr>
     <tr>
         <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/login_logs.png"/></td>
-        <td></td>
-    </tr>
-</table>
-8. 操作日志
-<table>
-    <tr>
-        <td>操作日志</td>
-        <td></td>
-    </tr>
-    <tr>
         <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/operate_logs.png"/></td>
-        <td></td>
     </tr>
 </table>
 
