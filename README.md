@@ -250,87 +250,23 @@ gradle bootJar
 7. 登录日志
 <table>
     <tr>
-        <td>登录</td>
-        <td>首页</td>
-    </tr>
-    <tr>
-        <td><img src="./images/login.png"/></td>
-        <td><img src="./images/home.png"/></td>
-    </tr>
-    <tr>
-        <td>用户管理</td>
-        <td>角色管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/user.png"/></td>
-        <td><img src="./images/role.png"/></td>
-    </tr>
-    <tr>
-        <td>权限管理</td>
-        <td>组织管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/permission.png"/></td>
-        <td><img src="./images/dept.png"/></td>
-    </tr>
-    <tr>
-        <td>职位管理</td>
-        <td>数据字典</td>
-    </tr>
-	<tr>
-        <td><img src="./images/post.png"/></td>
-        <td><img src="./images/dict.png"/></td>
-    </tr>	
-    <tr>
         <td>登录日志</td>
-        <td>操作日志</td>
-    </tr> 
+        <td></td>
+    </tr>
     <tr>
-        <td><img src="./images/login_logs.png"/></td>
-        <td><img src="./images/operate_logs.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/login_logs.png"/></td>
+        <td></td>
     </tr>
 </table>
 8. 操作日志
 <table>
     <tr>
-        <td>登录</td>
-        <td>首页</td>
-    </tr>
-    <tr>
-        <td><img src="./images/login.png"/></td>
-        <td><img src="./images/home.png"/></td>
-    </tr>
-    <tr>
-        <td>用户管理</td>
-        <td>角色管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/user.png"/></td>
-        <td><img src="./images/role.png"/></td>
-    </tr>
-    <tr>
-        <td>权限管理</td>
-        <td>组织管理</td>
-    </tr>
-    <tr>
-        <td><img src="./images/permission.png"/></td>
-        <td><img src="./images/dept.png"/></td>
-    </tr>
-    <tr>
-        <td>职位管理</td>
-        <td>数据字典</td>
-    </tr>
-	<tr>
-        <td><img src="./images/post.png"/></td>
-        <td><img src="./images/dict.png"/></td>
-    </tr>	
-    <tr>
-        <td>登录日志</td>
         <td>操作日志</td>
-    </tr> 
+        <td></td>
+    </tr>
     <tr>
-        <td><img src="./images/login_logs.png"/></td>
-        <td><img src="./images/operate_logs.png"/></td>
+        <td><img src="https://gitee.com/ch-cloud/wiki/raw/master/images/operate_logs.png"/></td>
+        <td></td>
     </tr>
 </table>
 
