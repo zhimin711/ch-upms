@@ -33,9 +33,11 @@ ext {
 }
 
 dependencies {
-    implementation(fileTree("${rootDir}/libs"))
-    implementation("com.ch:ch-core:${chVersion}")
+//    implementation("com.ch:ch-core:${chVersion}")
 //    implementation("com.ch:ch-mybatis:${chVersion}")
+    implementation(fileTree("${rootDir}/libs/zhaohua"))
+
+    implementation(fileTree("${rootDir}/libs/third"))
 
     implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-web') {
