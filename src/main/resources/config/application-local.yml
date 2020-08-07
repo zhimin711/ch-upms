@@ -1,0 +1,56 @@
+jasypt:
+  encryptor:
+    password: abc123
+    algorithm: PBEWithMD5AndDES
+spring:
+  application:
+    name: ch-upms
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://106.12.140.185:3306/dev_ch_upms
+    username: admin
+    password: ENC(hfO3JFDCY2HB6x+j1obZOg==)
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  thymeleaf:
+    mode: HTML
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: 100MB
+logging:
+  config: classpath:config/logback.xml
+  path: logs/${spring.application.name}
+  level:
+    com.ch: debug
+    com.alibaba.nacos.client: warn
+
+path:
+  temp: share/tmp
+  root: D:\\git\\ch-cloud-new\\ch-admin2
+  upload: ${path.root}\\upload
+  download: share/download
+
+
+rocketmq:
+  name-server: 192.168.199.194:9876 # 自己的RocketMQ服务地址
+  producer:
+    send-message-timeout: 300000
+    group: ch-upms
+#====================================mybatis-plus config===============================================
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  typeAliasesPackage: com.ch.cloud.upms.model
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      id-type: auto

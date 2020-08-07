@@ -1,0 +1,95 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+}
+apply from: 'buildApi.gradle'
+
+group = 'com.ch'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+ext {
+    set('springCloudVersion', "Hoxton.SR1")
+    set('seataVersion', "2.2.2.RELEASE")
+    set('springOauth2', "2.3.4.RELEASE")
+    set('alicloudVersion', "0.9.0.RELEASE")//0.2.1.RELEASE
+    set('chVersion', "1.0.3-SNAPSHOT")
+    set('swagger2Version', "2.9.2")
+
+}
+
+dependencies {
+//    implementation("com.ch:ch-core:${chVersion}")
+//    implementation("com.ch:ch-mybatis:${chVersion}")
+    implementation(fileTree("${rootDir}/libs/zhaohua"))
+
+    implementation(fileTree("${rootDir}/libs/third"))
+
+    implementation('org.springframework.boot:spring-boot-starter-aop')
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    implementation('org.springframework.boot:spring-boot-starter-jetty')
+
+//            <!--seata-->
+//    implementation "org.springframework.boot:spring-boot-starter-seata:${seataVersion}"
+//    implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-seata"
+
+//    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-config:${alicloudVersion}"
+//    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-discovery:${alicloudVersion}"
+    // https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-nacos-discovery
+    implementation group: 'com.alibaba.cloud', name: 'spring-cloud-starter-alibaba-nacos-discovery', version: '2.2.0.RELEASE'
+    implementation group: 'com.alibaba.cloud', name: 'spring-cloud-starter-alibaba-nacos-config', version: '2.2.0.RELEASE'
+
+
+    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-sentinel:${alicloudVersion}"
+    
+//    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-sentinel:${alicloudVersion}"
+//    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+//    implementation('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2')
+    implementation 'com.baomidou:mybatis-plus:3.3.1'
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.3.1'
+    implementation 'org.mybatis:mybatis-typehandlers-jsr310:1.0.1'
+
+//    https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-spring-boot-starter
+    implementation 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.1.0'
+
+    implementation "io.springfox:springfox-swagger2:${swagger2Version}"
+
+    implementation 'com.alibaba:druid:1.0.18'
+    implementation "mysql:mysql-connector-java:5.1.30"
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.1'
+    
+
+//    implementation "io.jsonwebtoken:jjwt:+"
+
+//    runtimeOnly('org.springframework.boot:spring-boot-devtools')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    // https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-generator
+    testImplementation group: 'com.baomidou', name: 'mybatis-plus-generator', version: '3.3.1'
+// <!-- mybatisplus逆向工程需要模板引擎，用freemaker也行 -->
+    testImplementation 'org.apache.velocity:velocity-engine-core:2.0'
+    annotationProcessor 'org.projectlombok:lombok'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}

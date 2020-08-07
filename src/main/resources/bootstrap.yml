@@ -1,0 +1,16 @@
+nacos:
+  config:
+    namespace: local
+    server-addr: 192.168.199.194:8848
+spring:
+  application:
+    name: ch-upms
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${nacos.config.server-addr}
+        namespace: ${nacos.config.namespace:}
+      config:
+        server-addr: ${nacos.config.server-addr}
+        namespace: ${nacos.config.namespace:}
+        file-extension: yml
