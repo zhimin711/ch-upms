@@ -79,6 +79,7 @@ mybatis-plus:
 
 ```
 （2） resources/bootstrap.yml  
+修改namespace与server-addr
 ```yaml
 nacos:
   config:
