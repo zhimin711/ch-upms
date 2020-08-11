@@ -17,8 +17,10 @@ configurations {
 
 repositories {
     mavenLocal()
+    maven {
+        url 'https://maven.aliyun.com/repository/public/'
+    }
     mavenCentral()
-    jcenter()
     maven { url "https://repo.spring.io/milestone" }
 }
 
@@ -34,10 +36,9 @@ ext {
 
 dependencies {
 //    implementation("com.ch:ch-core:${chVersion}")
-//    implementation("com.ch:ch-mybatis:${chVersion}")
-    implementation(fileTree("${rootDir}/libs/zhaohua"))
+    implementation(fileTree("${rootDir}/other/libs/zhaohua"))
 
-    implementation(fileTree("${rootDir}/libs/third"))
+    implementation(fileTree("${rootDir}/other/libs/third"))
 
     implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-web') {
