@@ -3,6 +3,7 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
 import com.ch.NumS;
+import com.ch.StatusS;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
@@ -56,7 +57,7 @@ public class PermissionController {
                 ExceptionUtils._throw(PubError.NON_NULL, "权限代码或名称不能为空");
             }
             if (!CommonUtils.isEquals("2", record.getType())) {
-                record.setCode(record.getCode().toUpperCase());
+//                record.setCode(record.getCode().toUpperCase());
             }
             Permission r = permissionService.findByCode(record.getCode());
             if (r != null) {
@@ -100,7 +101,7 @@ public class PermissionController {
                 ExceptionUtils._throw(PubError.NOT_EXISTS, "权限代码已存在！");
             }
             if (!CommonUtils.isEquals("2", record.getType())) {
-                record.setCode(record.getCode().toUpperCase());
+//                record.setCode(record.getCode().toUpperCase());
             }
             record.setChildren(null);
             if (!CommonUtils.isEquals(record.getParentId(), orig.getParentId()) && Lists.newArrayList(NumS._1, NumS._2).contains(orig.getType())) {
@@ -135,6 +136,23 @@ public class PermissionController {
 
     @GetMapping({"hidden"})
     public Result<Permission> hidden() {
-        return ResultUtils.wrapList(() -> permissionService.findByTypeAndRoleId(Lists.newArrayList(NumS._5), null));
+        return ResultUtils.wrapList(() -> {
+            Permission record = new Permission();
+            record.setType(NumS._5);
+            record.setHidden(true);
+            record.setStatus(StatusS.ENABLED);
+            return permissionService.find(record);
+        });
+    }
+
+    @GetMapping({"whitelist"})
+    public Result<Permission> whitelist() {
+        return ResultUtils.wrapList(() -> {
+            Permission record = new Permission();
+            record.setType(NumS._5);
+            record.setHidden(false);
+            record.setStatus(StatusS.ENABLED);
+            return permissionService.find(record);
+        });
     }
 }

@@ -117,6 +117,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
+    public List<Permission> find(Permission record) {
+        return getBaseMapper().selectList(Wrappers.query(record));
+    }
+
+    @Override
     public int updateRolePermissions(Long roleId, List<Long> permissionIds) {
         int c1 = getBaseMapper().deleteRolePermissions(roleId);
         if (!permissionIds.isEmpty()) {

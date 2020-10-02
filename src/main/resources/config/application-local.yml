@@ -6,7 +6,7 @@ spring:
   application:
     name: ch-upms
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://106.12.140.185:3306/dev_ch_upms
     username: admin
     password: ENC(hfO3JFDCY2HB6x+j1obZOg==)

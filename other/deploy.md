@@ -16,7 +16,6 @@ docker build -t ch-upms:v1 /home/zhimin/docker/ch-upms
 docker run --name ch-upms \
 -p 7002:7002 \
 -v /home/zhimin/share:/mnt/share \
--m 550M --memory-swap -1 \
 -d ch-upms:v1;
 #无网络
 docker run --name ch-upms \

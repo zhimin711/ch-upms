@@ -2,7 +2,7 @@ package com.ch.cloud.upms.ueditor;
 
 import com.baidu.ueditor.define.State;
 import com.baidu.ueditor.upload.Base64Uploader;
-import com.ch.utils.UUIDGenerator;
+import com.ch.toolkit.UUIDGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;

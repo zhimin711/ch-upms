@@ -22,7 +22,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("st_permission")
-@ApiModel(value="Permission对象", description="后台权限表")
+@ApiModel(value="权限对象", description="权限表")
 public class Permission extends Model<Permission> {
 
     private static final long serialVersionUID = 1L;
