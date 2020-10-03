@@ -37,11 +37,11 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
             parent = super.getById(pid);
             if (parent == null) return Lists.newArrayList();
         }
-        List<Department> list = super.query().eq("pid", pid).list();
+        List<Department> list = super.query().eq("parent_id", pid).list();
         if (list.isEmpty()) return list;
         list.forEach(r -> {
             String pid2 = StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, r.getPid(), r.getId().toString());
-            List<Department> subList = super.query().likeRight("pid", pid2).list();
+            List<Department> subList = super.query().likeRight("parent_id", pid2).list();
             if (subList.isEmpty()) return;
             Map<String, List<Department>> subMap = assembleTree(subList);
             r.setChildren(subMap.get(pid2));
@@ -60,7 +60,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         Status status = Status.forEnabled(record.getStatus());
         Page<Department> page = super.query().eq("pid", NumS._0)
                 .eq(status == Status.ENABLED, "status", status.getCode())
-                .orderByAsc("sort", "pid", "id").page(new Page<>(pageNum, pageSize));
+                .orderByAsc("sort", "parent_id", "id").page(new Page<>(pageNum, pageSize));
         if (page.getTotal() > 0) {
             page.getRecords().forEach(r -> r.setChildren(findChildrenByPid(StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, r.getPid(), r.getId().toString()))));
         }
@@ -71,12 +71,12 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
     public String findCascadeK(Long id) {
         Department leaf = super.getById(id);
         if (leaf == null) return null;
-        return StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, leaf.getPid(), leaf.getId().toString());
+        return StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, leaf.getParentId(), leaf.getId().toString());
     }
 
     @Override
     public List<String> findNames(List<Long> ids) {
-        List<Department> list = super.query().select("name").in("id", ids).orderByAsc("pid").list();
+        List<Department> list = super.query().select("name").in("id", ids).orderByAsc("parent_id").list();
         if (CommonUtils.isEmpty(list)) return Lists.newArrayList();
         return list.stream().map(Department::getName).collect(Collectors.toList());
     }
@@ -86,9 +86,9 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
     }
 
     private Map<String, List<Department>> assembleTree(List<Department> subList) {
-        Map<String, List<Department>> subMap = subList.stream().collect(Collectors.groupingBy(Department::getPid));
+        Map<String, List<Department>> subMap = subList.stream().collect(Collectors.groupingBy(Department::getParentId));
         subMap.forEach((k, v) -> v.forEach(r -> {
-            r.setChildren(subMap.get(StringExtUtils.linkStr(Constants.SEPARATOR_2, r.getPid(), r.getId().toString())));
+            r.setChildren(subMap.get(StringExtUtils.linkStr(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString())));
             if (r.getChildren() != null) r.getChildren().sort(Comparator.comparing(Department::getSort));
         }));
         return subMap;

@@ -35,6 +35,12 @@ public class Department extends Model<Department> {
     @ApiModelProperty(value = "上级部门id")
     private String pid;
 
+    @ApiModelProperty(value = "上级部门ID")
+    private String parentId;
+
+    @ApiModelProperty(value = "上级部门名称")
+    private String parentName;
+
     @ApiModelProperty(value = "部门名称")
     private String name;
 
