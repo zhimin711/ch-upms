@@ -29,7 +29,7 @@ ext {
     set('seataVersion', "2.2.2.RELEASE")
     set('springOauth2', "2.3.4.RELEASE")
     set('alicloudVersion', "0.9.0.RELEASE")//0.2.1.RELEASE
-    set('chVersion', "1.0.3-SNAPSHOT")
+    set('chVersion', "1.0.4-SNAPSHOT")
     set('swagger2Version', "2.9.2")
 
 }
@@ -72,6 +72,7 @@ dependencies {
     implementation 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.1.0'
 
     implementation "io.springfox:springfox-swagger2:${swagger2Version}"
+    compile group: 'io.swagger', name: 'swagger-models', version: '1.6.2'
 
 //    implementation 'com.alibaba:druid:1.0.18'
     implementation "mysql:mysql-connector-java:8.0.21"

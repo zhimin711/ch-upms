@@ -102,12 +102,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public boolean save(User record) {
-        if (record != null) {
-            if (CommonUtils.isEmpty(record.getPassword())) {
-                record.setPassword(EncryptUtils.generate());
-            }
-            record.setUserId(RandomStringUtils.randomNumeric(10));
+        if (CommonUtils.isEmpty(record.getPassword())) {
+            record.setPassword(EncryptUtils.generate());
         }
+        record.setUserId(RandomStringUtils.randomNumeric(10));
         boolean c = super.save(record);
         saveDepartmentPosition(record);
         return c;

@@ -8,7 +8,7 @@ import com.baidu.ueditor.define.State;
 import com.baidu.ueditor.upload.StorageManager;
 import com.ch.e.PubError;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.ExceptionUtils;
+import com.ch.e.ExceptionUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;

@@ -18,5 +18,5 @@ public interface IDictService extends IService<Dict> {
 
     Dict findByCode(String code);
 
-    List<Dict> findByPid(Long pid, Status status);
+    List<Dict> findByPidAndName(Long id, String name, Status status);
 }

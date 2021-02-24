@@ -15,7 +15,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.utils.ExceptionUtils;
+import com.ch.e.ExceptionUtils;
 import com.ch.utils.StringExtUtils;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;

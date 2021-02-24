@@ -15,7 +15,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.utils.ExceptionUtils;
+import com.ch.e.ExceptionUtils;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,8 +56,8 @@ public class PermissionController {
             if (CommonUtils.isEmpty(record.getCode()) || CommonUtils.isEmpty(record.getName())) {
                 ExceptionUtils._throw(PubError.NON_NULL, "权限代码或名称不能为空");
             }
-            if (!CommonUtils.isEquals("2", record.getType())) {
-//                record.setCode(record.getCode().toUpperCase());
+            if (CommonUtils.isEquals("3", record.getType()) || CommonUtils.isEquals("5", record.getType())) {
+                record.setCode(record.getCode().toUpperCase());
             }
             Permission r = permissionService.findByCode(record.getCode());
             if (r != null) {
@@ -86,6 +86,9 @@ public class PermissionController {
                 record.setParentName(null);
             } else {
                 record.setParentName(permissionService.findNameByParseLastId(record.getParentId()));
+            }
+            if (CommonUtils.isEquals("3", record.getType()) || CommonUtils.isEquals("5", record.getType())) {
+                record.setCode(record.getCode().toUpperCase());
             }
             if (CommonUtils.isNotEmpty(record.getUrl())) {
                 record.setUrl(record.getUrl().trim());

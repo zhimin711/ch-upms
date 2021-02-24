@@ -2,7 +2,7 @@ package com.ch.cloud.upms.utils;
 
 import com.ch.Constants;
 import com.ch.e.PubError;
-import com.ch.utils.ExceptionUtils;
+import com.ch.e.ExceptionUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

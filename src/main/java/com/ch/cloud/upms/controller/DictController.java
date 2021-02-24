@@ -13,7 +13,7 @@ import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.ExceptionUtils;
+import com.ch.e.ExceptionUtils;
 import com.ch.utils.VueRecordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +49,7 @@ public class DictController {
         record.setCreateBy(username);
         return ResultUtils.wrapFail(() -> {
             Dict orig = dictService.findByCode(record.getCode());
-            if (orig != null) ExceptionUtils._throw(PubError.EXISTS, "代码已存在");
+            if (orig != null) ExceptionUtils._throw(PubError.EXISTS, "代码");
             return dictService.save(record);
         });
     }
@@ -61,7 +61,7 @@ public class DictController {
         return ResultUtils.wrapFail(() -> {
             Dict orig = dictService.findByCode(record.getCode());
             if (orig != null && !CommonUtils.isEquals(id, orig.getId())) {
-                ExceptionUtils._throw(PubError.EXISTS, "代码已存在");
+                ExceptionUtils._throw(PubError.EXISTS, "代码");
             }
             return dictService.updateById(record);
         });
@@ -77,7 +77,7 @@ public class DictController {
         return ResultUtils.wrapFail(() -> {
             Dict record = dictService.getById(id);
             if (record != null) {
-                record.setChildren(dictService.findByPid(id, Status.UNKNOWN));
+                record.setChildren(dictService.findByPidAndName(id, null, Status.ALL));
             }
             return record;
         });
@@ -85,11 +85,11 @@ public class DictController {
 
 
     @GetMapping({"/data/{code}"})
-    public Result<VueRecord> search(@PathVariable String code) {
+    public Result<VueRecord> search(@PathVariable String code, @RequestParam("s") String name) {
         return ResultUtils.wrapList(() -> {
             Dict r = dictService.findByCode(code);
             if (r == null) return null;
-            List<Dict> records = dictService.findByPid(r.getId(), Status.ENABLED);
+            List<Dict> records = dictService.findByPidAndName(r.getId(), name, Status.ENABLED);
             return VueRecordUtils.covertCodeTree(records);
         });
     }

@@ -16,7 +16,7 @@ import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.e.PubError;
 import com.ch.utils.BeanExtUtils;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.ExceptionUtils;
+import com.ch.e.ExceptionUtils;
 import com.ch.utils.StringExtUtils;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;

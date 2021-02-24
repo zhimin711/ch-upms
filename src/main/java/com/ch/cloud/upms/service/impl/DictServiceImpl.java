@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ch.NumS;
 import com.ch.Status;
 import com.ch.cloud.upms.mapper.DictMapper;
 import com.ch.cloud.upms.model.Dict;
@@ -25,12 +26,15 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
 
     @Override
     public Dict findByCode(String code) {
-        return super.lambdaQuery().eq(Dict::getCode, code).one();
+        return super.lambdaQuery().eq(Dict::getPid, NumS._0).eq(Dict::getCode, code).one();
     }
 
     @Override
-    public List<Dict> findByPid(Long pid, Status status) {
-        return super.lambdaQuery().eq(Dict::getPid, pid).eq(status != Status.UNKNOWN, Dict::getStatus, status.getCode()).orderByAsc(Dict::getSort).list();
+    public List<Dict> findByPidAndName(Long pid, String name, Status status) {
+        return super.lambdaQuery().eq(Dict::getPid, pid)
+                .eq(status != Status.ALL, Dict::getStatus, status.getCode())
+                .like(CommonUtils.isNotEmpty(name), Dict::getName, name)
+                .orderByAsc(Dict::getSort).list();
     }
 
     @Override
@@ -50,7 +54,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
     public boolean updateById(Dict entity) {
         boolean flag = super.updateById(entity);
         if (flag && CommonUtils.isNotEmpty(entity.getChildren())) {
-            List<Dict> children = this.findByPid(entity.getId(), Status.UNKNOWN);
+            List<Dict> children = this.findByPidAndName(entity.getId(), null, Status.ALL);
             List<Long> origIds = children.stream().map(Dict::getId).collect(Collectors.toList());
             List<Long> updateIds = Lists.newArrayList();
             List<Dict> updateChildren = Lists.newArrayList();
