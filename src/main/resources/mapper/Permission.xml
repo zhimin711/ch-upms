@@ -27,7 +27,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, TYPE, NAME, CODE, URL, REDIRECT, ICON, SORT, hidden, IS_SYS, PARENT_ID, PARENT_NAME, METHOD, STATUS, deleted, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
+        ID, `TYPE`, `NAME`, CODE, URL, REDIRECT, ICON, SORT, hidden, IS_SYS, PARENT_ID, PARENT_NAME, METHOD, STATUS, deleted, CREATE_BY, CREATE_AT, UPDATE_BY, UPDATE_AT
     </sql>
 
     <select id="findByTypeAndRoleId" resultMap="BaseResultMap">

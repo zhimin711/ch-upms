@@ -85,7 +85,7 @@ public class DictController {
 
 
     @GetMapping({"/data/{code}"})
-    public Result<VueRecord> search(@PathVariable String code, @RequestParam("s") String name) {
+    public Result<VueRecord> search(@PathVariable String code, @RequestParam(value = "s", required = false) String name) {
         return ResultUtils.wrapList(() -> {
             Dict r = dictService.findByCode(code);
             if (r == null) return null;

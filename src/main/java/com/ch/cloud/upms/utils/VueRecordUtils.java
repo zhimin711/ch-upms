@@ -4,6 +4,7 @@ import com.ch.Constants;
 import com.ch.NumS;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.pojo.VueRecord;
+import com.ch.pojo.VueRecord2;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
 
@@ -72,9 +73,10 @@ public class VueRecordUtils {
 
 
     private static VueRecord convertPermission(Permission record) {
-        VueRecord vueRecord = new VueRecord();
+        VueRecord2 vueRecord = new VueRecord2();
         vueRecord.setLabel(record.getName());
         vueRecord.setValue(record.getId().toString());
+        vueRecord.setKey(record.getCode());
         vueRecord.setDisabled(!CommonUtils.isEquals(Constants.ENABLED, record.getStatus()));
         return vueRecord;
     }

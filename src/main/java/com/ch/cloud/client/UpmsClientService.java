@@ -4,6 +4,7 @@ import com.ch.cloud.client.dto.PermissionDto;
 import com.ch.cloud.client.dto.RoleDto;
 import com.ch.cloud.client.dto.UserDto;
 import com.ch.result.Result;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @date 2019/5/28
  */
 
+@FeignClient(name = UpmsConstants.NAME)
 public interface UpmsClientService {
 
     @GetMapping("user/{username}/info")
