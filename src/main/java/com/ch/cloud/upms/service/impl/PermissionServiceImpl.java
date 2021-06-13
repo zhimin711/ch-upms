@@ -8,16 +8,16 @@ import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.Constants;
-import com.ch.NumS;
+import com.ch.Num;
 import com.ch.Status;
 import com.ch.cloud.upms.mapper.PermissionMapper;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.e.PubError;
-import com.ch.utils.BeanExtUtils;
+import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
 import com.ch.e.ExceptionUtils;
-import com.ch.utils.StringExtUtils;
+import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +46,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public Page<Permission> findTreePage(Permission record, int pageNum, int pageSize) {
         Status status = Status.forEnabled(record.getStatus());
-        Page<Permission> page = super.query().eq("type", NumS._1).eq("parent_id", NumS._0)
+        Page<Permission> page = super.query().eq("type", Num.S1).eq("parent_id", Num.S0)
                 .eq(status == Status.ENABLED, "status", status.getCode())
                 .orderByAsc("sort", "parent_id", "id").page(new Page<>(pageNum, pageSize));
         if (page.getTotal() > 0) {
@@ -80,7 +80,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private void findChildren(List<Permission> records) {
         if (records == null || records.isEmpty()) return;
         records.forEach(r -> {
-            String pid2 = StringExtUtils.linkStrIgnoreZero(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString());
+            String pid2 = StringUtilsV2.linkStrIgnoreZero(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString());
             List<Permission> subList = super.query().likeRight("parent_id", pid2).list();
             if (subList.isEmpty()) return;
             Map<String, List<Permission>> subMap = assembleTree(subList);
@@ -91,19 +91,19 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
 
     private List<Permission> findTopCategory(Status status) {
-        return super.query().eq("type", NumS._1).eq("parent_id", NumS._0)
+        return super.query().eq("type", Num.S1).eq("parent_id", Num.S0)
                 .eq(status == Status.ENABLED, "status", status.getCode())
                 .orderByAsc("sort", "parent_id", "id").list();
     }
 
     @Override
     public List<Permission> findTreeByType(String type) {
-        Status status = Lists.newArrayList(NumS._0, NumS._9).contains(type) ? Status.ENABLED : Status.UNKNOWN;
+        Status status = Lists.newArrayList(Num.S0, Num.S9).contains(type) ? Status.ENABLED : Status.UNKNOWN;
         List<Permission> records = findTopCategory(status);
         if (records.isEmpty()) {
             return Lists.newArrayList();
         }
-        if (!CommonUtils.isEquals(type, NumS._1))
+        if (!CommonUtils.isEquals(type, Num.S1))
             records.forEach(r -> {
                 List<Permission> children = findChildrenByPidAndStatusAndType(r.getId().toString(), status != Status.UNKNOWN ? status.getCode() : null, type);
                 r.setChildren(children);
@@ -132,13 +132,13 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public List<Permission> findByPid(String pid) {
-        return findChildrenByPidAndStatusAndType(pid, null, NumS._0);
+        return findChildrenByPidAndStatusAndType(pid, null, Num.S0);
     }
 
     @Override
     public String findNameByParseLastId(String parentId) {
         if (CommonUtils.isEmpty(parentId)) return null;
-        String idStr = StringExtUtils.lastStr(parentId, Constants.SEPARATOR_2);
+        String idStr = StringUtilsV2.lastStr(parentId, Constants.SEPARATOR_2);
         if (!CommonUtils.isNumeric(idStr)) {
             return null;
         }
@@ -161,21 +161,21 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
         QueryChainWrapper<Permission> wrapper = super.query().eq("parent_id", pid).eq(CommonUtils.isNotEmpty(status), "status", status);
 
-        if (CommonUtils.isEquals(NumS._1, type)) {
+        if (CommonUtils.isEquals(Num.S1, type)) {
             wrapper.eq("type", type);
-        } else if (CommonUtils.isEquals(NumS._2, type)) {
-            wrapper.in("type", Lists.newArrayList(NumS._1, NumS._2));
-        } else if (!CommonUtils.isEquals(NumS._0, type)) {
-            wrapper.ne("type", NumS._5);
+        } else if (CommonUtils.isEquals(Num.S2, type)) {
+            wrapper.in("type", Lists.newArrayList(Num.S1, Num.S2));
+        } else if (!CommonUtils.isEquals(Num.S0, type)) {
+            wrapper.ne("type", Num.S5);
         }
         wrapper.orderByAsc("sort", "id");
         List<Permission> children = wrapper.list();
         if (CommonUtils.isEmpty(children)) return Lists.newArrayList();
         children.forEach(r -> {
-            String pid1 = StringExtUtils.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
-            if (Lists.newArrayList(NumS._1, NumS._2).contains(r.getType())
-                    && (CommonUtils.isEquals(NumS._0, type) || CommonUtils.isEquals(NumS._9, type)
-                    || (CommonUtils.isEquals(NumS._3, type) && CommonUtils.isEquals(NumS._1, r.getType())))) {
+            String pid1 = StringUtilsV2.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
+            if (Lists.newArrayList(Num.S1, Num.S2).contains(r.getType())
+                    && (CommonUtils.isEquals(Num.S0, type) || CommonUtils.isEquals(Num.S9, type)
+                    || (CommonUtils.isEquals(Num.S3, type) && CommonUtils.isEquals(Num.S1, r.getType())))) {
                 r.setChildren(findChildrenByPidAndStatusAndType(pid1, status, type));
             }
         });
@@ -186,7 +186,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if (CommonUtils.isEmpty(record.getParentId())) {
             record.setParentId("0");
         }
-        Map<String, Object> params = BeanExtUtils.getDeclaredFieldValueMap(record);
+        Map<String, Object> params = BeanUtilsV2.getDeclaredFieldValueMap(record);
         List<Permission> list = super.query().allEq(params).list();
         if (list.isEmpty()) return list;
         findChildren(list);
@@ -197,7 +197,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private Map<String, List<Permission>> assembleTree(List<Permission> subList) {
         Map<String, List<Permission>> subMap = subList.stream().collect(Collectors.groupingBy(Permission::getParentId));
         subMap.forEach((k, v) -> v.forEach(r -> {
-            r.setChildren(subMap.get(StringExtUtils.linkStr(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString())));
+            r.setChildren(subMap.get(StringUtilsV2.linkStr(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString())));
             if (r.getChildren() != null) r.getChildren().sort(Comparator.comparing(Permission::getSort));
         }));
         return subMap;

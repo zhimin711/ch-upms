@@ -11,8 +11,8 @@ import com.ch.cloud.upms.pojo.DepartmentDuty;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
-import com.ch.pojo.KeyValue;
 import com.ch.utils.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.RandomStringUtils;
@@ -159,7 +159,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                     return;
                 }
                 List<String> deptList = ddList.stream().map(e -> {
-                    List<String> names = departmentService.findNames(StringExtUtils.parseIds(e.getDepartment()));
+                    List<String> names = departmentService.findNames(StringUtilsV2.parseIds(e.getDepartment()));
                     return String.join(".", names);
                 }).collect(Collectors.toList());
                 r.setDepartment(String.join(",", deptList));

@@ -2,12 +2,13 @@ package com.ch.cloud.upms.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
-import com.ch.NumS;
+import com.ch.Num;
 import com.ch.StatusS;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
+import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
@@ -15,8 +16,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.e.ExceptionUtils;
-import com.ch.utils.StringExtUtils;
+import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +61,7 @@ public class RoleController {
             if (r != null) {
                 ExceptionUtils._throw(PubError.EXISTS, "角色代码已存在！");
             }
-            if (CommonUtils.isEquals(NumS._0, record.getType())) {
+            if (CommonUtils.isEquals(Num.S0, record.getType())) {
                 ExceptionUtils._throw(PubError.NOT_ALLOWED, "角色类型错误！");
             }
             record.setCode(code);
@@ -74,7 +74,7 @@ public class RoleController {
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody Role record,
                                 @RequestHeader(Constants.TOKEN_USER) String username) {
         return ResultUtils.wrapFail(() -> {
-            if (CommonUtils.isEquals(NumS._0, record.getType())) {
+            if (CommonUtils.isEquals(Num.S0, record.getType())) {
                 ExceptionUtils._throw(PubError.ARGS, "角色类型错误！");
             }
             Role orig = roleService.getById(id);
@@ -120,7 +120,7 @@ public class RoleController {
             } else if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
             }
-            List<String> types = StringExtUtils.splitStrAndDeDuplication(Constants.SEPARATOR_2, typesStr);
+            List<String> types = StringUtilsV2.splitStrAndDeDuplication(Constants.SEPARATOR_2, typesStr);
             if (types.isEmpty()) {
                 types.add("3");
             }

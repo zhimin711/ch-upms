@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ch.NumS;
+import com.ch.Num;
 import com.ch.Status;
 import com.ch.cloud.upms.mapper.DictMapper;
 import com.ch.cloud.upms.model.Dict;
@@ -26,7 +26,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
 
     @Override
     public Dict findByCode(String code) {
-        return super.lambdaQuery().eq(Dict::getPid, NumS._0).eq(Dict::getCode, code).one();
+        return super.lambdaQuery().eq(Dict::getPid, Num.S0).eq(Dict::getCode, code).one();
     }
 
     @Override

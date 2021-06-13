@@ -2,7 +2,7 @@ package com.ch.cloud.upms.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
-import com.ch.NumS;
+import com.ch.Num;
 import com.ch.StatusS;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
@@ -107,13 +107,13 @@ public class PermissionController {
 //                record.setCode(record.getCode().toUpperCase());
             }
             record.setChildren(null);
-            if (!CommonUtils.isEquals(record.getParentId(), orig.getParentId()) && Lists.newArrayList(NumS._1, NumS._2).contains(orig.getType())) {
+            if (!CommonUtils.isEquals(record.getParentId(), orig.getParentId()) && Lists.newArrayList(Num.S1, Num.S2).contains(orig.getType())) {
                 String pid = id + "";
-                if (!CommonUtils.isEquals(NumS._0, orig.getParentId())) {
+                if (!CommonUtils.isEquals(Num.S0, orig.getParentId())) {
                     pid = orig.getParentId() + "," + id;
                 }
                 List<Permission> children = permissionService.findByPid(pid);
-                if (CommonUtils.isEquals(NumS._1, orig.getType()) && !children.isEmpty()) {
+                if (CommonUtils.isEquals(Num.S1, orig.getType()) && !children.isEmpty()) {
                     ExceptionUtils._throw(PubError.NOT_EXISTS, "权限目录存在子菜单不允许调整上级！");
                 }
                 record.setChildren(children);
@@ -141,7 +141,7 @@ public class PermissionController {
     public Result<Permission> hidden() {
         return ResultUtils.wrapList(() -> {
             Permission record = new Permission();
-            record.setType(NumS._5);
+            record.setType(Num.S5);
             record.setHidden(true);
             record.setStatus(StatusS.ENABLED);
             return permissionService.find(record);
@@ -152,7 +152,7 @@ public class PermissionController {
     public Result<Permission> whitelist() {
         return ResultUtils.wrapList(() -> {
             Permission record = new Permission();
-            record.setType(NumS._5);
+            record.setType(Num.S5);
             record.setHidden(false);
             record.setStatus(StatusS.ENABLED);
             return permissionService.find(record);
