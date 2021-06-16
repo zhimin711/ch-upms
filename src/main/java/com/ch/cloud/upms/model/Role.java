@@ -68,9 +68,5 @@ public class Role extends Model<Role> {
     @ApiModelProperty(value = "更新时间")
     private Date updateAt;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 
 }

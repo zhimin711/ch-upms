@@ -96,9 +96,4 @@ public class OPRecord extends Model<OPRecord> {
     private String errorMessage;
 
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
-
 }

@@ -59,10 +59,4 @@ public class Position extends Model<Position> {
     @ApiModelProperty(value = "更新时间")
     private Date updateAt;
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
-
 }

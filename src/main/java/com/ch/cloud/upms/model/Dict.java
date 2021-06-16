@@ -68,11 +68,6 @@ public class Dict extends Model<Dict> {
     @ApiModelProperty(value = "更新时间")
     private Date updateAt;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
-
     @TableField(exist = false)
     private List<Dict> children;
 }

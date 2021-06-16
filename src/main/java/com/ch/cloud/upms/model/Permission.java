@@ -88,11 +88,6 @@ public class Permission extends Model<Permission> {
     private Date updateAt;
 
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
-
     @TableField(exist = false)
     List<Permission> children;
 }

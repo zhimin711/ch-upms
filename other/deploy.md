@@ -2,7 +2,8 @@
 #### 上传文件
 ```shell script
 scp -r src/main/docker/Dockerfile zhimin@192.168.1.100:/home/zhimin/docker/ch-upms
-scp -r build/libs/ch-upms-1.0.0-SNAPSHOT.jar zhimin@192.168.0.104:/home/zhimin/docker/ch-upms
+# window 
+scp -r build/libs/ch-upms-1.0.0-SNAPSHOT.jar zhimin@192.168.0.109:/home/zhimin/docker/ch-upms
 ```
 ####   打包docker镜像  
 基于src/main/docker/Dockerfile打包

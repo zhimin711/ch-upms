@@ -23,7 +23,6 @@ public class OPRecordServiceImpl extends ServiceImpl<OPRecordMapper, OPRecord> i
     public Page<OPRecord> page(OPRecord record, int pageNum, int pageSize) {
         return super.query().select("id", "url", "method", "auth_code", "status", "operator", "request_ip", "request_time", "response_time", "error_message")
                 .likeRight(CommonUtils.isNotEmpty(record.getAuthCode()), "auth_code", record.getAuthCode())
-                .notLike(CommonUtils.isEmpty(record.getAuthCode()), "auth_code", "LOGIN_")
                 .likeRight(CommonUtils.isNotEmpty(record.getUrl()), "url", record.getUrl())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
                 .orderByDesc("request_time").page(new Page<>(pageNum, pageSize));

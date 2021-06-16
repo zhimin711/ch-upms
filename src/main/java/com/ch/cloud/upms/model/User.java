@@ -97,11 +97,6 @@ public class User extends Model<User> {
     @ApiModelProperty(value = "更新人")
     private String updateBy;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
-
     @TableField(exist = false)
     private String department;
     @TableField(exist = false)

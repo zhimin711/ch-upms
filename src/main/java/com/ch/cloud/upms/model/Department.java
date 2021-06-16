@@ -77,12 +77,6 @@ public class Department extends Model<Department> {
     @ApiModelProperty(value = "更新时间")
     private Date updateAt;
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
-
     @TableField(exist = false)
     List<Department> children;
 
