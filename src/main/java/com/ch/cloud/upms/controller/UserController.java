@@ -14,10 +14,8 @@ import com.ch.pojo.KeyValue;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.CharUtils;
-import com.ch.utils.CommonUtils;
-import com.ch.utils.DateUtils;
-import com.ch.utils.EncryptUtils;
+import com.ch.utils.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +30,7 @@ import java.util.stream.Collectors;
  * @author 01370603
  * @date 2018/12/22 22:35
  */
-
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {

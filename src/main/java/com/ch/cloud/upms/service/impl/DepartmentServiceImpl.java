@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.Constants;
 import com.ch.Num;
+import com.ch.Separator;
 import com.ch.Status;
 import com.ch.cloud.upms.mapper.DepartmentMapper;
 import com.ch.cloud.upms.model.Department;
@@ -40,7 +41,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         List<Department> list = super.query().eq("parent_id", pid).list();
         if (list.isEmpty()) return list;
         list.forEach(r -> {
-            String pid2 = StringUtilsV2.linkStrIgnoreZero(Constants.SEPARATOR_2, r.getPid(), r.getId().toString());
+            String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getPid(), r.getId().toString());
             List<Department> subList = super.query().likeRight("parent_id", pid2).list();
             if (subList.isEmpty()) return;
             Map<String, List<Department>> subMap = assembleTree(subList);
