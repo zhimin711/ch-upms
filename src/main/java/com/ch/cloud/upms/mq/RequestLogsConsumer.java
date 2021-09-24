@@ -39,37 +39,42 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
     public void onMessage(String message) {
 //        log.info("接收到消息：\n{}", message);
         try {
-            String[] infos = message.split(REQUEST_PROCESS_SEPARATOR);
-            OPRecord record = new OPRecord();
-            for (String info : infos) {
-                JSONObject object = JSONObject.parseObject(info);
-                if (object.containsKey("request")) {
-                    record.setRequest(object.getJSONObject("request").toJSONString());
-                    record.setRequestIp(getIP(object.getJSONObject("request")));
-                } else if (object.containsKey("proxy")) {
-                    record.setProxy(object.getJSONObject("proxy").toJSONString());
-                } else if (object.containsKey("response")) {
-                    record.setResponse(object.getJSONObject("response").toJSONString());
-
-                    String status = object.getJSONObject("response").getString("status");
-                    record.setStatus(CommonUtils.isNumeric(status) ? Integer.valueOf(status) : null);
-                    parseError(object.getJSONObject("response"), record);
-                } else if (object.containsKey("record")) {
-                    copyProperties(object.getJSONObject("record"), record);
-                }
-            }
-            if (CommonUtils.isEquals(record.getUrl(), LOGIN_ACCESS)) {
-                record.setAuthCode("LOGIN_ACCESS");
-            } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_USER)) {
-                record.setAuthCode("LOGIN_USER");
-            } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_REFRESH)) {
-                record.setAuthCode("LOGIN_REFRESH");
-            }
-
+            OPRecord record = parseRecord(message);
             opRecordService.save(record);
         } catch (Exception e) {
             log.error("parse log error!~", e);
         }
+    }
+
+    public OPRecord parseRecord(String message) {
+        OPRecord record = new OPRecord();
+        String[] infos = message.split(REQUEST_PROCESS_SEPARATOR);
+        for (String info : infos) {
+            JSONObject object = JSONObject.parseObject(info);
+            if (object.containsKey("request")) {
+                record.setRequest(object.getJSONObject("request").toJSONString());
+                record.setRequestIp(getIP(object.getJSONObject("request")));
+            } else if (object.containsKey("proxy")) {
+                record.setProxy(object.getJSONObject("proxy").toJSONString());
+            } else if (object.containsKey("response")) {
+                record.setResponse(object.getJSONObject("response").toJSONString());
+
+                String status = object.getJSONObject("response").getString("status");
+                record.setStatus(CommonUtils.isNumeric(status) ? Integer.valueOf(status) : null);
+                parseError(object.getJSONObject("response"), record);
+            } else if (object.containsKey("record")) {
+                copyProperties(object.getJSONObject("record"), record);
+            }
+        }
+        if (CommonUtils.isEquals(record.getUrl(), LOGIN_ACCESS)) {
+            record.setAuthCode("LOGIN_ACCESS");
+        } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_USER)) {
+            record.setAuthCode("LOGIN_USER");
+        } else if (CommonUtils.isEquals(record.getUrl(), LOGIN_REFRESH)) {
+            record.setAuthCode("LOGIN_REFRESH");
+        }
+
+        return record;
     }
 
     private void parseError(JSONObject source, OPRecord target) {
