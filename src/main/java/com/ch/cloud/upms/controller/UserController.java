@@ -4,17 +4,23 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
 import com.ch.cloud.upms.fclient.SsoClientService;
 import com.ch.cloud.upms.model.Role;
+import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.UserInfo;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
 import com.ch.pojo.KeyValue;
+import com.ch.pojo.VueRecord2;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.*;
+import com.ch.utils.CharUtils;
+import com.ch.utils.CommonUtils;
+import com.ch.utils.DateUtils;
+import com.ch.utils.EncryptUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,4 +184,17 @@ public class UserController {
         });
     }
 
+    @GetMapping({"tenant"})
+    public Result<VueRecord2> findTenant() {
+        return ResultUtils.wrapList(() -> {
+            List<Tenant> tenantList = userService.findTenantsByUsername(RequestUtils.getHeaderUser());
+            return tenantList.stream().map(e -> {
+                VueRecord2 record = new VueRecord2();
+                record.setValue(e.getId() + "");
+                record.setLabel(e.getName());
+                record.setKey(e.getDepartmentId());
+                return record;
+            }).collect(Collectors.toList());
+        });
+    }
 }

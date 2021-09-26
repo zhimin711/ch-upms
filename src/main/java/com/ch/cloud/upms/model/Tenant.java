@@ -1,14 +1,15 @@
 package com.ch.cloud.upms.model;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -24,12 +25,12 @@ import lombok.experimental.Accessors;
 @TableName("bt_tenant")
 public class Tenant extends Model<Tenant> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 主键
      */
-      @TableId(value = "ID", type = IdType.AUTO)
+    @TableId(value = "ID", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -75,7 +76,7 @@ public class Tenant extends Model<Tenant> {
     /**
      * 创建时间
      */
-    private LocalDateTime createAt;
+    private Date createAt;
 
     /**
      * 创建人
@@ -85,7 +86,7 @@ public class Tenant extends Model<Tenant> {
     /**
      * 更新时间
      */
-    private LocalDateTime updateAt;
+    private Date updateAt;
 
     /**
      * 更新人

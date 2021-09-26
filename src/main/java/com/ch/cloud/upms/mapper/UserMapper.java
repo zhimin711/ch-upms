@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +32,6 @@ public interface UserMapper extends BaseMapper<User> {
     List<DepartmentDuty> findDepartmentPositionByUserId(Long userId);
 
     Page<User> pageBy(IPage<User> page, @Param(Constants.ENTITY) User user);
+
+    List<Tenant> findTenantsByUsername(String username);
 }

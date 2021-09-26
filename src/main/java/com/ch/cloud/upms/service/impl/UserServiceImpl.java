@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.model.Role;
+import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
 import com.ch.cloud.upms.service.IDepartmentService;
@@ -171,5 +172,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public List<DepartmentDuty> findDepartmentDuty(Long id) {
         return getBaseMapper().findDepartmentPositionByUserId(id);
+    }
+
+    @Override
+    public List<Tenant> findTenantsByUsername(String username) {
+        return getBaseMapper().findTenantsByUsername(username);
     }
 }
