@@ -3,9 +3,10 @@ package com.ch.cloud.upms.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.Num;
-import com.ch.cloud.upms.model.Project;
+import com.ch.Separator;
+import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Tenant;
+import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
@@ -16,13 +17,12 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
+import com.ch.utils.StringUtilsV2;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.stereotype.Controller;
-
-import java.sql.Wrapper;
+import java.util.List;
 
 /**
  * <p>
@@ -32,12 +32,14 @@ import java.sql.Wrapper;
  * @author zhimin.ma
  * @since 2021-09-26
  */
-@Controller
+@RestController
 @RequestMapping("/tenant")
 public class TenantController {
 
     @Autowired
-    private ITenantService tenantService;
+    private ITenantService     tenantService;
+    @Autowired
+    private IDepartmentService departmentService;
 
     @ApiOperation(value = "分页查询", notes = "分页查询业务-租户")
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
@@ -73,6 +75,16 @@ public class TenantController {
         }
         if (!CommonUtils.isEquals(record.getId(), r.getId())) {
             ExceptionUtils._throw(PubError.EXISTS, "部门已存在！");
+        }
+        List<Long> deptIds = StringUtilsV2.parseIds(record.getDepartmentId());
+        List<String> names = departmentService.findNames(deptIds);
+        record.setDepartmentName(String.join(Separator.OBLIQUE_LINE, names));
+        if (CommonUtils.isEmpty(record.getName())) {
+            record.setName(record.getDepartmentName());
+        }
+        if (CommonUtils.isEmpty(record.getManager())) {
+            Department dept = departmentService.getById(deptIds.get(deptIds.size() - 1));
+            record.setManager(dept.getLeader());
         }
     }
 

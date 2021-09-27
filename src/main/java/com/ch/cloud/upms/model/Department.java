@@ -33,7 +33,7 @@ public class Department extends Model<Department> {
     private Long id;
 
     @ApiModelProperty(value = "上级部门id")
-    private String pid;
+    private Long pid;
 
     @ApiModelProperty(value = "上级部门ID")
     private String parentId;

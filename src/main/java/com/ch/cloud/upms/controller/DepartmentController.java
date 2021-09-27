@@ -2,16 +2,20 @@ package com.ch.cloud.upms.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.Constants;
+import com.ch.Num;
 import com.ch.Status;
 import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Position;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IPositionService;
+import com.ch.cloud.upms.utils.RequestUtils;
+import com.ch.e.ExceptionUtils;
+import com.ch.e.PubError;
 import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.CommonUtils;
 import com.ch.utils.VueRecordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +36,7 @@ public class DepartmentController {
     @Autowired
     private IDepartmentService departmentService;
     @Autowired
-    private IPositionService positionService;
+    private IPositionService   positionService;
 
     @GetMapping(value = {"/{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Department> page(Department record,
@@ -43,17 +47,33 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public Result<Boolean> add(@RequestBody Department record,
-                               @RequestHeader(Constants.TOKEN_USER) String username) {
-        record.setCreateBy(username);
-        return ResultUtils.wrapFail(() -> departmentService.save(record));
+    public Result<Boolean> add(@RequestBody Department record) {
+        record.setCreateBy(RequestUtils.getHeaderUser());
+        return ResultUtils.wrapFail(() -> {
+            getAndCheck(record);
+            return departmentService.save(record);
+        });
     }
 
     @PutMapping({"/{id:[0-9]+}"})
-    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Department record,
-                                @RequestHeader(Constants.TOKEN_USER) String username) {
-        record.setUpdateBy(username);
-        return ResultUtils.wrapFail(() -> departmentService.updateById(record));
+    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Department record) {
+        record.setUpdateBy(RequestUtils.getHeaderUser());
+        return ResultUtils.wrapFail(() -> {
+            getAndCheck(record);
+            return departmentService.updateById(record);
+        });
+    }
+
+    private void getAndCheck(Department record) {
+        if (CommonUtils.isEquals(record.getPid(), record.getId())) {
+            ExceptionUtils._throw(PubError.NOT_ALLOWED, "id and pid is same");
+        }
+        Department parent = departmentService.getById(record.getPid());
+        if (parent == null) {
+            ExceptionUtils._throw(PubError.NOT_EXISTS, record.getPid());
+        }
+
+        record.setParentName(CommonUtils.isEquals(parent.getParentId(), Num.S0) ? parent.getName() : parent.getParentName() + "," + parent.getName());
     }
 
     @DeleteMapping("/{id:[0-9]+}")
