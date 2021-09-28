@@ -2,26 +2,21 @@ package com.ch.cloud.upms.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.Constants;
+import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
-import com.ch.cloud.upms.pojo.UserInfo;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.utils.RequestUtils;
-import com.ch.pojo.VueRecord;
 import com.ch.pojo.VueRecord2;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.utils.VueRecordUtils;
-import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.stereotype.Controller;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -113,11 +108,20 @@ public class ProjectController {
 
     @GetMapping({"{id:[0-9]+}/namespaces"})
     public Result<VueRecord2> findProjectNamespaces(@PathVariable Long id) {
-        return ResultUtils.wrapList(() -> projectService.findNamespaces(id));
+        return ResultUtils.wrapList(() -> {
+            List<Namespace> list = projectService.findNamespaces(id);
+            return list.stream().map(e -> {
+                VueRecord2 record2 = new VueRecord2();
+                record2.setLabel(e.getName());
+                record2.setValue(e.getId() + "");
+                record2.setKey(e.getUid());
+                return record2;
+            }).collect(Collectors.toList());
+        });
     }
 
     @PostMapping({"{id:[0-9]+}/namespaces"})
-    public Result<Integer> saveProjectNamespaces(@PathVariable Long id, @RequestBody List<String> namespaceIds) {
+    public Result<Integer> saveProjectNamespaces(@PathVariable Long id, @RequestBody List<Long> namespaceIds) {
         return ResultUtils.wrap(() -> projectService.assignNamespaces(id, namespaceIds));
     }
 }

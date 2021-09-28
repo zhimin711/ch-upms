@@ -44,7 +44,7 @@
     <delete id="deleteDepartmentPositionByUserId">
     DELETE FROM st_user_department_position WHERE user_id=#{userId}
   </delete>
-    <select id="findDepartmentPositionByUserId" resultType="com.ch.cloud.upms.pojo.DepartmentDuty">
+  <select id="findDepartmentPositionByUserId" resultType="com.ch.cloud.upms.pojo.DepartmentDuty">
     select user_id, department_id as department, position_id as duty FROM st_user_department_position WHERE user_id=#{userId}
   </select>
 

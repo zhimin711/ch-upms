@@ -2,6 +2,7 @@ package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
 import com.ch.pojo.VueRecord2;
 
@@ -19,7 +20,7 @@ public interface IProjectService extends IService<Project> {
 
     Page<Project> page(Project record, int pageNum, int pageSize);
 
-    List<VueRecord2> findNamespaces(Long id);
+    List<Namespace> findNamespaces(Long id);
 
-    Integer assignNamespaces(Long id, List<String> namespaceIds);
+    Integer assignNamespaces(Long id, List<Long> namespaceIds);
 }

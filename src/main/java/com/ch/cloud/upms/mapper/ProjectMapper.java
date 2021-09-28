@@ -1,7 +1,10 @@
 package com.ch.cloud.upms.mapper;
 
-import com.ch.cloud.upms.model.Project;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ch.cloud.upms.model.Namespace;
+import com.ch.cloud.upms.model.Project;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ProjectMapper extends BaseMapper<Project> {
 
+    List<Namespace> findNamespaces(Long id);
+
+    int insertAssignNamespace(Long id, Long namespaceId);
+
+    int deleteAssignNamespace(Long id, Long namespaceId);
 }

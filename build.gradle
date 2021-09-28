@@ -59,7 +59,7 @@ dependencies {
 
 
     implementation "org.springframework.cloud:spring-cloud-starter-alibaba-sentinel:${alicloudVersion}"
-    
+    implementation "org.springframework.retry:spring-retry:+"
 //    implementation "org.springframework.cloud:spring-cloud-starter-alibaba-sentinel:${alicloudVersion}"
 //    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
