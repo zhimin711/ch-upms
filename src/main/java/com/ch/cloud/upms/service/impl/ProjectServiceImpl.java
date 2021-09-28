@@ -5,9 +5,12 @@ import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.mapper.ProjectMapper;
 import com.ch.cloud.upms.service.IProjectService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ch.pojo.VueRecord2;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -27,5 +30,15 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 .like(CommonUtils.isNotEmpty(record.getName()), "name", record.getName())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
                 .orderByAsc("sort", "id").page(new Page<>(pageNum, pageSize));
+    }
+
+    @Override
+    public List<VueRecord2> findNamespaces(Long id) {
+        return null;
+    }
+
+    @Override
+    public Integer assignNamespaces(Long id, List<String> namespaceIds) {
+        return null;
     }
 }

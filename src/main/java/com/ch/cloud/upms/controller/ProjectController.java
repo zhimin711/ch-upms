@@ -104,11 +104,21 @@ public class ProjectController {
 //        return ResultUtils.wrap(() -> projectUserTool.assignUser(id, userIds));
 //    }
 
-//    @GetMapping(value = {"user/tree"})
+    //    @GetMapping(value = {"user/tree"})
 //    public Result<VueRecord2> treeByUser() {
 //        List<Project> records = projectService.findByUserId(RequestUtils.getUser());
 //        List<VueRecord2> tree = ProjectCodeUtils.covertIdTree(records);
 //        return Result.success(tree);
 //    }
+
+    @GetMapping({"{id:[0-9]+}/namespaces"})
+    public Result<VueRecord2> findProjectNamespaces(@PathVariable Long id) {
+        return ResultUtils.wrapList(() -> projectService.findNamespaces(id));
+    }
+
+    @PostMapping({"{id:[0-9]+}/namespaces"})
+    public Result<Integer> saveProjectNamespaces(@PathVariable Long id, @RequestBody List<String> namespaceIds) {
+        return ResultUtils.wrap(() -> projectService.assignNamespaces(id, namespaceIds));
+    }
 }
 

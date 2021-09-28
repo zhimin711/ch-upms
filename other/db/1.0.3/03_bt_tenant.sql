@@ -4,7 +4,7 @@ CREATE TABLE `bt_tenant`
     `ID`              bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `DEPARTMENT_ID`   varchar(55)         DEFAULT NULL COMMENT '租户部门ID',
     `DEPARTMENT_NAME` varchar(250)        DEFAULT NULL COMMENT '租户部门名称',
-    `NAME` varchar(250)        DEFAULT NULL COMMENT '租户别名',
+    `NAME`            varchar(250)        DEFAULT NULL COMMENT '租户别名',
     `MANAGER`         varchar(55)         DEFAULT NULL COMMENT '负责人',
     `SORT`            int(10)             DEFAULT NULL COMMENT '排序',
     `DESCRIPTION`     varchar(255)        DEFAULT NULL COMMENT '描述',
@@ -19,3 +19,12 @@ CREATE TABLE `bt_tenant`
     KEY `IDX_BT_T_STATUS` (`STATUS`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='业务-租户表';
+
+CREATE TABLE `rt_tenant_project`
+(
+    `TENANT_ID`  bigint      NOT NULL COMMENT '租户ID',
+    `PROJECT_ID` bigint      NOT NULL COMMENT '项目ID',
+    `ROLE`       varchar(50) NOT NULL COMMENT '角色：DEV（开发），TEST（测试），OPS（运维）',
+    PRIMARY KEY (`TENANT_ID`, `PROJECT_ID`),
+    KEY `IDX_RT_TP_PROJECT_ID` (`PROJECT_ID`)
+) ENGINE = InnoDB COMMENT ='关系-项目与租户表';

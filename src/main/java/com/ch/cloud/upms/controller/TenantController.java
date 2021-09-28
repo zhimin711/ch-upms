@@ -68,6 +68,7 @@ public class TenantController {
         });
     }
 
+
     private void checkSaveOrUpdate(Tenant record) {
         Tenant r = tenantService.getOne(Wrappers.lambdaQuery(record).eq(Tenant::getDepartmentId, record.getDepartmentId()));
         if (r == null) {
