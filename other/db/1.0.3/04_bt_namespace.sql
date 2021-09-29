@@ -14,8 +14,17 @@ CREATE TABLE `bt_namespace`
     unique key `UK_BT_N_UID` (`UID`)
 ) ENGINE = InnoDB COMMENT ='关系-命名空间表';
 
-
+DROP TABLE IF EXISTS `rt_project_namespace`;
 CREATE TABLE `rt_project_namespace`
+(
+    `PROJECT_ID`   bigint NOT NULL COMMENT '项目ID',
+    `NAMESPACE_ID` bigint NOT NULL COMMENT '命名空间ID',
+    PRIMARY KEY (`PROJECT_ID`, `NAMESPACE_ID`),
+    KEY `IDX_RT_PU_NAMESPACE_ID` (`NAMESPACE_ID`)
+) ENGINE = InnoDB COMMENT ='关系-项目与命名空间表';
+
+DROP TABLE IF EXISTS `rt_user_namespace`;
+CREATE TABLE `rt_user_namespace`
 (
     `PROJECT_ID`   bigint NOT NULL COMMENT '项目ID',
     `NAMESPACE_ID` bigint NOT NULL COMMENT '命名空间ID',

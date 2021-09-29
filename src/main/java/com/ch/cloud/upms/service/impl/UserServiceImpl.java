@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.UserMapper;
+import com.ch.cloud.upms.mapper2.UserProjectMapper;
+import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
@@ -40,6 +42,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private IRoleService roleService;
     @Resource
     private IDepartmentService departmentService;
+    @Resource
+    private UserProjectMapper userProjectMapper;
 
     @Override
     public User findByUsername(String username) {
@@ -177,5 +181,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public List<Tenant> findTenantsByUsername(String username) {
         return getBaseMapper().findTenantsByUsername(username);
+    }
+
+    @Override
+    public List<Project> findProjectsByUsernameAndTenantId(String userId, Long tenantId) {
+        return userProjectMapper.findProjectsByUserIdAndTenantId(userId,tenantId);
     }
 }

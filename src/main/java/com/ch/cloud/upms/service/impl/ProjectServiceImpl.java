@@ -2,6 +2,7 @@ package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.StatusS;
+import com.ch.cloud.upms.mapper2.UserProjectMapper;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.mapper.ProjectMapper;
@@ -13,6 +14,7 @@ import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -27,6 +29,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> implements IProjectService {
+
+    @Resource
+    private UserProjectMapper userProjectMapper;
 
     @Override
     public Page<Project> page(Project record, int pageNum, int pageSize) {
@@ -43,7 +48,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     }
 
     @Override
-    public Integer assignNamespaces(Long id, List<Long> namespaceIds) {
+    public int assignNamespaces(Long id, List<Long> namespaceIds) {
         List<Namespace> list = findNamespaces(id);
         List<Long> uNamespaceIds = list.stream().map(Namespace::getId).collect(Collectors.toList());
 //        List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(Role::getId).collect(Collectors.toList());
@@ -54,6 +59,24 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             uNamespaceIds.stream().filter(r -> !namespaceIds.contains(r)).forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignNamespace(id, r)));
         } else if (!uNamespaceIds.isEmpty()) {
             uNamespaceIds.forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignNamespace(id, r)));
+        }
+        return c.get();
+    }
+
+    @Override
+    public List<String> findUsers(Long id) {
+        return userProjectMapper.findUserIdsByProjectId(id);
+    }
+
+    @Override
+    public int assignUsers(Long id, List<String> userIds) {
+        List<String> list = findUsers(id);
+        AtomicInteger c = new AtomicInteger();
+        if (!userIds.isEmpty()) {
+            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insert(id, r)));
+            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
+        } else if (!list.isEmpty()) {
+            list.forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
         }
         return c.get();
     }

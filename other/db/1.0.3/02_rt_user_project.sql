@@ -1,8 +1,8 @@
 -- ----------------------------
--- Table structure for rt_project_user
+-- Table structure for rt_user_project
 -- ----------------------------
-DROP TABLE IF EXISTS `rt_project_user`;
-CREATE TABLE `rt_project_user`(
+DROP TABLE IF EXISTS `rt_user_project`;
+CREATE TABLE `rt_user_project`(
   `PROJECT_ID` bigint(20) NOT NULL COMMENT '项目ID',
   `USER_ID` varchar(50) NOT NULL COMMENT '用户名/ID',
   `ROLE` varchar(50) NOT NULL COMMENT '角色：DEV（开发），TEST（测试），OPS（运维）',

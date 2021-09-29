@@ -4,6 +4,7 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
+import com.ch.cloud.upms.pojo.UserInfo;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.pojo.VueRecord2;
@@ -44,18 +45,7 @@ public class ProjectController {
     @PostMapping
     public Result<Boolean> add(@RequestBody Project record) {
         record.setCreateBy(RequestUtils.getHeaderUser());
-        convertParentCode(record);
         return ResultUtils.wrapFail(() -> projectService.save(record));
-    }
-
-    private void convertParentCode(Project record) {
-        if (CommonUtils.isEmpty(record.getParentCode())) {
-            record.setParentCode(null);
-            record.setParentName(null);
-        } else if (CommonUtils.isEquals(record.getParentCode(), record.getCode())) {
-            record.setParentCode(null);
-            record.setParentName(null);
-        }
     }
 
     @PutMapping({"{id:[0-9]+}"})
@@ -63,7 +53,6 @@ public class ProjectController {
         record.setUpdateBy(RequestUtils.getHeaderUser());
         record.setUpdateAt(DateUtils.current());
 
-        convertParentCode(record);
         return ResultUtils.wrapFail(() -> projectService.updateById(record));
     }
 
@@ -84,27 +73,15 @@ public class ProjectController {
 //        return ResultUtils.wrapList(() -> projectUserTool.findUserInfo(0L));
 //    }
 
-//    @GetMapping({"{id:[0-9]+}/users"})
-//    public Result<String> findProjectUser(@PathVariable Long id) {
-//        return ResultUtils.wrapList(() -> {
-//            if (id < 1) {
-//                Result<UserInfo> res1 = upmsClientService.userInfo("");
-//                return Lists.newArrayList(res1.getRows());
-//            }
-//        });
-//    }
+    @GetMapping({"{id:[0-9]+}/users"})
+    public Result<String> findProjectUser(@PathVariable Long id) {
+        return ResultUtils.wrapList(() -> projectService.findUsers(id));
+    }
 
-//    @PostMapping({"{id:[0-9]+}/users"})
-//    public Result<Integer> saveProjectUser(@PathVariable Long id, @RequestBody List<String> userIds) {
-//        return ResultUtils.wrap(() -> projectUserTool.assignUser(id, userIds));
-//    }
-
-    //    @GetMapping(value = {"user/tree"})
-//    public Result<VueRecord2> treeByUser() {
-//        List<Project> records = projectService.findByUserId(RequestUtils.getUser());
-//        List<VueRecord2> tree = ProjectCodeUtils.covertIdTree(records);
-//        return Result.success(tree);
-//    }
+    @PostMapping({"{id:[0-9]+}/users"})
+    public Result<Integer> saveProjectUsers(@PathVariable Long id, @RequestBody List<String> userIds) {
+        return ResultUtils.wrap(() -> projectService.assignUsers(id, userIds));
+    }
 
     @GetMapping({"{id:[0-9]+}/namespaces"})
     public Result<VueRecord2> findProjectNamespaces(@PathVariable Long id) {

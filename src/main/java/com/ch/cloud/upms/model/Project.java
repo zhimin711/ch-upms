@@ -36,14 +36,14 @@ public class Project extends Model<Project> {
     private Long id;
 
     /**
-     * 上级代码(控制在两层)
+     * 租户ID(控制在两层)
      */
-    private String parentCode;
+    private Long tenantId;
 
     /**
-     * 上级名称
+     * 租户名称
      */
-    private String parentName;
+    private String tenantName;
 
     /**
      * 名称

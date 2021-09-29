@@ -5,8 +5,8 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.ch.cloud.upms.model.Project">
         <id column="ID" property="id" />
-        <result column="PARENT_CODE" property="parentCode" />
-        <result column="PARENT_NAME" property="parentName" />
+        <result column="TENANT_ID" property="tenantCode" />
+        <result column="TENANT_NAME" property="tenantName" />
         <result column="NAME" property="name" />
         <result column="CODE" property="code" />
         <result column="DEPARTMENT" property="department" />
@@ -23,7 +23,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, PARENT_CODE, PARENT_NAME, NAME, CODE, DEPARTMENT, MANAGER, SORT, DESCRIPTION, STATUS, DELETED, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
+        ID, TENANT_ID, TENANT_NAME, NAME, CODE, DEPARTMENT, MANAGER, SORT, DESCRIPTION, STATUS, DELETED, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
     </sql>
 
     <select id="findNamespaces" resultType="com.ch.cloud.upms.model.Namespace">

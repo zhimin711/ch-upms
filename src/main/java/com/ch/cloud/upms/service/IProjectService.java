@@ -22,5 +22,9 @@ public interface IProjectService extends IService<Project> {
 
     List<Namespace> findNamespaces(Long id);
 
-    Integer assignNamespaces(Long id, List<Long> namespaceIds);
+    int assignNamespaces(Long id, List<Long> namespaceIds);
+
+    List<String> findUsers(Long id);
+
+    int assignUsers(Long id, List<String> userIds);
 }

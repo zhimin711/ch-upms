@@ -2,8 +2,8 @@ drop TABLE if exists `bt_project`;
 CREATE TABLE `bt_project`
 (
     `ID`          bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `PARENT_CODE` varchar(100)        DEFAULT NULL COMMENT '上级代码(控制在两层)',
-    `PARENT_NAME` varchar(200)        DEFAULT NULL COMMENT '上级名称',
+    `TENANT_ID`   bigint(20)          DEFAULT NULL COMMENT '租户ID',
+    `TENANT_NAME` varchar(200)        DEFAULT NULL COMMENT '租户名称',
     `NAME`        varchar(50)         DEFAULT NULL COMMENT '名称',
     `CODE`        varchar(50)         DEFAULT NULL COMMENT '代码',
     `DEPARTMENT`  varchar(55)         DEFAULT NULL COMMENT '所属部门',
@@ -17,7 +17,7 @@ CREATE TABLE `bt_project`
     `UPDATE_AT`   datetime            DEFAULT NULL COMMENT '更新时间',
     `UPDATE_BY`   varchar(64)         DEFAULT NULL COMMENT '更新人',
     PRIMARY KEY (`ID`),
-    UNIQUE KEY `IDX_BT_PC_CODES` (`PARENT_CODE`, `CODE`),
-    KEY `IDX_BT_PC_STATUS` (`STATUS`)
+    UNIQUE KEY `IDX_BT_P_CODE` (`TENANT_ID`, `CODE`),
+    KEY `IDX_BT_P_STATUS` (`STATUS`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='业务-项目表';

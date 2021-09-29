@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -36,4 +37,6 @@ public interface IUserService extends IService<User> {
     List<DepartmentDuty> findDepartmentDuty(Long id);
 
     List<Tenant> findTenantsByUsername(String username);
+
+    List<Project> findProjectsByUsernameAndTenantId(String headerUser, Long tenantId);
 }
