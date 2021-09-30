@@ -71,10 +71,7 @@ public class TenantController {
 
     private void checkSaveOrUpdate(Tenant record) {
         Tenant r = tenantService.getOne(Wrappers.lambdaQuery(record).eq(Tenant::getDepartmentId, record.getDepartmentId()));
-        if (r == null) {
-            return;
-        }
-        if (!CommonUtils.isEquals(record.getId(), r.getId())) {
+        if (r != null && !CommonUtils.isEquals(record.getId(), r.getId())) {
             ExceptionUtils._throw(PubError.EXISTS, "部门已存在！");
         }
         List<Long> deptIds = StringUtilsV2.parseIds(record.getDepartmentId());

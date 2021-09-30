@@ -1,6 +1,8 @@
+
+DROP TABLE IF EXISTS `bt_namespace`;
 CREATE TABLE `bt_namespace`
 (
-    `ID`          bigint      NOT NULL COMMENT '命名空间ID',
+    `ID`          bigint(20)  NOT NULL AUTO_INCREMENT COMMENT '主键',
     `UID`         varchar(64) NOT NULL COMMENT '命名空间唯一标识',
     `NAME`        varchar(150)         DEFAULT NULL COMMENT '空间名称',
     `DESCRIPTION` varchar(255)         DEFAULT NULL COMMENT '描述',
@@ -12,7 +14,7 @@ CREATE TABLE `bt_namespace`
     `UPDATE_BY`   varchar(64)          DEFAULT NULL COMMENT '更新人',
     PRIMARY KEY (`ID`),
     unique key `UK_BT_N_UID` (`UID`)
-) ENGINE = InnoDB COMMENT ='关系-命名空间表';
+) ENGINE = InnoDB COMMENT ='业务-命名空间表';
 
 DROP TABLE IF EXISTS `rt_project_namespace`;
 CREATE TABLE `rt_project_namespace`

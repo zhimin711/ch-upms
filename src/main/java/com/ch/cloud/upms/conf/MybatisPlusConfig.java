@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableTransactionManagement
 @Configuration
-@MapperScan({"com.ch.cloud.upms.mapper"})
+@MapperScan({"com.ch.cloud.upms.mapper", "com.ch.cloud.upms.mapper2"})
 public class MybatisPlusConfig {
 
     /**

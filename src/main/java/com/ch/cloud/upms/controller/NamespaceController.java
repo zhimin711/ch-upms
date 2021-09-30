@@ -27,7 +27,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -41,7 +40,7 @@ import java.util.List;
  * @author zhimin.ma
  * @since 2021-09-28
  */
-@Controller
+@RestController
 @RequestMapping("/namespace")
 public class NamespaceController {
 
@@ -56,7 +55,7 @@ public class NamespaceController {
 
     public static final String NAMESPACE_ADDR = "/nacos/v1/console/namespaces";
 
-    @ApiOperation(value = "分页查询", notes = "分页查询业务-命名空间")
+    @ApiOperation(value = "分页查询", notes = "分页查询命名空间")
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Namespace> page(Namespace record,
                                       @PathVariable(value = "num") int pageNum,
@@ -67,7 +66,7 @@ public class NamespaceController {
         });
     }
 
-    @ApiOperation(value = "添加", notes = "添加业务-命名空间")
+    @ApiOperation(value = "添加", notes = "添加命名空间")
     @PostMapping
     public Result<Boolean> add(@RequestBody Namespace record) {
         return ResultUtils.wrapFail(() -> {
@@ -116,7 +115,7 @@ public class NamespaceController {
         }
     }
 
-    @ApiOperation(value = "修改", notes = "修改业务-命名空间")
+    @ApiOperation(value = "修改", notes = "修改命名空间")
     @PutMapping({"{id:[0-9]+}"})
     public Result<Boolean> edit(@RequestBody Namespace record) {
         return ResultUtils.wrapFail(() -> {
@@ -139,7 +138,13 @@ public class NamespaceController {
         });
     }
 
-    @ApiOperation(value = "删除", notes = "删除业务-命名空间")
+    @GetMapping({"{id:[0-9]+}"})
+    public Result<Namespace> find(@PathVariable Long id) {
+        return ResultUtils.wrapFail(() -> namespaceService.getById(id));
+    }
+
+
+    @ApiOperation(value = "删除", notes = "删除命名空间")
     @DeleteMapping({"{id:[0-9]+}"})
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
@@ -152,9 +157,10 @@ public class NamespaceController {
     }
 
     @ApiOperation(value = "同步", notes = "同步-NACOS命名空间")
-    @DeleteMapping({"/syncNacos"})
+    @GetMapping({"/syncNacos"})
     public Result<Boolean> syncNacos() {
         return ResultUtils.wrapFail(() -> {
+            ExceptionUtils.assertEmpty(nacosUrl, PubError.CONFIG, "nacos address");
             JSONObject resp = new RestTemplate().getForObject(nacosUrl + NAMESPACE_ADDR, JSONObject.class);
             if (resp != null && resp.containsKey("data")) {
                 JSONArray arr = resp.getJSONArray("data");
