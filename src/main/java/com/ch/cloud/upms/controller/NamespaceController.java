@@ -23,10 +23,9 @@ import com.ch.utils.VueRecordUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -85,19 +84,24 @@ public class NamespaceController {
         if (record.getSyncNacos() == null || !record.getSyncNacos() || CommonUtils.isEmpty(nacosUrl)) {
             return true;
         }
+        MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
+        param.add("namespaceDesc", record.getDescription());
         if (isNew) {
             record.setUid(UUIDGenerator.generate());
+            param.add("customNamespaceId", record.getUid());
+            param.add("namespaceName", record.getName());
+        }else{
+            param.add("namespace", record.getUid());
+            param.add("namespaceShowName", record.getName());
         }
-        JSONObject param = new JSONObject();
-        param.put("customNamespaceId", record.getUid());
-        param.put("namespaceName", record.getName());
-        param.put("namespaceDesc", record.getDescription());
         Boolean sync;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(param, headers);
         if (isNew) {
-            sync = restTemplate.postForObject(nacosUrl + NAMESPACE_ADDR, param, Boolean.class);
+            sync = restTemplate.postForObject(nacosUrl + NAMESPACE_ADDR, httpEntity, Boolean.class);
         } else {
 //            restTemplate.put(nacosUrl + NAMESPACE_ADDR, param);
-            HttpEntity<JSONObject> httpEntity = new HttpEntity<>(param);
             ResponseEntity<Boolean> resp = restTemplate.exchange(nacosUrl + NAMESPACE_ADDR, HttpMethod.PUT, httpEntity, Boolean.class);
             if (resp.getStatusCode() == HttpStatus.OK) {
                 sync = resp.getBody();

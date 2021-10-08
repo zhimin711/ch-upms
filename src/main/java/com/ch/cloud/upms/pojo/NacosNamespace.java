@@ -17,7 +17,9 @@ public class NacosNamespace {
      * 当前配置数
      */
     private Integer configCount;
+
     private String  namespace;
+
     private String  namespaceShowName;
     /**
      * 配额
