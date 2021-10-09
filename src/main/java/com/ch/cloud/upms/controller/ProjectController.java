@@ -2,9 +2,11 @@ package com.ch.cloud.upms.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.Separator;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.pojo.UserInfo;
+import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.pojo.VueRecord2;
@@ -13,6 +15,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
+import com.ch.utils.StringUtilsV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +35,9 @@ import java.util.stream.Collectors;
 public class ProjectController {
 
     @Autowired
-    private IProjectService projectService;
+    private IProjectService    projectService;
+    @Autowired
+    private IDepartmentService departmentService;
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Project> page(Project record,
@@ -44,20 +49,30 @@ public class ProjectController {
 
     @PostMapping
     public Result<Boolean> add(@RequestBody Project record) {
+        checkSaveOrUpdate(record);
         record.setCreateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> projectService.save(record));
     }
 
-    @PutMapping({"{id:[0-9]+}"})
-    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Project record) {
-        record.setUpdateBy(RequestUtils.getHeaderUser());
-        record.setUpdateAt(DateUtils.current());
-
-        return ResultUtils.wrapFail(() -> projectService.updateById(record));
+    private void checkSaveOrUpdate(Project record) {
+        List<Long> deptIds = StringUtilsV2.parseIds(record.getDepartment());
+        List<String> names = departmentService.findNames(deptIds);
+        record.setDepartmentName(String.join(Separator.OBLIQUE_LINE, names));
     }
 
-    @PostMapping({"delete"})
-    public Result<Boolean> delete(Long id) {
+    @PutMapping({"{id:[0-9]+}"})
+    public Result<Boolean> edit(@RequestBody Project record) {
+        return ResultUtils.wrapFail(() -> {
+            checkSaveOrUpdate(record);
+            record.setUpdateBy(RequestUtils.getHeaderUser());
+            record.setUpdateAt(DateUtils.current());
+
+            return projectService.updateById(record);
+        });
+    }
+
+    @DeleteMapping({"{id:[0-9]+}"})
+    public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> projectService.removeById(id));
     }
 

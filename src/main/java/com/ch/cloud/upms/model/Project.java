@@ -61,6 +61,11 @@ public class Project extends Model<Project> {
     private String department;
 
     /**
+     * 部门名称
+     */
+    private String departmentName;
+
+    /**
      * 负责人
      */
     private String manager;

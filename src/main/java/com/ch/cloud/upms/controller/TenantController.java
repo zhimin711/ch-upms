@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Separator;
 import com.ch.cloud.upms.model.Department;
+import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
+import com.ch.pojo.VueRecord;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
@@ -18,6 +20,7 @@ import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.StringUtilsV2;
+import com.ch.utils.VueRecordUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -107,5 +110,15 @@ public class TenantController {
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> tenantService.removeById(id));
     }
+
+
+    @GetMapping({"available"})
+    public Result<VueRecord> findAvailable() {
+        return ResultUtils.wrapList(() -> {
+            List<Tenant> list = tenantService.list();
+            return VueRecordUtils.covertIdTree(list);
+        });
+    }
+
 }
 
