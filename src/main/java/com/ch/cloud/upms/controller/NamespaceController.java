@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.pojo.NacosNamespace;
+import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.service.INamespaceService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
@@ -17,6 +18,7 @@ import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.toolkit.UUIDGenerator;
+import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.VueRecordUtils;
@@ -90,7 +92,7 @@ public class NamespaceController {
             record.setUid(UUIDGenerator.generate());
             param.add("customNamespaceId", record.getUid());
             param.add("namespaceName", record.getName());
-        }else{
+        } else {
             param.add("namespace", record.getUid());
             param.add("namespaceShowName", record.getName());
         }
@@ -143,8 +145,21 @@ public class NamespaceController {
     }
 
     @GetMapping({"{id:[0-9]+}"})
-    public Result<Namespace> find(@PathVariable Long id) {
-        return ResultUtils.wrapFail(() -> namespaceService.getById(id));
+    public Result<NamespaceDto> find(@PathVariable Long id) {
+        return ResultUtils.wrapFail(() -> {
+            Namespace namespace = namespaceService.getById(id);
+            if (namespace == null) return null;
+            NamespaceDto dto = BeanUtilsV2.clone(namespace, NamespaceDto.class);
+            if (namespace.getSyncNacos()) {
+                String param = "show=all&namespaceId=" + namespace.getUid();
+                NacosNamespace nn = new RestTemplate().getForObject(nacosUrl + NAMESPACE_ADDR + "?" + param, NacosNamespace.class);
+                if (nn != null) {
+                    dto.setQuota(nn.getQuota());
+                    dto.setConfigCount(nn.getConfigCount());
+                }
+            }
+            return dto;
+        });
     }
 
 
