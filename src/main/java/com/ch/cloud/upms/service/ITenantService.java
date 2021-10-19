@@ -2,7 +2,10 @@ package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ch.Status;
 import com.ch.cloud.upms.model.Tenant;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +18,6 @@ import com.ch.cloud.upms.model.Tenant;
 public interface ITenantService extends IService<Tenant> {
 
     Page<Tenant> page(Tenant record, int pageNum, int pageSize);
+
+    List<Tenant> findByDepartmentIdAndNameAndStatus(String prefixDeptId, String name, Status enabled);
 }

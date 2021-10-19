@@ -1,12 +1,15 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.Status;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.mapper.TenantMapper;
 import com.ch.cloud.upms.service.ITenantService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.utils.CommonUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -27,5 +30,14 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
                 .likeRight(CommonUtils.isNotEmpty(record.getDepartmentName()), "department_name", record.getDepartmentName())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
                 .orderByAsc("sort", "id").page(new Page<>(pageNum, pageSize));
+    }
+
+    @Override
+    public List<Tenant> findByDepartmentIdAndNameAndStatus(String prefixDeptId, String name, Status status) {
+        return super.query()
+                .likeRight(CommonUtils.isNotEmpty(name), "name", name)
+                .likeRight("department_id", prefixDeptId)
+                .eq(status != Status.UNKNOWN, "status", status.getCode())
+                .orderByAsc("sort", "id").list();
     }
 }

@@ -3,6 +3,7 @@ package com.ch.cloud.upms.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.Namespace;
@@ -137,9 +138,10 @@ public class NamespaceController {
     }
 
     @GetMapping({"available"})
-    public Result<VueRecord> findAvailable() {
+    public Result<VueRecord> findAvailable(@RequestParam(name = "s", required = false) String name) {
         return ResultUtils.wrapList(() -> {
-            List<Namespace> list = namespaceService.list();
+            Wrapper<Namespace> wrapper = Wrappers.lambdaQuery(Namespace.class).like(CommonUtils.isNotEmpty(name), Namespace::getName, name);
+            List<Namespace> list = namespaceService.list(wrapper);
             return VueRecordUtils.covertIdTree(list);
         });
     }
@@ -197,6 +199,9 @@ public class NamespaceController {
             Namespace record = new Namespace();
             record.setUid(e.getNamespace());
             record.setName(e.getNamespaceShowName());
+            if(CommonUtils.isEmpty(record.getUid())){
+
+            }
             Namespace orig = namespaceService.getOne(Wrappers.lambdaQuery(record).eq(Namespace::getUid, record.getUid()));
             if (orig != null) {
                 orig.setName(e.getNamespaceShowName());

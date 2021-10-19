@@ -188,6 +188,10 @@ public class UserController {
     @GetMapping({"tenants"})
     public Result<VueRecord2> findTenants() {
         return ResultUtils.wrapList(() -> {
+            String username = RequestUtils.getHeaderUser();
+            if (CommonUtils.isEmpty(username)) {
+                return null;
+            }
             List<Tenant> tenantList = userService.findTenantsByUsername(RequestUtils.getHeaderUser());
             return tenantList.stream().map(e -> {
                 VueRecord2 record = new VueRecord2();

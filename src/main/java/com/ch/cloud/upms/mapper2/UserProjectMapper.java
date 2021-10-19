@@ -18,8 +18,8 @@ public interface UserProjectMapper {
     List<Long> findProjectIdsByUserId(String userId);
 
     @Select("SELECT t1.* from bt_project t1" +
-            " INNER JOIN rt_user_project t2 ON t1.id  = t2.PROJECT_ID " +
-            "WHERE t1.tenant_id =#{tenantId} and t2.USER_ID=#{userId}")
+            " INNER JOIN rt_user_project t2 ON t1.id  = t2.PROJECT_ID" +
+            " WHERE t1.tenant_id =#{tenantId} and t2.USER_ID=#{userId}")
     List<Project> findProjectsByUserIdAndTenantId(String userId, Long tenantId);
 
     @Select("select USER_ID from rt_user_project where PROJECT_ID=#{projectId}")
@@ -27,6 +27,9 @@ public interface UserProjectMapper {
 
     @Insert("INSERT INTO rt_user_project (PROJECT_ID,USER_ID) VALUES (#{projectId},#{userId})")
     int insert(@Param("projectId") Long projectId, @Param("userId") String userId);
+
+    @Insert("INSERT INTO rt_user_project (PROJECT_ID,USER_ID,ROLE) VALUES (#{projectId},#{userId},#{role})")
+    int insert(@Param("projectId") Long projectId, @Param("userId") String userId, @Param("role") String role);
 
     @Delete("DELETE FROM rt_user_project where PROJECT_ID=#{projectId} and USER_ID=#{userId}")
     int delete(Long projectId, String userId);
