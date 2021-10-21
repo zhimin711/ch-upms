@@ -6,8 +6,10 @@ import com.ch.Num;
 import com.ch.Status;
 import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Position;
+import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IPositionService;
+import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
@@ -37,6 +39,8 @@ public class DepartmentController {
     private IDepartmentService departmentService;
     @Autowired
     private IPositionService   positionService;
+    @Autowired
+    private ITenantService     tenantService;
 
     @GetMapping(value = {"/{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Department> page(Department record,
@@ -102,6 +106,18 @@ public class DepartmentController {
     @GetMapping("/{id:[0-9]+}/positions/{name}")
     public Result<Position> findPositions(@PathVariable Long id, @PathVariable(required = false) String name) {
         return ResultUtils.wrapList(() -> positionService.findByDepartmentIdAndNameAndStatus(id, name, Status.ENABLED));
+    }
+
+    @GetMapping("/{id:[0-9]+}/tenants/{name}")
+    public Result<Tenant> findTenants(@PathVariable Long id, @PathVariable(required = false) String name) {
+        return ResultUtils.wrapList(() -> {
+            Department department = departmentService.getById(id);
+            if (department == null) {
+                ExceptionUtils._throw(PubError.NOT_EXISTS, id);
+            }
+            String prefixDeptId = CommonUtils.isEquals(department.getParentId(), Num.S0) ? department.getId() + "" : department.getParentId() + "," + department.getId();
+            return tenantService.findByDepartmentIdAndNameAndStatus(prefixDeptId, name, Status.ENABLED);
+        });
     }
 
 }
