@@ -9,7 +9,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.pojo.NacosNamespace;
 import com.ch.cloud.upms.pojo.NamespaceDto;
+import com.ch.cloud.upms.pojo.UserProjectNamespaceDto;
 import com.ch.cloud.upms.service.INamespaceService;
+import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
@@ -48,6 +50,8 @@ public class NamespaceController {
 
     @Autowired
     private INamespaceService namespaceService;
+    @Autowired
+    private IProjectService   projectService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -199,7 +203,7 @@ public class NamespaceController {
             Namespace record = new Namespace();
             record.setUid(e.getNamespace());
             record.setName(e.getNamespaceShowName());
-            if(CommonUtils.isEmpty(record.getUid())){
+            if (CommonUtils.isEmpty(record.getUid())) {
 
             }
             Namespace orig = namespaceService.getOne(Wrappers.lambdaQuery(record).eq(Namespace::getUid, record.getUid()));
@@ -214,6 +218,30 @@ public class NamespaceController {
                 namespaceService.save(record);
             }
         });
+    }
+
+    @GetMapping({"{id:[0-9]+}/{projectId:[0-9]+}/users"})
+    public Result<UserProjectNamespaceDto> findProjectUser(@PathVariable Long id, @PathVariable Long projectId) {
+        return ResultUtils.wrapList(() -> namespaceService.findUsers(id, projectId));
+    }
+
+    @PostMapping({"{id:[0-9]+}/{projectId:[0-9]+}/users"})
+    public Result<Integer> saveProjectUsers(@PathVariable Long id, @PathVariable Long projectId, @RequestBody List<String> userIds) {
+        return ResultUtils.wrap(() -> namespaceService.assignUsers(id, projectId, userIds));
+    }
+
+    @PostMapping({"apply/{projectId:[0-9]+}"})
+    public Result<Integer> apply(@PathVariable Long projectId, @RequestBody List<Long> namespaceIds) {
+        return ResultUtils.wrap(() -> {
+            String username = RequestUtils.getHeaderUser();
+            checkUserProject(username, projectId);
+            return namespaceService.applyProjectNamespaces(username, projectId, namespaceIds);
+        });
+    }
+
+    private void checkUserProject(String username, Long projectId) {
+        boolean exists = projectService.exists(username, projectId);
+        if (!exists) ExceptionUtils._throw(PubError.NOT_EXISTS, username + "+" + projectId);
     }
 }
 

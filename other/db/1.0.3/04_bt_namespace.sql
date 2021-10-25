@@ -1,4 +1,3 @@
-
 DROP TABLE IF EXISTS `bt_namespace`;
 CREATE TABLE `bt_namespace`
 (
@@ -28,8 +27,10 @@ CREATE TABLE `rt_project_namespace`
 DROP TABLE IF EXISTS `rt_user_namespace`;
 CREATE TABLE `rt_user_namespace`
 (
-    `PROJECT_ID`   bigint NOT NULL COMMENT '项目ID',
-    `NAMESPACE_ID` bigint NOT NULL COMMENT '命名空间ID',
-    PRIMARY KEY (`PROJECT_ID`, `NAMESPACE_ID`),
+    `USER_ID`      bigint  NOT NULL COMMENT '用户ID',
+    `PROJECT_ID`   bigint  NOT NULL COMMENT '项目ID',
+    `NAMESPACE_ID` bigint  NOT NULL COMMENT '命名空间ID',
+    PRIMARY KEY (`USER_ID`, `PROJECT_ID`, `NAMESPACE_ID`),
+    KEY `IDX_RT_PU_PROJECT_ID` (`PROJECT_ID`),
     KEY `IDX_RT_PU_NAMESPACE_ID` (`NAMESPACE_ID`)
-) ENGINE = InnoDB COMMENT ='关系-项目与命名空间表';
+) ENGINE = InnoDB COMMENT ='关系-用户与命名空间表';

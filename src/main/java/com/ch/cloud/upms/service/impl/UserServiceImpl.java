@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
+import com.ch.cloud.upms.mapper2.UserProjectNamespaceMapper;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
+import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
@@ -39,11 +41,13 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     @Resource
-    private IRoleService roleService;
+    private IRoleService               roleService;
     @Resource
-    private IDepartmentService departmentService;
+    private IDepartmentService         departmentService;
     @Resource
-    private UserProjectMapper userProjectMapper;
+    private UserProjectMapper          userProjectMapper;
+    @Resource
+    private UserProjectNamespaceMapper userProjectNamespaceMapper;
 
     @Override
     public User findByUsername(String username) {
@@ -185,6 +189,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public List<Project> findProjectsByUsernameAndTenantId(String userId, Long tenantId) {
-        return userProjectMapper.findProjectsByUserIdAndTenantId(userId,tenantId);
+        return userProjectMapper.findProjectsByUserIdAndTenantId(userId, tenantId);
+    }
+
+    @Override
+    public List<NamespaceDto> findNamespacesByUsernameAndProjectId(String username, Long projectId) {
+        return userProjectNamespaceMapper.findNamespacesByUserIdAndProjectId(username, projectId);
     }
 }

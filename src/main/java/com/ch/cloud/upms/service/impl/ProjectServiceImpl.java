@@ -80,4 +80,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
         return c.get();
     }
+
+    @Override
+    public boolean exists(String userId, Long projectId) {
+        int c = userProjectMapper.exists(projectId, userId);
+        return c > 0;
+    }
 }
