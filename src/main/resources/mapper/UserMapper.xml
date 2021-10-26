@@ -70,15 +70,17 @@
             and t2.department_id like #{et.department}
         </if>
     </where>
+    group by t.username
   </select>
     <select id="findTenantsByUsername" resultType="com.ch.cloud.upms.model.Tenant">
-        SELECT t.id,t.`name`,t.DEPARTMENT_ID,t.DEPARTMENT_NAME, IF(u.department_id = t.DEPARTMENT_ID,-1,IFNULL(t.sort,0)) as SORT from bt_tenant t
+        SELECT t.id,t.`name`,t.DEPARTMENT_ID,t.DEPARTMENT_NAME, IF(u.department_id = t.DEPARTMENT_ID,-1,IFNULL(t.sort,0)) as SORT
+        from bt_tenant t
         INNER JOIN st_user_department_position udp
         on t.DEPARTMENT_ID = udp.department_id
         INNER JOIN st_user u
         on u.id = udp.user_id
         where u.USERNAME = #{username}
-        and t.status = '0'
+        and t.status = '1'
         ORDER BY `SORT`
     </select>
 </mapper>

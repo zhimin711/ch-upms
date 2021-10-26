@@ -167,11 +167,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 if (ddList.isEmpty()) {
                     return;
                 }
+                r.setDutyList(ddList);
                 List<String> deptList = ddList.stream().map(e -> {
                     List<String> names = departmentService.findNames(StringUtilsV2.parseIds(e.getDepartment()));
                     return String.join(".", names);
                 }).collect(Collectors.toList());
                 r.setDepartment(String.join(",", deptList));
+
             });
         }
         return pager;

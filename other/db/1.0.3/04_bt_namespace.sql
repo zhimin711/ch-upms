@@ -27,7 +27,7 @@ CREATE TABLE `rt_project_namespace`
 DROP TABLE IF EXISTS `rt_user_namespace`;
 CREATE TABLE `rt_user_namespace`
 (
-    `USER_ID`      bigint  NOT NULL COMMENT '用户ID',
+    `USER_ID`      varchar(64)  NOT NULL COMMENT '用户ID',
     `PROJECT_ID`   bigint  NOT NULL COMMENT '项目ID',
     `NAMESPACE_ID` bigint  NOT NULL COMMENT '命名空间ID',
     PRIMARY KEY (`USER_ID`, `PROJECT_ID`, `NAMESPACE_ID`),

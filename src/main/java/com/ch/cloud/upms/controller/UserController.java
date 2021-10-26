@@ -212,7 +212,7 @@ public class UserController {
                 VueRecord2 record = new VueRecord2();
                 record.setValue(e.getId() + "");
                 record.setLabel(e.getName());
-                record.setKey(e.getTenantId() + "");
+                record.setKey(e.getCode() + "");
                 return record;
             }).collect(Collectors.toList());
         });
