@@ -108,8 +108,8 @@ public class DepartmentController {
         return ResultUtils.wrapList(() -> positionService.findByDepartmentIdAndNameAndStatus(id, name, Status.ENABLED));
     }
 
-    @GetMapping("/{id:[0-9]+}/tenants/{name}")
-    public Result<Tenant> findTenants(@PathVariable Long id, @PathVariable(required = false) String name) {
+    @GetMapping("/{id:[0-9]+}/tenants")
+    public Result<Tenant> findTenants(@PathVariable Long id, @RequestParam(value = "s", required = false) String name) {
         return ResultUtils.wrapList(() -> {
             Department department = departmentService.getById(id);
             if (department == null) {

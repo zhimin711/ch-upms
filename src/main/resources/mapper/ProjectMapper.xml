@@ -27,7 +27,7 @@
     </sql>
 
     <select id="findNamespaces" resultType="com.ch.cloud.upms.model.Namespace">
-        select t1.id, t2.name, t2.uid
+        select t2.id, t2.name, t2.uid
         FROM rt_project_namespace t1
         inner join bt_namespace t2
         on t1.namespace_id = t2.id
