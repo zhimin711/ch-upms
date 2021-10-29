@@ -10,6 +10,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Http请求工具类
+ *
  * @author 01370603
  */
 public class RequestUtils {
@@ -24,11 +26,11 @@ public class RequestUtils {
     }
 
     public static String getHeaderUser() {
-        return get().getHeader(Constants.TOKEN_USER);
+        return get().getHeader(Constants.X_TOKEN_USER);
     }
 
     public static String getHeaderUser(HttpServletRequest request) {
-        return request.getHeader(Constants.TOKEN_USER);
+        return request.getHeader(Constants.X_TOKEN_USER);
     }
 
 }

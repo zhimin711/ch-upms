@@ -3,6 +3,7 @@ package com.ch.cloud.client;
 import com.ch.cloud.client.dto.PermissionDto;
 import com.ch.cloud.client.dto.RoleDto;
 import com.ch.cloud.client.dto.UserDto;
+import com.ch.cloud.client.dto.TenantDto;
 import com.ch.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,9 @@ public interface UpmsClientService {
 
     @GetMapping({"user/{username}/role"})
     Result<RoleDto> findRoleByUsername(@PathVariable String username);
+
+    @GetMapping({"user/{username}/tenants"})
+    Result<TenantDto> findTenantsByUserId(@PathVariable String username);
 
     @GetMapping({"user/{userId}/roles"})
     Result<RoleDto> findRolesByUserId(@PathVariable Long userId);

@@ -1,13 +1,14 @@
 package com.ch.cloud.upms.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.Constants;
 import com.ch.Num;
 import com.ch.StatusS;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
+import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.cloud.upms.utils.VueRecordUtils;
+import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
 import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
@@ -15,7 +16,6 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.e.ExceptionUtils;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +37,7 @@ import java.util.List;
 public class PermissionController {
 
     @Autowired
-    IRoleService roleService;
+    IRoleService       roleService;
     @Autowired
     IPermissionService permissionService;
 
@@ -50,8 +50,7 @@ public class PermissionController {
     }
 
     @PostMapping
-    public Result<Boolean> add(@RequestBody Permission record,
-                               @RequestHeader(Constants.TOKEN_USER) String username) {
+    public Result<Boolean> add(@RequestBody Permission record) {
         return ResultUtils.wrapFail(() -> {
             if (CommonUtils.isEmpty(record.getCode()) || CommonUtils.isEmpty(record.getName())) {
                 ExceptionUtils._throw(PubError.NON_NULL, "权限代码或名称不能为空");
@@ -71,14 +70,13 @@ public class PermissionController {
             if (CommonUtils.isNotEmpty(record.getUrl())) {
                 record.setUrl(record.getUrl().trim());
             }
-            record.setCreateBy(username);
+            record.setCreateBy(RequestUtils.getHeaderUser());
             return permissionService.save(record);
         });
     }
 
     @PutMapping({"{id:[0-9]+}"})
-    public Result<Integer> edit(@PathVariable Long id, @RequestBody Permission record,
-                                @RequestHeader(Constants.TOKEN_USER) String username) {
+    public Result<Integer> edit(@PathVariable Long id, @RequestBody Permission record) {
         return ResultUtils.wrapFail(() -> {
 
             if (CommonUtils.isEmpty(record.getParentId())) {
@@ -93,7 +91,7 @@ public class PermissionController {
             if (CommonUtils.isNotEmpty(record.getUrl())) {
                 record.setUrl(record.getUrl().trim());
             }
-            record.setUpdateBy(username);
+            record.setUpdateBy(RequestUtils.getHeaderUser());
             record.setUpdateAt(DateUtils.current());
             Permission r = permissionService.findByCode(record.getCode());
             Permission orig = permissionService.getById(id);

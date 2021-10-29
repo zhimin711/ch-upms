@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Constants;
 import com.ch.cloud.upms.model.Position;
 import com.ch.cloud.upms.service.IPositionService;
+import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
@@ -42,16 +43,14 @@ public class PositionController {
     }
 
     @PostMapping
-    public Result<Boolean> add(@RequestBody Position record,
-                               @RequestHeader(Constants.TOKEN_USER) String username) {
-        record.setCreateBy(username);
+    public Result<Boolean> add(@RequestBody Position record) {
+        record.setCreateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> positionService.save(record));
     }
 
     @PutMapping({"/{id:[0-9]+}"})
-    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Position record,
-                                @RequestHeader(Constants.TOKEN_USER) String username) {
-        record.setUpdateBy(username);
+    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Position record) {
+        record.setUpdateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> positionService.updateById(record));
     }
 

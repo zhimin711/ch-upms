@@ -1,26 +1,23 @@
 package com.ch.cloud.upms.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.Constants;
-import com.ch.Num;
 import com.ch.Status;
 import com.ch.cloud.upms.model.Dict;
 import com.ch.cloud.upms.service.IDictService;
+import com.ch.cloud.upms.utils.RequestUtils;
+import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
 import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
-import com.ch.e.ExceptionUtils;
 import com.ch.utils.VueRecordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Wrapper;
 import java.util.List;
 
 /**
@@ -47,9 +44,8 @@ public class DictController {
     }
 
     @PostMapping
-    public Result<Boolean> add(@RequestBody Dict record,
-                               @RequestHeader(Constants.TOKEN_USER) String username) {
-        record.setCreateBy(username);
+    public Result<Boolean> add(@RequestBody Dict record) {
+        record.setCreateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> {
             Dict orig = dictService.findByCode(record.getCode());
             if (orig != null) ExceptionUtils._throw(PubError.EXISTS, "代码");
@@ -58,9 +54,8 @@ public class DictController {
     }
 
     @PutMapping({"/{id:[0-9]+}"})
-    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Dict record,
-                                @RequestHeader(Constants.TOKEN_USER) String username) {
-        record.setUpdateBy(username);
+    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Dict record) {
+        record.setUpdateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> {
             Dict orig = dictService.findByCode(record.getCode());
             if (orig != null && !CommonUtils.isEquals(id, orig.getId())) {

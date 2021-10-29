@@ -1,11 +1,9 @@
 package com.ch.cloud.upms.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.Constants;
 import com.ch.cloud.upms.fclient.SsoClientService;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
-import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.pojo.UserInfo;
@@ -62,15 +60,14 @@ public class UserController {
     }
 
     @PostMapping
-    public Result<Boolean> add(@RequestBody User record,
-                               @RequestHeader(Constants.TOKEN_USER) String username) {
+    public Result<Boolean> add(@RequestBody User record) {
 
         User r = userService.findByUsername(record.getUsername());
 
         if (r != null) {
             return Result.error(PubError.EXISTS, "用户名已存在！");
         }
-        record.setCreateBy(username);
+        record.setCreateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> userService.save(record));
     }
 
@@ -84,9 +81,8 @@ public class UserController {
     }
 
     @PutMapping({"{id:[0-9]+}"})
-    public Result<Boolean> edit(@PathVariable Long id, @RequestBody User record,
-                                @RequestHeader(Constants.TOKEN_USER) String username) {
-        record.setUpdateBy(username);
+    public Result<Boolean> edit(@PathVariable Long id, @RequestBody User record) {
+        record.setUpdateBy(RequestUtils.getHeaderUser());
         record.setUpdateAt(DateUtils.current());
         return ResultUtils.wrapFail(() -> userService.updateById(record));
     }
@@ -97,8 +93,7 @@ public class UserController {
     }
 
     @PostMapping("{id:[0-9]+}/initPwd")
-    public Result<String> initPwd(@PathVariable Long id,
-                                  @RequestHeader(Constants.TOKEN_USER) String username) {
+    public Result<String> initPwd(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
             User user = userService.getById(id);
             if (user == null) {
@@ -110,7 +105,7 @@ public class UserController {
                 ExceptionUtils._throw(PubError.UPDATE, "加密错误，请稍后重试!");
             }
             user.setPassword(res.get());
-            user.setUpdateBy(username);
+            user.setUpdateBy(RequestUtils.getHeaderUser());
             user.setUpdateAt(DateUtils.current());
             int c = userService.updatePassword(user);
             if (c <= 0) {
@@ -121,9 +116,9 @@ public class UserController {
     }
 
     @PostMapping("changePwd")
-    public Result<Integer> changePwd(@RequestBody KeyValue keyValue,
-                                     @RequestHeader(Constants.TOKEN_USER) String username) {
+    public Result<Integer> changePwd(@RequestBody KeyValue keyValue) {
         return ResultUtils.wrapFail(() -> {
+            String username = RequestUtils.getHeaderUser();
             User user = userService.findByUsername(username);
             if (user == null) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
@@ -155,16 +150,6 @@ public class UserController {
         return ResultUtils.wrap(() -> userService.assignRole(id, roleIds));
     }
 
-    @GetMapping("{username}/info")
-    public Result<User> findByUsername(@PathVariable String username) {
-        return ResultUtils.wrapFail(() -> userService.findByUsername(username));
-    }
-
-    @GetMapping({"{username}/role"})
-    public Result<Role> findRolesByUsername(@PathVariable String username) {
-        return ResultUtils.wrap(() -> roleService.getCurrent(username));
-    }
-
     @GetMapping("valid")
     public Result<UserInfo> findValid(@RequestParam(value = "name", required = false) String idOrUsernameOrRealName) {
         return ResultUtils.wrapList(() -> {
@@ -185,9 +170,9 @@ public class UserController {
             }).collect(Collectors.toList());
         });
     }
-
+/*
     @GetMapping({"tenants"})
-    public Result<VueRecord2> findTenants() {
+    public Result<TenantDto> findTenants() {
         return ResultUtils.wrapList(() -> {
             String username = RequestUtils.getHeaderUser();
             if (CommonUtils.isEmpty(username)) {
@@ -195,14 +180,14 @@ public class UserController {
             }
             List<Tenant> tenantList = userService.findTenantsByUsername(RequestUtils.getHeaderUser());
             return tenantList.stream().map(e -> {
-                VueRecord2 record = new VueRecord2();
-                record.setValue(e.getId() + "");
-                record.setLabel(e.getName());
-                record.setKey(e.getDepartmentId());
+                TenantDto record = new TenantDto();
+                record.setId(e.getId());
+                record.setName(e.getName());
+                record.setDeptId(e.getDepartmentId());
                 return record;
             }).collect(Collectors.toList());
         });
-    }
+    }*/
 
     @GetMapping({"tenant/{tenantId:[0-9]+}/projects"})
     public Result<VueRecord2> findProjects(@PathVariable Long tenantId) {

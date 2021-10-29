@@ -3,6 +3,7 @@ CREATE TABLE `bt_namespace`
 (
     `ID`          bigint(20)  NOT NULL AUTO_INCREMENT COMMENT '主键',
     `UID`         varchar(64) NOT NULL COMMENT '命名空间唯一标识',
+    `TYPE`        varchar(64) NOT NULL COMMENT '命名空间类型：NACOS',
     `NAME`        varchar(150)         DEFAULT NULL COMMENT '空间名称',
     `DESCRIPTION` varchar(255)         DEFAULT NULL COMMENT '描述',
     `SYNC_NACOS`  tinyint(1)  NOT NULL DEFAULT '0' COMMENT '同步到Nacos状态：0.未同步 1.已同步',
@@ -27,9 +28,9 @@ CREATE TABLE `rt_project_namespace`
 DROP TABLE IF EXISTS `rt_user_namespace`;
 CREATE TABLE `rt_user_namespace`
 (
-    `USER_ID`      varchar(64)  NOT NULL COMMENT '用户ID',
-    `PROJECT_ID`   bigint  NOT NULL COMMENT '项目ID',
-    `NAMESPACE_ID` bigint  NOT NULL COMMENT '命名空间ID',
+    `USER_ID`      varchar(64) NOT NULL COMMENT '用户ID',
+    `PROJECT_ID`   bigint      NOT NULL COMMENT '项目ID',
+    `NAMESPACE_ID` bigint      NOT NULL COMMENT '命名空间ID',
     PRIMARY KEY (`USER_ID`, `PROJECT_ID`, `NAMESPACE_ID`),
     KEY `IDX_RT_PU_PROJECT_ID` (`PROJECT_ID`),
     KEY `IDX_RT_PU_NAMESPACE_ID` (`NAMESPACE_ID`)

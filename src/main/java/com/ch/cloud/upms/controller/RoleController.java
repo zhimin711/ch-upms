@@ -8,6 +8,7 @@ import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
+import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
 import com.ch.result.InvokerPage;
@@ -50,8 +51,7 @@ public class RoleController {
     }
 
     @PostMapping
-    public Result<Boolean> add(@RequestBody Role record,
-                               @RequestHeader(Constants.TOKEN_USER) String username) {
+    public Result<Boolean> add(@RequestBody Role record) {
         return ResultUtils.wrapFail(() -> {
             if (CommonUtils.isEmpty(record.getCode())) {
                 ExceptionUtils._throw(PubError.EXISTS, "角色代码不能为空！");
@@ -65,14 +65,13 @@ public class RoleController {
                 ExceptionUtils._throw(PubError.NOT_ALLOWED, "角色类型错误！");
             }
             record.setCode(code);
-            record.setCreateBy(username);
+            record.setCreateBy(RequestUtils.getHeaderUser());
             return roleService.save(record);
         });
     }
 
     @PutMapping("{id:[0-9]+}")
-    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Role record,
-                                @RequestHeader(Constants.TOKEN_USER) String username) {
+    public Result<Boolean> edit(@PathVariable Long id, @RequestBody Role record) {
         return ResultUtils.wrapFail(() -> {
             if (CommonUtils.isEquals(Num.S0, record.getType())) {
                 ExceptionUtils._throw(PubError.ARGS, "角色类型错误！");
@@ -84,7 +83,7 @@ public class RoleController {
             record.setCode(orig.getCode());
             record.setCreateAt(orig.getCreateAt());
             record.setCreateBy(orig.getCreateBy());
-            record.setUpdateBy(username);
+            record.setUpdateBy(RequestUtils.getHeaderUser());
             record.setUpdateAt(DateUtils.current());
             return roleService.updateById(record);
         });
