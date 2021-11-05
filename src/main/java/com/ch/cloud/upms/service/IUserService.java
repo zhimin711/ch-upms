@@ -19,6 +19,7 @@ import java.util.List;
  * @since 2020-03-25
  */
 public interface IUserService extends IService<User> {
+
     User findByUsername(String username);
 
     int updatePassword(User user);
@@ -42,4 +43,6 @@ public interface IUserService extends IService<User> {
     List<Project> findProjectsByUsernameAndTenantId(String username, Long tenantId);
 
     List<NamespaceDto> findNamespacesByUsernameAndProjectId(String username, Long projectId);
+
+    User getDefaultInfo(String username);
 }

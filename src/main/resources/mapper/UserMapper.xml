@@ -29,7 +29,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ID, USER_ID, USERNAME, PASSWORD, REAL_NAME, BIRTH, SEX, EMAIL, MOBILE, LOCKED, EXPIRED, TYPE, STATUS, deleted, LAST_LOGIN_AT, LAST_LOGIN_IP, ERROR_COUNT, REMARK, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
+        ID, USER_ID, USERNAME, PASSWORD, REAL_NAME, BIRTH, SEX, EMAIL, MOBILE, LOCKED,
+        EXPIRED, `TYPE`, STATUS, deleted, LAST_LOGIN_AT, LAST_LOGIN_IP, ERROR_COUNT,
+        REMARK, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
     </sql>
 
     <insert id="insertAssignRole">
@@ -45,11 +47,15 @@
     DELETE FROM st_user_department_position WHERE user_id=#{userId}
   </delete>
   <select id="findDepartmentPositionByUserId" resultType="com.ch.cloud.upms.pojo.DepartmentDuty">
-    select user_id, department_id as department, position_id as duty FROM st_user_department_position WHERE user_id=#{userId}
+    select user_id, department_id as department, position_id as duty
+    FROM st_user_department_position
+    WHERE user_id=#{userId}
   </select>
 
-    <select id="pageBy" parameterType="com.ch.cloud.upms.model.User" resultMap="BaseResultMap">
-    select t.* FROM st_user t left join  st_user_department_position t2 on t.id = t2.user_id
+    <select id="pageBy" parameterType="com.ch.cloud.upms.model.User" resultType="com.ch.cloud.upms.model.User">
+    select t.*, group_concat(t2.department_id order by t2.department_id asc separator '|') as department
+    FROM st_user t
+    left join st_user_department_position t2 on t.id = t2.user_id
     <where>
         <if test="et.userId !=null and et.userId != ''">
             and t.user_id like #{et.userId}

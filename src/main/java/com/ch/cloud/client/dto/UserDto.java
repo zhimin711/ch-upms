@@ -17,15 +17,42 @@ import java.io.Serializable;
 public class UserDto implements Serializable {
 
     @ApiModelProperty(hidden = true)
-    private Long id;
+    private Long   id;
+    /**
+     *
+     */
+    private String userId;
     /**
      * 用户名
      */
     @ApiModelProperty(name = "username", value = "登录名", required = true)
     private String username;
     /**
-     * 密码
+     *
      */
-    @ApiModelProperty(name = "password", value = "密码", required = true, position = 1)
-    private String password;
+    private String realName;
+    /**
+     *
+     */
+    private String avatar;
+    /**
+     *
+     */
+    private Long   roleId;
+    /**
+     *
+     */
+    private Long   departmentId;
+    /**
+     *
+     */
+    private String departmentName;
+    /**
+     *
+     */
+    private Long   tenantId;
+    /**
+     *
+     */
+    private String tenantName;
 }

@@ -13,9 +13,7 @@ import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
 import com.ch.cloud.upms.pojo.NamespaceDto;
-import com.ch.cloud.upms.service.IDepartmentService;
-import com.ch.cloud.upms.service.IRoleService;
-import com.ch.cloud.upms.service.IUserService;
+import com.ch.cloud.upms.service.*;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
 import com.ch.utils.*;
@@ -41,9 +39,14 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     @Resource
-    private IRoleService               roleService;
+    private IRoleService       roleService;
     @Resource
-    private IDepartmentService         departmentService;
+    private IDepartmentService departmentService;
+    @Resource
+    private IPositionService   positionService;
+    @Resource
+    private ITenantService     tenantService;
+
     @Resource
     private UserProjectMapper          userProjectMapper;
     @Resource
@@ -143,6 +146,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
             getBaseMapper().insertDepartmentPosition(record.getId(), r.getDepartment(), Long.valueOf(r.getDuty()));
         });
+        if (CommonUtils.isNotEmpty(record.getDepartmentId())) {
+            List<String> names = departmentService.findNames(StringUtilsV2.parseIds(record.getDepartmentId()));
+            record.setDepartmentName(String.join(",", names));
+        }
+
     }
 
     @Override
@@ -150,6 +158,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (CommonUtils.isNotEmpty(record.getDepartment())) {
             if (CommonUtils.isNumeric(record.getDepartment())) {
                 String key = departmentService.findCascadeK(Long.valueOf(record.getDepartment()));
+                record.setDepartmentId(key);
                 record.setDepartment(SQLUtils.likeSuffix(key));
             }
         }
@@ -163,16 +172,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //                .orderByAsc("user_id").page(new Page<>(pageNum, pageSize));
         if (pager.getTotal() > 0) {
             pager.getRecords().forEach(r -> {
-                List<DepartmentDuty> ddList = getBaseMapper().findDepartmentPositionByUserId(r.getId());
-                if (ddList.isEmpty()) {
-                    return;
+                r.setDepartment("0");
+                if (CommonUtils.isNotEmpty(r.getDepartmentId(), record.getDepartment())
+                        && !r.getDepartmentId().startsWith(record.getDepartmentId())) {
+
+                    r.setDepartment("1");
                 }
-                r.setDutyList(ddList);
-                List<String> deptList = ddList.stream().map(e -> {
-                    List<String> names = departmentService.findNames(StringUtilsV2.parseIds(e.getDepartment()));
-                    return String.join(".", names);
-                }).collect(Collectors.toList());
-                r.setDepartment(String.join(",", deptList));
 
             });
         }
@@ -181,7 +186,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public List<DepartmentDuty> findDepartmentDuty(Long id) {
-        return getBaseMapper().findDepartmentPositionByUserId(id);
+        List<DepartmentDuty> records = getBaseMapper().findDepartmentPositionByUserId(id);
+        records.forEach(e -> {
+            List<String> names = departmentService.findNames(StringUtilsV2.parseIds(e.getDepartment()));
+            e.setDepartmentName(String.join(",", names));
+            e.setDutyName(positionService.getById(e.getDuty()).getName());
+        });
+        return records;
     }
 
     @Override
@@ -197,5 +208,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public List<NamespaceDto> findNamespacesByUsernameAndProjectId(String username, Long projectId) {
         return userProjectNamespaceMapper.findNamespacesByUserIdAndProjectId(username, projectId);
+    }
+
+    @Override
+    public User getDefaultInfo(String username) {
+        User user = this.findByUsername(username);
+        if (user == null) return null;
+        boolean hasChange = false;
+        if (CommonUtils.isEmpty(user.getRoleId())) {
+            List<Role> roles = roleService.findByUserId(user.getId());
+            if (!roles.isEmpty()) {
+                user.setRoleId(roles.get(0).getId());
+                hasChange = true;
+            }
+        }
+        if (CommonUtils.isEmpty(user.getTenantId())) {
+            List<Tenant> list = getBaseMapper().findTenantsByUsername(username);
+            if (!list.isEmpty()) {
+                user.setTenantId(list.get(0).getId());
+                user.setTenantName(list.get(0).getName());
+                hasChange = true;
+            }
+        }
+        if (hasChange) {
+            super.updateById(user);
+        }
+        return user;
     }
 }

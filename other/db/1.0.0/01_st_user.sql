@@ -2,36 +2,48 @@
 -- Table structure for st_user
 -- ----------------------------
 DROP TABLE IF EXISTS `st_user`;
-CREATE TABLE `st_user` (
-  `ID` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `USER_ID` VARCHAR(64) NOT NULL COMMENT '用户编号',
-  `USERNAME` VARCHAR(50) NOT NULL COMMENT '用户帐号',
-  `PASSWORD` VARCHAR(100) NOT NULL COMMENT '密码',
-  `REAL_NAME` VARCHAR(100) DEFAULT NULL COMMENT '真实姓名',
-  `BIRTH` DATE DEFAULT NULL COMMENT '出生日期',
-  `SEX` TINYINT(1) DEFAULT NULL COMMENT '性别: 0.女 1.男',
-  `EMAIL` VARCHAR(50) DEFAULT NULL COMMENT '电子邮箱',
-  `MOBILE` CHAR(11) DEFAULT NULL COMMENT '手机号码',
-  `LOCKED` CHAR(1) NOT NULL DEFAULT '0' COMMENT '用户是否锁定: 0.否 1.是',
-  `EXPIRED` DATE NULL COMMENT '过期日期',
-  `TYPE` CHAR(1) NOT NULL DEFAULT '1' COMMENT '类型: 0.系统 1.普通',
-  `STATUS` CHAR(1) NOT NULL DEFAULT '1' COMMENT '状态: 0.禁用 1.启动',
-  `LAST_LOGIN_AT` DATETIME DEFAULT NULL COMMENT '登录时间',
-  `LAST_LOGIN_IP` VARCHAR(30) DEFAULT NULL COMMENT '用户登录IP地址',
-  `ERROR_COUNT` INT(2) NOT NULL DEFAULT '0' COMMENT '当天登录错误次数',
-  `REMARK` VARCHAR(100) DEFAULT NULL COMMENT '备注',
-  `CREATE_AT` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `CREATE_BY` VARCHAR(64) DEFAULT NULL COMMENT '创建人',
-  `UPDATE_AT` DATETIME NULL COMMENT '更新时间',
-  `UPDATE_BY` VARCHAR(64) DEFAULT NULL COMMENT '更新人',
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UK_ST_U_USER_ID` (`USER_ID`),
-  UNIQUE KEY `UK_ST_U_USERNAME` (`USERNAME`),
-  UNIQUE KEY `UK_ST_U_EMAIL` (`EMAIL`)
-) ENGINE=INNODB DEFAULT CHARSET=UTF8 COMMENT '后台用户表';
-
+CREATE TABLE `st_user`
+(
+    `ID`            BIGINT(20)   NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `USER_ID`       VARCHAR(64)  NOT NULL COMMENT '用户编号',
+    `USERNAME`      VARCHAR(50)  NOT NULL COMMENT '用户帐号',
+    `PASSWORD`      VARCHAR(100) NOT NULL COMMENT '密码',
+    `REAL_NAME`     VARCHAR(100)          DEFAULT NULL COMMENT '真实姓名',
+    `BIRTH`         DATE                  DEFAULT NULL COMMENT '出生日期',
+    `SEX`           TINYINT(1)            DEFAULT NULL COMMENT '性别: 0.女 1.男',
+    `EMAIL`         VARCHAR(50)           DEFAULT NULL COMMENT '电子邮箱',
+    `MOBILE`        CHAR(11)              DEFAULT NULL COMMENT '手机号码',
+    `LOCKED`        CHAR(1)      NOT NULL DEFAULT '0' COMMENT '用户是否锁定: 0.否 1.是',
+    `EXPIRED`       DATE         NULL COMMENT '过期日期',
+    `TYPE`          CHAR(1)      NOT NULL DEFAULT '1' COMMENT '类型: 0.系统 1.普通',
+    `STATUS`        CHAR(1)      NOT NULL DEFAULT '1' COMMENT '状态: 0.禁用 1.启动',
+    `LAST_LOGIN_AT` DATETIME              DEFAULT NULL COMMENT '登录时间',
+    `LAST_LOGIN_IP` VARCHAR(30)           DEFAULT NULL COMMENT '用户登录IP地址',
+    `ERROR_COUNT`   INT(2)       NOT NULL DEFAULT '0' COMMENT '当天登录错误次数',
+    `REMARK`        VARCHAR(100)          DEFAULT NULL COMMENT '备注',
+    `CREATE_AT`     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `CREATE_BY`     VARCHAR(64)           DEFAULT NULL COMMENT '创建人',
+    `UPDATE_AT`     DATETIME     NULL COMMENT '更新时间',
+    `UPDATE_BY`     VARCHAR(64)           DEFAULT NULL COMMENT '更新人',
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `UK_ST_U_USER_ID` (`USER_ID`),
+    UNIQUE KEY `UK_ST_U_USERNAME` (`USERNAME`),
+    UNIQUE KEY `UK_ST_U_EMAIL` (`EMAIL`)
+) ENGINE = INNODB
+  DEFAULT CHARSET = UTF8 COMMENT '后台用户表';
 -- ----------------------------
 -- Records of A_USER
 -- ----------------------------
-INSERT INTO `st_user` VALUES ('1', '7131630043', 'admin', '$shiro1$SHA-256$500000$3YYXcOOQn3UvIlDJRA209Q==$FLuYSFR030oIW/twVg0oAcH22zjQEIEuEHV5QCgVlxw=',
-                                   '系统管理员', '2017-03-09', '1', 'admin@ch.com', NULL, '0', NULL, '0', '1', NULL, NULL, '0',NULL, '2017-03-09 09:26:44', NULL, NULL, NULL);
+INSERT INTO `st_user`
+VALUES ('1', '7131630043', 'admin',
+        '$shiro1$SHA-256$500000$3YYXcOOQn3UvIlDJRA209Q==$FLuYSFR030oIW/twVg0oAcH22zjQEIEuEHV5QCgVlxw=',
+        '系统管理员', '2017-03-09', '1', 'admin@ch.com', NULL, '0', NULL, '0', '1', NULL, NULL, '0', NULL,
+        '2017-03-09 09:26:44', NULL, NULL, NULL);
+
+alter table st_user
+    add column `department_id`   varchar(100) DEFAULT NULL COMMENT '组织ID' after `TYPE`,
+    add column `department_name` varchar(200) DEFAULT NULL COMMENT '组织名称' after `department_id`,
+    add column `tenant_id`       bigint       DEFAULT NULL COMMENT '租户ID' after `department_name`,
+    add column `tenant_name`     varchar(200) DEFAULT NULL COMMENT '租户名称' after `tenant_id`,
+    add column `role_id`         bigint       DEFAULT NULL COMMENT '角色ID' after `tenant_name`,
+    add column `position_id`     bigint       DEFAULT NULL COMMENT '职位ID' after `role_id`;

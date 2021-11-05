@@ -1,5 +1,7 @@
 package com.ch.cloud.upms.controller.f;
 
+import com.ch.cloud.client.dto.LoginUserDto;
+import com.ch.cloud.client.dto.UserDto;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
@@ -8,6 +10,7 @@ import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.BeanUtilsV2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +35,23 @@ public class UserClientController {
     @Autowired
     private IRoleService roleService;
 
-    @GetMapping("{username}/info")
-    public Result<User> findByUsername(@PathVariable String username) {
-        return ResultUtils.wrapFail(() -> userService.findByUsername(username));
+    @GetMapping("{username}/login")
+    public Result<LoginUserDto> findByUsername(@PathVariable String username) {
+        return ResultUtils.wrapFail(() -> {
+            User user = userService.findByUsername(username);
+            return BeanUtilsV2.clone(user, LoginUserDto.class);
+        });
     }
 
-    @GetMapping({"{username}/role"})
+    @GetMapping({"{username}/info"})
+    public Result<UserDto> findInfo(@PathVariable String username) {
+        return ResultUtils.wrap(() -> {
+            User user = userService.getDefaultInfo(username);
+            return BeanUtilsV2.clone(user, UserDto.class);
+        });
+    }
+
+    @GetMapping({"{username}/roles"})
     public Result<Role> findRolesByUsername(@PathVariable String username) {
         return ResultUtils.wrap(() -> roleService.getCurrent(username));
     }

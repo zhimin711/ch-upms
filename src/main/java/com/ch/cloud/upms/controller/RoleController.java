@@ -1,8 +1,8 @@
 package com.ch.cloud.upms.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.Constants;
 import com.ch.Num;
+import com.ch.Separator;
 import com.ch.StatusS;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.model.Role;
@@ -36,7 +36,7 @@ public class RoleController {
 
 
     @Autowired
-    private IRoleService roleService;
+    private IRoleService       roleService;
     @Autowired
     private IPermissionService permissionService;
 
@@ -116,10 +116,12 @@ public class RoleController {
             Role role = roleService.getById(roleId);
             if (role == null) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
+            } else if (CommonUtils.isEquals(StatusS.DISABLED, role.getStatus())) {
+                ExceptionUtils._throw(PubError.INVALID, roleId);
             } else if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
             }
-            List<String> types = StringUtilsV2.splitStrAndDeDuplication(Constants.SEPARATOR_2, typesStr);
+            List<String> types = StringUtilsV2.splitStrAndDeDuplication(Separator.COMMA_SIGN, typesStr);
             if (types.isEmpty()) {
                 types.add("3");
             }

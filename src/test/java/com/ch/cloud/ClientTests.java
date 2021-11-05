@@ -40,9 +40,12 @@ public class ClientTests {
         if (resp != null && resp.containsKey("data")) {
             JSONArray arr = resp.getJSONArray("data");
             List<NacosNamespace> list = arr.toJavaList(NacosNamespace.class);
-
             System.out.println(arr.toJSONString());
         }
+        String param = "show=all&namespaceId="+"8aaa810e7c5f8e5f017c5f8e5f6a0000";
+//        resp =  new RestTemplate().getForObject("http://nacos.12301.io/nacos/v1/console/namespaces?"+param,JSONObject.class);
+//        assert resp != null;
+//        System.out.println(resp.toJSONString());
     }
 
     @Test
@@ -55,8 +58,8 @@ public class ClientTests {
         param.add("customNamespaceId", "test");
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(param, headers);
 
-        Boolean sync = new RestTemplate().postForObject("http://nacos.12301.io/nacos/v1/console/namespaces", httpEntity, Boolean.class);
-        System.out.println(sync);
+//        Boolean sync = new RestTemplate().postForObject("http://nacos.12301.io/nacos/v1/console/namespaces", httpEntity, Boolean.class);
+//        System.out.println(sync);
     }
 }
 

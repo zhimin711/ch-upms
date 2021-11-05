@@ -23,7 +23,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("st_user")
-@ApiModel(value="User对象", description="后台用户表")
+@ApiModel(value = "User对象", description = "后台用户表")
 public class User extends Model<User> {
 
     private static final long serialVersionUID = 1L;
@@ -68,7 +68,7 @@ public class User extends Model<User> {
     @ApiModelProperty(value = "状态: 0.禁用 1.启动")
     private String status;
 
-    @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）")
+    @ApiModelProperty(hidden = true)
     @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean deleted;
@@ -97,8 +97,23 @@ public class User extends Model<User> {
     @ApiModelProperty(value = "更新人")
     private String updateBy;
 
+    @ApiModelProperty(hidden = true)
     @TableField(exist = false)
-    private String department;
+    private String               department;
+    @ApiModelProperty(hidden = true)
     @TableField(exist = false)
     private List<DepartmentDuty> dutyList;
+
+    @ApiModelProperty(value = "默认角色Id")
+    private Long   roleId;
+    @ApiModelProperty(value = "所属部门Id")
+    private String departmentId;
+    @ApiModelProperty(value = "所属部门名称")
+    private String departmentName;
+    @ApiModelProperty(value = "租户ID")
+    private Long   tenantId;
+    @ApiModelProperty(value = "租户名称")
+    private String tenantName;
+    @ApiModelProperty(value = "所属部门职位ID")
+    private Long   positionId;
 }

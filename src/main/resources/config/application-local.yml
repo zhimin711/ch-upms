@@ -1,8 +1,9 @@
+server:
+  port: 7002
 jasypt:
   encryptor:
     password: abc123
     algorithm: PBEWithMD5AndDES
-
 
 #====================================shardingsphereconfig===============================================
 spring:
@@ -12,7 +13,7 @@ spring:
       ds0:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://192.168.0.109:3306/ch_upms?characterEncoding=UTF-8&serverTimezone=GMT
+        jdbc-url: jdbc:mysql://192.168.0.250:30307/ch_upms?characterEncoding=UTF-8&serverTimezone=GMT
         username: admin
         password: 123456
     sharding:
@@ -63,7 +64,7 @@ logging:
 
 #====================================rocketmq config===============================================
 rocketmq:
-  name-server: 192.168.0.109:9876 # 自己的RocketMQ服务地址
+  name-server: 192.168.0.250:30876 # 自己的RocketMQ服务地址
   producer:
     send-message-timeout: 300000
     group: ch-upms
