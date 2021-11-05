@@ -28,13 +28,13 @@ public interface UpmsClientService {
     @GetMapping({"user/{username}/tenants"})
     Result<TenantDto> findTenantsByUserId(@PathVariable String username);
 
-    @GetMapping({"user/{userId}/roles"})
+    @GetMapping({"user/{userId:[0-9]+}/roles"})
     Result<RoleDto> findRolesByUserId(@PathVariable Long userId);
 
-    @GetMapping({"role/{roleId}/menus"})
+    @GetMapping({"role/{roleId:[0-9]+}/menus"})
     Result<PermissionDto> findMenusByRoleId(@PathVariable Long roleId);
 
-    @GetMapping({"role/{roleId}/permissions"})
+    @GetMapping({"role/{roleId:[0-9]+}/permissions"})
     Result<PermissionDto> findPermissionsByRoleId(@PathVariable Long roleId);
 
     @GetMapping({"permission/hidden"})

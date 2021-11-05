@@ -51,10 +51,10 @@ public class UserClientController {
         });
     }
 
-    @GetMapping({"{username}/roles"})
-    public Result<Role> findRolesByUsername(@PathVariable String username) {
-        return ResultUtils.wrap(() -> roleService.getCurrent(username));
-    }
+//    @GetMapping({"{username}/role"})
+//    public Result<Role> findRolesByUsername(@PathVariable String username) {
+//        return ResultUtils.wrap(() -> roleService.getCurrent(username));
+//    }
 
     @GetMapping({"{username}/tenants"})
     public Result<TenantDto> findTenants(@PathVariable String username) {
