@@ -70,8 +70,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         List<String> list = findUsers(id);
         AtomicInteger c = new AtomicInteger();
         if (!userIds.isEmpty()) {
-            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insert(id, r)));
-            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
+            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insert(id, r)));
+            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
         } else if (!list.isEmpty()) {
             list.forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
         }
@@ -83,10 +83,10 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         List<String> list = userProjectMapper.findUserIdsByProjectIdAndRole(id, role.name());
         AtomicInteger c = new AtomicInteger();
         if (!userIds.isEmpty()) {
-            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insert(id, r, role.name())));
-            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r, role.name())));
+            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insertFull(id, r, role.name())));
+            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.deleteFull(id, r, role.name())));
         } else if (!list.isEmpty()) {
-            list.forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r, role.name())));
+            list.forEach(r -> c.getAndAdd(userProjectMapper.deleteFull(id, r, role.name())));
         }
         return c.get();
     }
@@ -114,32 +114,28 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         boolean ok = super.save(entity);
         if (!ok) return false;
         if (CommonUtils.isNotEmpty(entity.getManager())) {
-            userProjectMapper.insert(entity.getId(), entity.getManager(), RoleType.MRG.name());
+            userProjectMapper.insertFull(entity.getId(), entity.getManager(), RoleType.MRG.name());
         }
         if (!CommonUtils.isEmpty(entity.getDevUserIds())) {
-            entity.getDevUserIds().forEach(uid -> userProjectMapper.insert(entity.getId(), uid, RoleType.DEV.name()));
+            entity.getDevUserIds().forEach(uid -> userProjectMapper.insertFull(entity.getId(), uid, RoleType.DEV.name()));
         }
         if (!CommonUtils.isEmpty(entity.getTestUserIds())) {
-            entity.getTestUserIds().forEach(uid -> userProjectMapper.insert(entity.getId(), uid, RoleType.TEST.name()));
+            entity.getTestUserIds().forEach(uid -> userProjectMapper.insertFull(entity.getId(), uid, RoleType.TEST.name()));
         }
         return true;
     }
 
     @Override
-    public boolean updateById(Project entity) {
-        boolean ok = super.save(entity);
+    public boolean updateById(Project record) {
+        boolean ok = super.updateById(record);
         if (!ok) return false;
 
-        if (CommonUtils.isNotEmpty(entity.getManager())) {
-            userProjectMapper.deleteByProjectIdAndRole(entity.getId(), RoleType.MRG.name());
-            userProjectMapper.insert(entity.getId(), entity.getManager(), RoleType.MRG.name());
+        if (CommonUtils.isNotEmpty(record.getManager())) {
+            userProjectMapper.deleteByProjectIdAndRole(record.getId(), RoleType.MRG.name());
+            userProjectMapper.insertFull(record.getId(), record.getManager(), RoleType.MRG.name());
         }
-        if (!CommonUtils.isEmpty(entity.getDevUserIds())) {
-            assignUsers(entity.getId(), entity.getDevUserIds(), RoleType.DEV);
-        }
-        if (!CommonUtils.isEmpty(entity.getTestUserIds())) {
-            assignUsers(entity.getId(), entity.getTestUserIds(), RoleType.TEST);
-        }
+        assignUsers(record.getId(), record.getDevUserIds(), RoleType.DEV);
+        assignUsers(record.getId(), record.getTestUserIds(), RoleType.TEST);
         return true;
     }
 }

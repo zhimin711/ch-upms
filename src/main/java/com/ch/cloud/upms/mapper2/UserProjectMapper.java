@@ -32,13 +32,13 @@ public interface UserProjectMapper {
     int insert(@Param("projectId") Long projectId, @Param("userId") String userId);
 
     @Insert("INSERT INTO rt_user_project (PROJECT_ID,USER_ID,ROLE) VALUES (#{projectId},#{userId},#{role})")
-    int insert(@Param("projectId") Long projectId, @Param("userId") String userId, @Param("role") String role);
+    int insertFull(@Param("projectId") Long projectId, @Param("userId") String userId, @Param("role") String role);
 
     @Delete("DELETE FROM rt_user_project where PROJECT_ID=#{projectId} and USER_ID=#{userId}")
     int delete(Long projectId, String userId);
 
     @Delete("DELETE FROM rt_user_project where PROJECT_ID=#{projectId} and USER_ID=#{userId} and role=#{role}")
-    int delete(Long projectId, String userId, String role);
+    int deleteFull(Long projectId, String userId, String role);
 
     @Delete("DELETE FROM rt_user_project where PROJECT_ID = #{projectId}")
     int deleteByProjectId(Long projectId);
