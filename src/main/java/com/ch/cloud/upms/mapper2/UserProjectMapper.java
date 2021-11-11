@@ -25,6 +25,9 @@ public interface UserProjectMapper {
     @Select("select USER_ID from rt_user_project where PROJECT_ID=#{projectId}")
     List<String> findUserIdsByProjectId(Long projectId);
 
+    @Select("select USER_ID from rt_user_project where PROJECT_ID=#{projectId} and ROLE=#{role}")
+    List<String> findUserIdsByProjectIdAndRole(Long projectId, String role);
+
     @Insert("INSERT INTO rt_user_project (PROJECT_ID,USER_ID) VALUES (#{projectId},#{userId})")
     int insert(@Param("projectId") Long projectId, @Param("userId") String userId);
 
@@ -34,10 +37,18 @@ public interface UserProjectMapper {
     @Delete("DELETE FROM rt_user_project where PROJECT_ID=#{projectId} and USER_ID=#{userId}")
     int delete(Long projectId, String userId);
 
+    @Delete("DELETE FROM rt_user_project where PROJECT_ID=#{projectId} and USER_ID=#{userId} and role=#{role}")
+    int delete(Long projectId, String userId, String role);
+
     @Delete("DELETE FROM rt_user_project where PROJECT_ID = #{projectId}")
     int deleteByProjectId(Long projectId);
 
     @Select("SELECT count(1) from rt_user_project where PROJECT_ID=#{projectId} and USER_ID=#{userId}")
     int exists(@Param("projectId") Long projectId, @Param("userId") String userId);
 
+    @Update("update rt_user_project set USER_ID=#{userId} where PROJECT_ID=#{projectId} and role=#{role}")
+    int updateByProjectIdAndRole(Long projectId, String userId, String role);
+
+    @Delete("DELETE FROM rt_user_project where PROJECT_ID = #{projectId} and role=#{role}")
+    int deleteByProjectIdAndRole(Long projectId, String role);
 }

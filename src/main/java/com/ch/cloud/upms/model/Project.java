@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -110,10 +112,8 @@ public class Project extends Model<Project> {
      */
     private String updateBy;
 
-
-    @Override
-    public Serializable pkVal() {
-        return this.id;
-    }
-
+    @TableField(exist = false)
+    private List<String> devUserIds;
+    @TableField(exist = false)
+    private List<String> testUserIds;
 }

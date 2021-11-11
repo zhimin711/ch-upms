@@ -60,6 +60,11 @@ public class ProjectController {
         record.setDepartmentName(String.join(Separator.OBLIQUE_LINE, names));
     }
 
+    @GetMapping({"{id:[0-9]+}"})
+    public Result<Project> Project(@PathVariable Long id) {
+        return ResultUtils.wrapFail(() -> projectService.getWithUserById(id));
+    }
+
     @PutMapping({"{id:[0-9]+}"})
     public Result<Boolean> edit(@RequestBody Project record) {
         return ResultUtils.wrapFail(() -> {

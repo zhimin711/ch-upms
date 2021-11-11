@@ -1,17 +1,14 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.StatusS;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ch.cloud.upms.mapper.ProjectMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
-import com.ch.cloud.upms.mapper.ProjectMapper;
-import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.service.IProjectService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ch.pojo.VueRecord2;
+import com.ch.cloud.upms.utils.RoleType;
 import com.ch.utils.CommonUtils;
-import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -81,9 +78,68 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         return c.get();
     }
 
+    //    @Override
+    private int assignUsers(Long id, List<String> userIds, RoleType role) {
+        List<String> list = userProjectMapper.findUserIdsByProjectIdAndRole(id, role.name());
+        AtomicInteger c = new AtomicInteger();
+        if (!userIds.isEmpty()) {
+            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insert(id, r, role.name())));
+            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r, role.name())));
+        } else if (!list.isEmpty()) {
+            list.forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r, role.name())));
+        }
+        return c.get();
+    }
+
     @Override
     public boolean exists(String userId, Long projectId) {
         int c = userProjectMapper.exists(projectId, userId);
         return c > 0;
+    }
+
+    @Override
+    public Project getWithUserById(Long id) {
+        Project record = super.getById(id);
+        if (record != null) {
+            List<String> devUserIds = userProjectMapper.findUserIdsByProjectIdAndRole(id, RoleType.DEV.name());
+            List<String> testUserIds = userProjectMapper.findUserIdsByProjectIdAndRole(id, RoleType.TEST.name());
+            record.setDevUserIds(devUserIds);
+            record.setTestUserIds(testUserIds);
+        }
+        return record;
+    }
+
+    @Override
+    public boolean save(Project entity) {
+        boolean ok = super.save(entity);
+        if (!ok) return false;
+        if (CommonUtils.isNotEmpty(entity.getManager())) {
+            userProjectMapper.insert(entity.getId(), entity.getManager(), RoleType.MRG.name());
+        }
+        if (!CommonUtils.isEmpty(entity.getDevUserIds())) {
+            entity.getDevUserIds().forEach(uid -> userProjectMapper.insert(entity.getId(), uid, RoleType.DEV.name()));
+        }
+        if (!CommonUtils.isEmpty(entity.getTestUserIds())) {
+            entity.getTestUserIds().forEach(uid -> userProjectMapper.insert(entity.getId(), uid, RoleType.TEST.name()));
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateById(Project entity) {
+        boolean ok = super.save(entity);
+        if (!ok) return false;
+
+        if (CommonUtils.isNotEmpty(entity.getManager())) {
+            userProjectMapper.deleteByProjectIdAndRole(entity.getId(), RoleType.MRG.name());
+            userProjectMapper.insert(entity.getId(), entity.getManager(), RoleType.MRG.name());
+        }
+        if (!CommonUtils.isEmpty(entity.getDevUserIds())) {
+            assignUsers(entity.getId(), entity.getDevUserIds(), RoleType.DEV);
+        }
+        if (!CommonUtils.isEmpty(entity.getTestUserIds())) {
+            assignUsers(entity.getId(), entity.getTestUserIds(), RoleType.TEST);
+        }
+        return true;
     }
 }

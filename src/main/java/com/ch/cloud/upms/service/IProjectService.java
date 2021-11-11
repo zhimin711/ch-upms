@@ -29,4 +29,6 @@ public interface IProjectService extends IService<Project> {
     int assignUsers(Long id, List<String> userIds);
 
     boolean exists(String userId, Long projectId);
+
+    Project getWithUserById(Long id);
 }
