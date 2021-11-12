@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ch.cloud.upms.mapper.ApplyRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ch.cloud.upms.model.ApplyRecord">
+        <id column="ID" property="id" />
+        <result column="TYPE" property="type" />
+        <result column="CONTENT" property="content" />
+        <result column="STATUS" property="status" />
+        <result column="APPROVE_BY" property="approveBy" />
+        <result column="APPROVE_AT" property="approveAt" />
+        <result column="CREATE_AT" property="createAt" />
+        <result column="CREATE_BY" property="createBy" />
+        <result column="UPDATE_AT" property="updateAt" />
+        <result column="UPDATE_BY" property="updateBy" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, TYPE, CONTENT, STATUS, APPROVE_BY, APPROVE_AT, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
+    </sql>
+
+</mapper>

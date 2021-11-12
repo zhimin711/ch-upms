@@ -6,10 +6,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.cloud.upms.model.ApplyRecord;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.pojo.NacosNamespace;
 import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.pojo.UserProjectNamespaceDto;
+import com.ch.cloud.upms.service.IApplyRecordService;
 import com.ch.cloud.upms.service.INamespaceService;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.utils.RequestUtils;
@@ -49,9 +51,11 @@ import java.util.List;
 public class NamespaceController {
 
     @Autowired
-    private INamespaceService namespaceService;
+    private INamespaceService   namespaceService;
     @Autowired
-    private IProjectService   projectService;
+    private IProjectService     projectService;
+    @Autowired
+    private IApplyRecordService applyRecordService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -231,11 +235,21 @@ public class NamespaceController {
     }
 
     @PostMapping({"apply/{projectId:[0-9]+}"})
-    public Result<Integer> apply(@PathVariable Long projectId, @RequestBody List<Long> namespaceIds) {
+    public Result<Boolean> apply(@PathVariable Long projectId, @RequestBody List<Long> namespaceIds) {
         return ResultUtils.wrap(() -> {
             String username = RequestUtils.getHeaderUser();
             checkUserProject(username, projectId);
-            return namespaceService.applyProjectNamespaces(username, projectId, namespaceIds);
+            ApplyRecord record = new ApplyRecord();
+            record.setCreateBy(username);
+            record.setType("1");
+
+            JSONObject object = new JSONObject();
+            object.put("userId", username);
+            object.put("projectId", projectId);
+            object.put("namespaceIds", namespaceIds);
+            record.setContent(object.toJSONString());
+
+            return applyRecordService.save(record);
         });
     }
 
