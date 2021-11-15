@@ -38,6 +38,11 @@ public class ApplyRecord extends Model<ApplyRecord> {
     private String type;
 
     /**
+     * 申请KEY:
+     */
+    private String dataKey;
+
+    /**
      * 申请内容
      */
     private String content;

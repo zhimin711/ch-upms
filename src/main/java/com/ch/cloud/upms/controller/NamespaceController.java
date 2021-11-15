@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.ApplyRecord;
 import com.ch.cloud.upms.model.Namespace;
+import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.pojo.NacosNamespace;
 import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.pojo.UserProjectNamespaceDto;
@@ -27,6 +28,7 @@ import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.VueRecordUtils;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -242,11 +244,26 @@ public class NamespaceController {
             ApplyRecord record = new ApplyRecord();
             record.setCreateBy(username);
             record.setType("1");
+            record.setDataKey(projectId + "");
+            List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record));
+            if (!list.isEmpty()) {
+                ExceptionUtils._throw(PubError.EXISTS, "已提交申请,请联系管理员审核！");
+            }
+            Project project = projectService.getById(projectId);
 
             JSONObject object = new JSONObject();
             object.put("userId", username);
             object.put("projectId", projectId);
+            object.put("projectName", project.getName());
             object.put("namespaceIds", namespaceIds);
+
+            List<String> names = Lists.newArrayList();
+            for (Long nid : namespaceIds) {
+                Namespace n = namespaceService.getById(nid);
+                names.add(n.getName());
+            }
+            object.put("namespaceNames", String.join("|", names));
+
             record.setContent(object.toJSONString());
 
             return applyRecordService.save(record);

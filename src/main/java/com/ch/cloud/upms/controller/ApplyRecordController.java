@@ -1,10 +1,11 @@
 package com.ch.cloud.upms.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.ApplyRecord;
-import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.service.IApplyRecordService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
@@ -19,8 +20,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.stereotype.Controller;
-
 /**
  * <p>
  * 业务-申请记录表 前端控制器
@@ -29,7 +28,7 @@ import org.springframework.stereotype.Controller;
  * @author zhimin.ma
  * @since 2021-11-12
  */
-@Controller
+@RestController
 @RequestMapping("/apply")
 public class ApplyRecordController {
 
