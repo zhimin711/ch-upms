@@ -14,6 +14,7 @@ import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.s.ApproveStatus;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import io.swagger.annotations.ApiOperation;
@@ -55,7 +56,10 @@ public class ApplyRecordController {
             ApplyRecord orig = applyRecordService.getById(record.getId());
             if (orig == null) ExceptionUtils._throw(PubError.NOT_EXISTS, record.getId());
             if (!CommonUtils.isEquals(orig.getType(), "1")) {
-                ExceptionUtils._throw(PubError.NOT_ALLOWED, "approve nacos namespace failed!");
+                ExceptionUtils._throw(PubError.NOT_ALLOWED, "approve type is not [nacos]!");
+            }
+            if (ApproveStatus.fromValue(record.getStatus()).availableApprove()) {
+                ExceptionUtils._throw(PubError.NOT_ALLOWED, "approve status is not correct!");
             }
             orig.setStatus(record.getStatus());
             orig.setApproveBy(RequestUtils.getHeaderUser());

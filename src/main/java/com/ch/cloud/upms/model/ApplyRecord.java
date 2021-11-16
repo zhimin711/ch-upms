@@ -50,7 +50,7 @@ public class ApplyRecord extends Model<ApplyRecord> {
     /**
      * 状态：0.待审核 1.已通过 2.拒绝
      */
-    private String status;
+    private Integer status;
 
     /**
      * 审核人

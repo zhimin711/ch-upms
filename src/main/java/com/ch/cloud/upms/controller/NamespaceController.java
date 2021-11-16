@@ -23,6 +23,7 @@ import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.s.ApproveStatus;
 import com.ch.toolkit.UUIDGenerator;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
@@ -245,6 +246,7 @@ public class NamespaceController {
             record.setCreateBy(username);
             record.setType("1");
             record.setDataKey(projectId + "");
+            record.setStatus(ApproveStatus.STAY.getCode());
             List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record));
             if (!list.isEmpty()) {
                 ExceptionUtils._throw(PubError.EXISTS, "已提交申请,请联系管理员审核！");
