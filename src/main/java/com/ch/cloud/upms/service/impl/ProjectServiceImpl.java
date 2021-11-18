@@ -82,7 +82,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     private int assignUsers(Long id, List<String> userIds, RoleType role) {
         List<String> list = userProjectMapper.findUserIdsByProjectIdAndRole(id, role.name());
         AtomicInteger c = new AtomicInteger();
-        if (!userIds.isEmpty()) {
+        if (CommonUtils.isNotEmpty(userIds)) {
             userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insertFull(id, r, role.name())));
             list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.deleteFull(id, r, role.name())));
         } else if (!list.isEmpty()) {

@@ -135,25 +135,4 @@ public class PermissionController {
         });
     }
 
-    @GetMapping({"hidden"})
-    public Result<Permission> hidden() {
-        return ResultUtils.wrapList(() -> {
-            Permission record = new Permission();
-            record.setType(Num.S5);
-            record.setHidden(true);
-            record.setStatus(StatusS.ENABLED);
-            return permissionService.find(record);
-        });
-    }
-
-    @GetMapping({"whitelist"})
-    public Result<Permission> whitelist() {
-        return ResultUtils.wrapList(() -> {
-            Permission record = new Permission();
-            record.setType(Num.S5);
-            record.setHidden(false);
-            record.setStatus(StatusS.ENABLED);
-            return permissionService.find(record);
-        });
-    }
 }

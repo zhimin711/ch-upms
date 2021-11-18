@@ -14,18 +14,18 @@ import java.util.List;
 @Mapper
 public interface UserProjectMapper {
 
-    @Select("select PROJECT_ID from rt_user_project where USER_ID=#{userId}")
+    @Select("select distinct PROJECT_ID from rt_user_project where USER_ID=#{userId}")
     List<Long> findProjectIdsByUserId(String userId);
 
-    @Select("SELECT t1.* from bt_project t1" +
+    @Select("SELECT distinct t1.* from bt_project t1" +
             " INNER JOIN rt_user_project t2 ON t1.id  = t2.PROJECT_ID" +
             " WHERE t1.tenant_id =#{tenantId} and t2.USER_ID=#{userId}")
     List<Project> findProjectsByUserIdAndTenantId(String userId, Long tenantId);
 
-    @Select("select USER_ID from rt_user_project where PROJECT_ID=#{projectId}")
+    @Select("select distinct USER_ID from rt_user_project where PROJECT_ID=#{projectId}")
     List<String> findUserIdsByProjectId(Long projectId);
 
-    @Select("select USER_ID from rt_user_project where PROJECT_ID=#{projectId} and ROLE=#{role}")
+    @Select("select distinct USER_ID from rt_user_project where PROJECT_ID=#{projectId} and ROLE=#{role}")
     List<String> findUserIdsByProjectIdAndRole(Long projectId, String role);
 
     @Insert("INSERT INTO rt_user_project (PROJECT_ID,USER_ID) VALUES (#{projectId},#{userId})")

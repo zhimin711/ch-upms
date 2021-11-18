@@ -31,7 +31,7 @@ public class Permission extends Model<Permission> {
     @TableId(value = "ID", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "类型(1.目录 2.菜单页 3.按钮)")
+    @ApiModelProperty(value = "类型(1.目录 2.菜单页 3.按钮 4. 5.)")
     private String type;
 
     @ApiModelProperty(value = "名称")
@@ -54,6 +54,9 @@ public class Permission extends Model<Permission> {
 
     @ApiModelProperty(value = "是否隐藏(0.否 1.是)")
     private Boolean hidden;
+
+    @ApiModelProperty(value = "是否开始Cookie(0.否 1.是)")
+    private Boolean enableCookie;
 
     @ApiModelProperty(value = "是否为系统权限(0.否 1.是)")
     @TableField("IS_SYS")
