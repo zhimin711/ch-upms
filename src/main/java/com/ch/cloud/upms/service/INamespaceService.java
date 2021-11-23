@@ -24,4 +24,5 @@ public interface INamespaceService extends IService<Namespace> {
     int assignUsers(Long id, Long projectId, List<String> userIds);
 
     int applyProjectNamespaces(String headerUser, Long projectId, List<Long> namespaceIds);
+
 }

@@ -9,6 +9,7 @@ import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.utils.RoleType;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.SQLUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -138,4 +139,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         assignUsers(record.getId(), record.getTestUserIds(), RoleType.TEST);
         return true;
     }
+
+    @Override
+    public List<Project> findByNamespaceIdAndName(Long namespaceId, String name) {
+        if(CommonUtils.isNotEmpty(name)){
+            name = SQLUtils.likeAny(name);
+        }
+        return getBaseMapper().findByNamespaceIdAndName(namespaceId, name);
+    }
+
 }

@@ -5,7 +5,7 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.ch.cloud.upms.model.Project">
         <id column="ID" property="id" />
-        <result column="TENANT_ID" property="tenantCode" />
+        <result column="TENANT_ID" property="tenantId" />
         <result column="TENANT_NAME" property="tenantName" />
         <result column="NAME" property="name" />
         <result column="CODE" property="code" />
@@ -40,4 +40,13 @@
     <delete id="deleteAssignNamespace">
         DELETE FROM rt_project_namespace WHERE PROJECT_ID=#{projectId} AND NAMESPACE_ID=#{namespaceId}
      </delete>
+    <select id="findByNamespaceIdAndName" resultMap="BaseResultMap">
+        select t1.* from bt_project t1
+        inner join rt_project_namespace t2
+        on t1.id = t2.PROJECT_ID
+        where t2.NAMESPACE_ID = #{namespaceId}
+        <if test="name!=null and name!=''">
+            t1.name like #{name}
+        </if>
+    </select>
 </mapper>

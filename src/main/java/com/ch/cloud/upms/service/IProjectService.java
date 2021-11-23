@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
-import com.ch.pojo.VueRecord2;
 
 import java.util.List;
 
@@ -31,4 +30,6 @@ public interface IProjectService extends IService<Project> {
     boolean exists(String userId, Long projectId);
 
     Project getWithUserById(Long id);
+
+    List<Project> findByNamespaceIdAndName(Long namespaceId, String name);
 }

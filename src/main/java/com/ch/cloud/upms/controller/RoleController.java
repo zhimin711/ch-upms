@@ -90,12 +90,12 @@ public class RoleController {
     }
 
 
-    @DeleteMapping({"/{id:[0-9]+}"})
+    @DeleteMapping({"{id:[0-9]+}"})
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> roleService.removeById(id));
     }
 
-    @GetMapping({"{roleId}/menus"})
+    @GetMapping({"{roleId:[0-9]+}/menus"})
     public Result<Permission> findMenusByRoleId(@PathVariable Long roleId) {
         return ResultUtils.wrapList(() -> {
             Long rid = roleId;
@@ -109,7 +109,7 @@ public class RoleController {
         });
     }
 
-    @GetMapping({"{roleId}/permissions"})
+    @GetMapping({"{roleId:[0-9]+}/permissions"})
     public Result<Permission> findPermissions(@PathVariable Long roleId, @RequestParam(value = "types", required = false) String typesStr) {
         return ResultUtils.wrapList(() -> {
             Long rid = roleId;
@@ -117,7 +117,7 @@ public class RoleController {
             if (role == null) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
             } else if (CommonUtils.isEquals(StatusS.DISABLED, role.getStatus())) {
-                ExceptionUtils._throw(PubError.INVALID, roleId);
+                ExceptionUtils._throw(PubError.INVALID, "角色：" + roleId);
             } else if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
             }
@@ -129,7 +129,7 @@ public class RoleController {
         });
     }
 
-    @PostMapping({"{roleId}/permissions"})
+    @PostMapping({"{roleId:[0-9]+}/permissions"})
     public Result<Integer> editPermissions(@PathVariable Long roleId, @RequestBody Long[] permissionIds) {
         return ResultUtils.wrap(() -> permissionService.updateRolePermissions(roleId, Lists.newArrayList(permissionIds)));
     }

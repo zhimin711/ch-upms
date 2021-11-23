@@ -21,4 +21,6 @@ public interface ProjectMapper extends BaseMapper<Project> {
     int insertAssignNamespace(Long projectId, Long namespaceId);
 
     int deleteAssignNamespace(Long projectId, Long namespaceId);
+
+    List<Project> findByNamespaceIdAndName(Long namespaceId, String name);
 }

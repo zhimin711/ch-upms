@@ -276,5 +276,14 @@ public class NamespaceController {
         boolean exists = projectService.exists(username, projectId);
         if (!exists) ExceptionUtils._throw(PubError.NOT_EXISTS, username + "+" + projectId);
     }
+
+
+    @GetMapping({"{id:[0-9]+}/projects"})
+    public Result<VueRecord> findProjects(@PathVariable Long id, @RequestParam(value = "s", required = false) String name) {
+        return ResultUtils.wrapList(() -> {
+            List<Project> projects = projectService.findByNamespaceIdAndName(id, name);
+            return VueRecordUtils.covertIdList(projects);
+        });
+    }
 }
 

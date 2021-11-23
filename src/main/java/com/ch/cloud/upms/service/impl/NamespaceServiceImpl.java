@@ -36,7 +36,7 @@ public class NamespaceServiceImpl extends ServiceImpl<NamespaceMapper, Namespace
 
     @Override
     public List<UserProjectNamespaceDto> findUsers(Long namespaceId, Long projectId) {
-        return userProjectNamespaceMapper.findUsersByNamespaceIdAndProjectId(namespaceId,projectId);
+        return userProjectNamespaceMapper.findUsersByNamespaceIdAndProjectId(namespaceId, projectId);
     }
 
     @Override
@@ -48,4 +48,5 @@ public class NamespaceServiceImpl extends ServiceImpl<NamespaceMapper, Namespace
     public int applyProjectNamespaces(String userId, Long projectId, List<Long> namespaceIds) {
         return 0;
     }
+
 }
