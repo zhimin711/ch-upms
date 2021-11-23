@@ -21,6 +21,7 @@ import com.ch.utils.CharUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.EncryptUtils;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +135,27 @@ public class UserController {
             return userService.updatePassword(user);
         });
     }
+
+
+    @PostMapping("change/role")
+    public Result<Boolean> changDefaultRole(@RequestBody Role role) {
+        return ResultUtils.wrapFail(() -> {
+            String username = RequestUtils.getHeaderUser();
+            User user = userService.findByUsername(username);
+            if (user == null) {
+                ExceptionUtils._throw(PubError.NOT_EXISTS, "用户不存在: " + username);
+            }
+            boolean exists = userService.existsRole(user.getId(), role.getId());
+            if (!exists) {
+                ExceptionUtils._throw(PubError.NOT_EXISTS, role.getId());
+            }
+            user.setRoleId(role.getId());
+            user.setUpdateBy(username);
+            user.setUpdateAt(DateUtils.current());
+            return userService.updateBatchById(Lists.newArrayList(user));
+        });
+    }
+
 
     @GetMapping({"roles"})
     public Result<Role> findEnableRoles() {

@@ -7,6 +7,7 @@ import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
 import com.ch.cloud.upms.mapper2.UserProjectNamespaceMapper;
+import com.ch.cloud.upms.mapper2.UserRoleMapper;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.Tenant;
@@ -51,6 +52,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserProjectMapper          userProjectMapper;
     @Resource
     private UserProjectNamespaceMapper userProjectNamespaceMapper;
+    @Resource
+    private UserRoleMapper             userRoleMapper;
 
     @Override
     public User findByUsername(String username) {
@@ -234,5 +237,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             super.updateById(user);
         }
         return user;
+    }
+
+    @Override
+    public boolean existsRole(Long userId, Long roleId) {
+        return userRoleMapper.exists(userId, roleId);
     }
 }

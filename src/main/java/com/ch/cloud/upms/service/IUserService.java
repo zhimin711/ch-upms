@@ -45,4 +45,6 @@ public interface IUserService extends IService<User> {
     List<NamespaceDto> findNamespacesByUsernameAndProjectId(String username, Long projectId);
 
     User getDefaultInfo(String username);
+
+    boolean existsRole(Long userId, Long roleId);
 }
