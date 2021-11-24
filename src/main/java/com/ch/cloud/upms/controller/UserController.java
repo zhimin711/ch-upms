@@ -137,7 +137,7 @@ public class UserController {
     }
 
 
-    @PostMapping("change/role")
+    @PostMapping("changeRole")
     public Result<Boolean> changDefaultRole(@RequestBody Role role) {
         return ResultUtils.wrapFail(() -> {
             String username = RequestUtils.getHeaderUser();
