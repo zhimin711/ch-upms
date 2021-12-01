@@ -61,7 +61,7 @@ public class ProjectController {
     }
 
     @GetMapping({"{id:[0-9]+}"})
-    public Result<Project> Project(@PathVariable Long id) {
+    public Result<Project> get(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> projectService.getWithUserById(id));
     }
 

@@ -5,6 +5,7 @@ import com.ch.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * decs:通用用户权限客户端接口
@@ -35,7 +36,7 @@ public interface UpmsClientService {
     Result<PermissionDto> findMenusByRoleId(@PathVariable Long roleId);
 
     @GetMapping({"role/{roleId:[0-9]+}/permissions"})
-    Result<PermissionDto> findPermissionsByRoleId(@PathVariable Long roleId);
+    Result<PermissionDto> findPermissionsByRoleId(@PathVariable Long roleId, @RequestParam(value = "types", required = false) String typesStr);
 
     @GetMapping({"permission/hidden"})
     Result<PermissionDto> findHiddenPermissions();

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色管理
@@ -132,5 +133,21 @@ public class RoleController {
     @PostMapping({"{roleId:[0-9]+}/permissions"})
     public Result<Integer> editPermissions(@PathVariable Long roleId, @RequestBody Long[] permissionIds) {
         return ResultUtils.wrap(() -> permissionService.updateRolePermissions(roleId, Lists.newArrayList(permissionIds)));
+    }
+
+    @PutMapping({"{roleId:[0-9]+}/permissions"})
+    public Result<Integer> editAuthPermissions(@PathVariable Long roleId, @RequestBody List<Long> permissionIds) {
+        return ResultUtils.wrap(() -> {
+            List<Long> ids = permissionIds;
+            if (CommonUtils.isNotEmpty(permissionIds)) {//过滤非授权权限
+                List<Permission> list = permissionService.query().in("id", permissionIds).eq("type", "4").select("id").list();
+                if (list.isEmpty()) {
+                    ids = Lists.newArrayList();
+                } else {
+                    ids = list.stream().map(Permission::getId).collect(Collectors.toList());
+                }
+            }
+            return permissionService.updateRolePermissions(roleId, ids);
+        });
     }
 }

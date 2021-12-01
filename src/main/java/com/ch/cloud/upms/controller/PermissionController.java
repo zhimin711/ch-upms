@@ -126,7 +126,7 @@ public class PermissionController {
     }
 
 
-    @ApiOperation(value = "获取权限树", notes = "0.全部 1.目录 2.菜单 3.按钮、链接")
+    @ApiOperation(value = "获取权限树", notes = "0.全部 1.目录 2.菜单 3.按钮、链接 4.可以授权接口 9.可授权权限")
     @GetMapping({"tree/{type:[0-9]+}"})
     public Result<VueRecord> tree(@PathVariable String type) {
         return ResultUtils.wrapList(() -> {

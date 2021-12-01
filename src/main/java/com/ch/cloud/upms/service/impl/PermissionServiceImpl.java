@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.Constants;
 import com.ch.Num;
+import com.ch.Separator;
 import com.ch.Status;
 import com.ch.cloud.upms.mapper.PermissionMapper;
 import com.ch.cloud.upms.model.Permission;
@@ -80,7 +81,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private void findChildren(List<Permission> records) {
         if (records == null || records.isEmpty()) return;
         records.forEach(r -> {
-            String pid2 = StringUtilsV2.linkStrIgnoreZero(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString());
+            String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString());
             List<Permission> subList = super.query().likeRight("parent_id", pid2).list();
             if (subList.isEmpty()) return;
             Map<String, List<Permission>> subMap = assembleTree(subList);
@@ -138,7 +139,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public String findNameByParseLastId(String parentId) {
         if (CommonUtils.isEmpty(parentId)) return null;
-        String idStr = StringUtilsV2.lastStr(parentId, Constants.SEPARATOR_2);
+        String idStr = StringUtilsV2.lastStr(parentId, Separator.COMMA_SIGN);
         if (!CommonUtils.isNumeric(idStr)) {
             return null;
         }
@@ -197,7 +198,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private Map<String, List<Permission>> assembleTree(List<Permission> subList) {
         Map<String, List<Permission>> subMap = subList.stream().collect(Collectors.groupingBy(Permission::getParentId));
         subMap.forEach((k, v) -> v.forEach(r -> {
-            r.setChildren(subMap.get(StringUtilsV2.linkStr(Constants.SEPARATOR_2, r.getParentId(), r.getId().toString())));
+            r.setChildren(subMap.get(StringUtilsV2.linkStr(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString())));
             if (r.getChildren() != null) r.getChildren().sort(Comparator.comparing(Permission::getSort));
         }));
         return subMap;

@@ -9,7 +9,7 @@ package com.ch.cloud.client.dto;
  * @since 2021/11/22
  */
 public enum PermissionType {
-    CATALOG("1"), MENU("2"), MENU_HIDE("2#0"), BUTTON("3"), INTERFACE("5");
+    CATALOG("1"), MENU("2"), MENU_HIDE("2#0"), BUTTON("3"), AUTH_INTERFACE("4"), INTERFACE("5");
 
     private final String code;
 
