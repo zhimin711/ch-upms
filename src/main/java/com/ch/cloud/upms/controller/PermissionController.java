@@ -131,7 +131,7 @@ public class PermissionController {
     public Result<VueRecord> tree(@PathVariable String type) {
         return ResultUtils.wrapList(() -> {
             List<Permission> records = permissionService.findTreeByType(type);
-            return VueRecordUtils.convertParentsByType(records, type);
+            return VueRecordUtils.convertTreeByType(records, type);
         });
     }
 

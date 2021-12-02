@@ -34,7 +34,7 @@
         select
         DISTINCT <include refid="Base_Column_List"/>
         from st_permission t
-        <if test="roleId > 0">
+        <if test="roleId !=null and roleId > 0">
             inner join st_role_permission t1
             on t.ID = t1.PERMISSION_ID and t1.ROLE_ID = #{roleId}
         </if>

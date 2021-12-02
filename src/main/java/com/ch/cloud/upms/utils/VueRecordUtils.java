@@ -8,9 +8,11 @@ import com.ch.cloud.upms.model.Permission;
 import com.ch.pojo.VueRecord;
 import com.ch.pojo.VueRecord2;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -21,16 +23,34 @@ import java.util.stream.Collectors;
 public class VueRecordUtils {
 
 
-    public static List<VueRecord> convertParentsByType(List<Permission> records, String type) {
+    public static List<VueRecord> convertTreeByType(List<Permission> records, String type) {
         if (CommonUtils.isEmpty(records)) {
             return Lists.newArrayList();
         }
 
         boolean isMenu = CommonUtils.isEquals(Num.S2, type);
+        boolean isInterface = CommonUtils.isEquals(Num.S4, type);
         if (isMenu) {
             return convertCategory(records);
+        } else if (isInterface) {
+            return convertAuthInterfaceTree(records);
         }
+        return convertAuthPermissionTree(records, type);
+    }
+
+    private static List<VueRecord> convertAuthPermissionTree(List<Permission> records, String type) {
         return records.stream().map(r -> convertAuthByType(r, type)).collect(Collectors.toList());
+    }
+
+    private static List<VueRecord> convertAuthInterfaceTree(List<Permission> records) {
+        Map<String, List<Permission>> map = records.stream().collect(Collectors.groupingBy(Permission::getParentId));
+        map.forEach((k, v) -> v.forEach(e -> {
+            List<Permission> list = map.get(StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, k, e.getId().toString()));
+            if (CommonUtils.isNotEmpty(list)) {
+                e.setChildren(list);
+            }
+        }));
+        return convertAuthPermissionTree(map.get("0"), null);
     }
 
     private static List<VueRecord> convertCategory(List<Permission> records) {
@@ -68,7 +88,7 @@ public class VueRecordUtils {
             vueRecord.setDisabled(disabled);
         }
         if (CommonUtils.isNotEmpty(record.getChildren())) {
-            vueRecord.setChildren(convertParentsByType(record.getChildren(), type));
+            vueRecord.setChildren(convertAuthPermissionTree(record.getChildren(), type));
         }
         return vueRecord;
     }

@@ -20,11 +20,13 @@ import com.ch.utils.CommonUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -99,7 +101,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public List<Permission> findTreeByType(String type) {
-        Status status = Lists.newArrayList(Num.S0, Num.S9).contains(type) ? Status.ENABLED : Status.UNKNOWN;
+        Status status = Lists.newArrayList(Num.S0, Num.S4, Num.S9).contains(type) ? Status.ENABLED : Status.UNKNOWN;
+        if (CommonUtils.isEquals(type, Num.S4)) {
+            return findAuthPermissionTree(type);
+        }
         List<Permission> records = findTopCategory(status);
         if (records.isEmpty()) {
             return Lists.newArrayList();
@@ -110,6 +115,19 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 r.setChildren(children);
             });
         return records;
+    }
+
+    private List<Permission> findAuthPermissionTree(String type) {
+        List<Permission> list = getBaseMapper().findByTypeAndRoleId(Lists.newArrayList(type), null);
+        if (list.isEmpty()) return null;
+        Set<Long> pidSet = Sets.newHashSet();
+        list.forEach(e -> {
+            List<Long> ids = StringUtilsV2.parseIds(e.getParentId());
+            pidSet.addAll(ids);
+        });
+        List<Permission> list2 = super.query().in("id", pidSet).eq("status", Status.ENABLED.getCode()).list();
+        list2.addAll(list);
+        return list2;
     }
 
     @Override
