@@ -39,4 +39,6 @@ public interface IPermissionService extends IService<Permission> {
     int updateWithNull(Permission record);
 
     boolean delete(Long id);
+
+    int updateRoleAuthPermissions(Long roleId, List<Long> permissionIds);
 }

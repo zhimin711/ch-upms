@@ -53,6 +53,11 @@
         </foreach>
     </insert>
     <delete id="deleteRolePermissions">
-    delete from st_role_permission where ROLE_ID = #{roleId}
-  </delete>
+        delete from st_role_permission where ROLE_ID = #{roleId}
+    </delete>
+    <delete id="deleteRoleAuthPermissions">
+         delete t1 from st_role_permission t1
+         inner join st_permission t2 on t2.id = t1.PERMISSION_ID
+         where t2.TYPE = '4' and ROLE_ID = #{roleId};
+    </delete>
 </mapper>

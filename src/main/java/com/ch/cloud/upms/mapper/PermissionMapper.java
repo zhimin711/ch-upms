@@ -21,4 +21,6 @@ public interface PermissionMapper extends BaseMapper<Permission> {
     int deleteRolePermissions(Long roleId);
 
     int insertRolePermissions(@Param("roleId") Long roleId, @Param("permissionIds") List<Long> permissionIds);
+
+    int deleteRoleAuthPermissions(Long roleId);
 }

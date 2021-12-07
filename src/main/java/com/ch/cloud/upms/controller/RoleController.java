@@ -147,7 +147,7 @@ public class RoleController {
                     ids = list.stream().map(Permission::getId).collect(Collectors.toList());
                 }
             }
-            return permissionService.updateRolePermissions(roleId, ids);
+            return permissionService.updateRoleAuthPermissions(roleId, ids);
         });
     }
 }

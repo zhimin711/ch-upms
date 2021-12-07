@@ -266,4 +266,13 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         }
         return super.removeById(id);
     }
+
+    @Override
+    public int updateRoleAuthPermissions(Long roleId, List<Long> permissionIds) {
+        int c1 = getBaseMapper().deleteRoleAuthPermissions(roleId);
+        if (!permissionIds.isEmpty()) {
+            c1 += getBaseMapper().insertRolePermissions(roleId, permissionIds);
+        }
+        return c1;
+    }
 }
