@@ -33,7 +33,7 @@ public class ClientTests {
         System.out.println(o);
     }
 
-    @Test
+//    @Test
     public void namespaces() {
 
         JSONObject resp = new RestTemplate().getForObject("http://nacos.12301.io/nacos/v1/console/namespaces", JSONObject.class);

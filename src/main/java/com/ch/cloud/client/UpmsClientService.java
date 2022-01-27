@@ -5,6 +5,7 @@ import com.ch.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -28,6 +29,9 @@ public interface UpmsClientService {
 
     @GetMapping({"user/{username}/tenants"})
     Result<TenantDto> findTenantsByUserId(@PathVariable String username);
+
+    @PostMapping({"user/roles"})
+    Result<RoleDto> findRolesByUserId2(@RequestParam Long userId);
 
     @GetMapping({"user/{userId:[0-9]+}/roles"})
     Result<RoleDto> findRolesByUserId(@PathVariable Long userId);
