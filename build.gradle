@@ -81,7 +81,7 @@ dependencies {
     implementation 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.1.0'
 
     implementation "io.springfox:springfox-swagger2:${swagger2Version}"
-    compile group: 'io.swagger', name: 'swagger-models', version: '1.6.2'
+    implementation group: 'io.swagger', name: 'swagger-models', version: '1.6.2'
 
 //    implementation 'com.alibaba:druid:1.0.18'
     implementation "mysql:mysql-connector-java:8.0.21"
