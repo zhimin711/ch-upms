@@ -3,4 +3,6 @@ VOLUME /tmp
 ADD ch-upms-1.0.0-SNAPSHOT.jar app.jar
 RUN sh -c 'touch /app.jar'
 ENV JAVA_OPTS="-Dnacos.config.server-addr=nacos.12301.io:80 -Dnacos.config.namespace=cloud-dev"
+
+EXPOSE 8080
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
