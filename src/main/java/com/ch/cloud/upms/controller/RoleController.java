@@ -122,7 +122,7 @@ public class RoleController {
                 ExceptionUtils._throw(PubError.INVALID, "角色：" + roleId);
             } else if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
-                typesStr2 = "3,4";
+                if(CommonUtils.isEmpty(typesStr2)) typesStr2 = "3,4";
             }
             List<String> types = StringUtilsV2.splitStrAndDeDuplication(Separator.COMMA_SIGN, typesStr2);
             if (types.isEmpty()) {
