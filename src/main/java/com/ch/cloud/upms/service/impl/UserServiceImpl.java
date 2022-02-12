@@ -133,9 +133,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         record.setUsername(null);
         //不更新密码
         record.setPassword(null);
-        boolean c = super.updateById(record);
         saveDepartmentPosition(record);
-        return c;
+        return super.updateById(record);
     }
 
     private void saveDepartmentPosition(User record) {
