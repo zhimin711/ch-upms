@@ -19,8 +19,8 @@ spec:
         app: ch-upms
     spec:
       containers:
-        - name: container-pzy5a9
-          image: 'hub.ch.cn/ch/ch-upms:${DATETIME}'
+        - name: container-nzrbje
+          image: '192.168.0.253:8082/ch/ch-upms:${DATETIME}'
           ports:
             - name: tcp-8080
               containerPort: 8080
@@ -31,4 +31,4 @@ spec:
                 -Dnacos.config.server-addr=nacos.public.svc.cluster.local:8848
                 -Dnacos.config.namespace=e9ae1f48-6c01-4a07-862c-98bc69c17819
       imagePullSecrets:
-        - name: ch-hub
+        - name: ch-nexus
