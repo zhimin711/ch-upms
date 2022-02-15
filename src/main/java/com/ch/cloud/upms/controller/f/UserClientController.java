@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.controller.f;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ch.cloud.client.dto.LoginUserDto;
 import com.ch.cloud.client.dto.UserDto;
 import com.ch.cloud.upms.model.Role;
@@ -53,7 +54,12 @@ public class UserClientController {
 
     @PostMapping({"roles"})
     public Result<Role> findRolesByUserId(@RequestParam Long userId) {
-        return ResultUtils.wrapList(() -> roleService.findByUserId(userId));
+        return ResultUtils.wrapList(() -> {
+
+            List<Role> records = roleService.findByUserId(userId);
+            log.info("current user {} roles: {}",userId,JSONObject.toJSONString(records));
+            return records;
+        });
     }
 
     @GetMapping({"{username}/tenants"})
