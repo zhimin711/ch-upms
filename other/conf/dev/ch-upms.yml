@@ -1,42 +1,85 @@
-#服务端口
-server:
-  port: 7002
-    # servlet:
-  # context-path: /upms
+jasypt:
+  encryptor:
+    password: abc123
+    algorithm: PBEWithMD5AndDES
+
+#====================================shardingsphereconfig===============================================
 spring:
+  shardingsphere:
+    datasource:
+      names: ds0
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql.nacos.svc.cluster.local:3306/ch_upms?characterEncoding=UTF-8&serverTimezone=GMT
+        username: admin
+        password: 123456
+    sharding:
+      tables:
+        lt_op_record:
+          actualDataNodes: ds0.lt_op_record_$->{0..1}
+          logicTable: lt_op_record
+          tableStrategy:
+            standard:
+              preciseAlgorithmClassName: com.ch.cloud.upms.sharding.LogShardingStrategy
+              shardingColumn: auth_code
+
+
+  #====================================spring config===============================================
+  #spring:
+  #  application:
+  #    name: ch-upms
+  #  datasource:
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
+  ##    url: jdbc:mysql://106.12.140.185:3306/dev_ch_upms
+  ##    username: admin
+  ##    password: ENC(hfO3JFDCY2HB6x+j1obZOg==)
+  #    url: jdbc:mysql://192.168.0.109:3306/ch_upms?characterEncoding=UTF-8&serverTimezone=GMT
+  #    username: admin
+  #    password: 123456
+  #    type: com.zaxxer.hikari.HikariDataSource
+  #    hikari:
+  #      minimum-idle: 5
+  #      maximum-pool-size: 15
+  #      auto-commit: true
+  #      idle-timeout: 30000
+  #      pool-name: DatebookHikariCP
+  #      connection-timeout: 30000
+  #      connection-test-query: SELECT 1
+  thymeleaf:
+    mode: HTML
+    cache: false
   servlet:
     multipart:
       max-file-size: 100MB
-      max-request-size: 512MB
-  datasource:
-    url: jdbc:mysql://192.168.1.8:3306/admin?useSSL=false
-    username: admin
-    password: 123456
-    # 使用druid数据源
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.jdbc.Driver
-    filters: stat
-    maxActive: 20
-    initialSize: 1
-    maxWait: 60000
-    minIdle: 1
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: select 'x'
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: true
-    maxOpenPreparedStatements: 20
-
 logging:
   config: classpath:config/logback.xml
-  path: logs
+  path: build/logs/${spring.application.name:upms}
   level:
     com.ch: debug
     com.alibaba.nacos.client: warn
+
+
+#====================================rocketmq config===============================================
+rocketmq:
+  name-server: rmqnamesrv.rocket-mq.svc.cluster.local:9876 # 自己的RocketMQ服务地址
+  producer:
+    send-message-timeout: 300000
+    group: ch-upms
+#====================================mybatis-plus config===============================================
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  typeAliasesPackage: com.ch.cloud.upms.model
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      id-type: auto
+
+#====================================custom config===============================================
 path:
-  root: /mnt/share
-  temp: /mnt/share/tmp
-  upload: /Users/zhimin/work/oschina/ch-cloud/ch-admin2/upload
-  download: /mnt/share/download
+  temp: share/tmp
+  root: /mnt/logs/${spring.application.name:upms}
+  upload: ${path.root}\\upload
+  download: share/download
