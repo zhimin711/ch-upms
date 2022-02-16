@@ -44,6 +44,9 @@ public class Department extends Model<Department> {
     @ApiModelProperty(value = "部门名称")
     private String name;
 
+    @ApiModelProperty(value = "部门类型：0集团 1公司 2部门 3团队")
+    private Integer deptType;
+
     @ApiModelProperty(value = "显示顺序")
     private Integer sort;
 

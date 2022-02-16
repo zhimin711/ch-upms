@@ -2,14 +2,12 @@ package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ch.Constants;
 import com.ch.Num;
 import com.ch.Separator;
 import com.ch.Status;
 import com.ch.cloud.upms.mapper.DepartmentMapper;
 import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.service.IDepartmentService;
-import com.ch.pojo.KeyValue;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
@@ -32,7 +30,7 @@ import java.util.stream.Collectors;
 public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Department> implements IDepartmentService {
 
     @Override
-    public List<Department> findTreeByPid(String pid, boolean containsParent) {
+    public List<Department> findTreeByPid(String pid, boolean containsParent, Integer deptType) {
         Department parent = null;
         if (!CommonUtils.isEquals("0", pid) && containsParent) {
             parent = super.getById(pid);
@@ -42,7 +40,8 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         if (list.isEmpty()) return list;
         list.forEach(r -> {
             String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString());
-            List<Department> subList = super.query().likeRight("parent_id", pid2).list();
+            List<Department> subList = super.query().likeRight("parent_id", pid2)
+                    .le(deptType > 0, "date_type", deptType).list();
             if (subList.isEmpty()) return;
             Map<String, List<Department>> subMap = assembleTree(subList);
             r.setChildren(subMap.get(pid2));
@@ -83,7 +82,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
     }
 
     private List<Department> findChildrenByPid(String pid) {
-        return findTreeByPid(pid, false);
+        return findTreeByPid(pid, false, null);
     }
 
     private Map<String, List<Department>> assembleTree(List<Department> subList) {

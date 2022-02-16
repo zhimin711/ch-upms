@@ -38,9 +38,9 @@ public class DepartmentController {
     @Autowired
     private IDepartmentService departmentService;
     @Autowired
-    private IPositionService   positionService;
+    private IPositionService positionService;
     @Autowired
-    private ITenantService     tenantService;
+    private ITenantService tenantService;
 
     @GetMapping(value = {"/{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Department> page(Department record,
@@ -98,7 +98,15 @@ public class DepartmentController {
     @GetMapping({"/tree/{pid:[0-9]+}"})
     public Result<VueRecord> tree(@PathVariable String pid) {
         return ResultUtils.wrapList(() -> {
-            List<Department> records = departmentService.findTreeByPid(pid, true);
+            List<Department> records = departmentService.findTreeByPid(pid, true, null);
+            return VueRecordUtils.covertIdTree(records);
+        });
+    }
+
+    @GetMapping({"{pid:[0-9]+}/tree/{deptType:[0-9]+}"})
+    public Result<VueRecord> treeType(@PathVariable String pid, @PathVariable Integer deptType) {
+        return ResultUtils.wrapList(() -> {
+            List<Department> records = departmentService.findTreeByPid(pid, true, deptType);
             return VueRecordUtils.covertIdTree(records);
         });
     }
