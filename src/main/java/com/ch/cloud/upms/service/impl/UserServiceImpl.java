@@ -38,20 +38,20 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     @Resource
-    private IRoleService       roleService;
+    private IRoleService roleService;
     @Resource
     private IDepartmentService departmentService;
     @Resource
-    private IPositionService   positionService;
+    private IPositionService positionService;
     @Resource
-    private ITenantService     tenantService;
+    private ITenantService tenantService;
 
     @Resource
-    private UserProjectMapper          userProjectMapper;
+    private UserProjectMapper userProjectMapper;
     @Resource
     private UserProjectNamespaceMapper userProjectNamespaceMapper;
     @Resource
-    private UserRoleMapper             userRoleMapper;
+    private UserRoleMapper userRoleMapper;
     @Resource
     private UserDepartmentPositionMapper userDepartmentPositionMapper;
 
@@ -149,10 +149,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             Department dept = departmentService.getById(StringUtilsV2.lastId(r.getDepartment()));
             String deptId = r.getDepartment();
             String orgId = "";
-            if(dept.getDeptType()!=null && dept.getDeptType().equals(3)){
+            if (dept.getDeptType() != null && dept.getDeptType().equals(3)) {
                 deptId = dept.getParentId();
+                orgId = r.getDepartment();
             }
-            userDepartmentPositionMapper.insertDepartmentPosition(record.getId(), deptId, Long.valueOf(r.getDuty()),orgId);
+            userDepartmentPositionMapper.insertDepartmentPosition(record.getId(), deptId, Long.valueOf(r.getDuty()), orgId);
         });
         if (CommonUtils.isNotEmpty(record.getDepartmentId())) {
             List<String> names = departmentService.findNames(StringUtilsV2.parseIds(record.getDepartmentId()));
