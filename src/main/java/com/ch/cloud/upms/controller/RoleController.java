@@ -37,7 +37,7 @@ public class RoleController {
 
 
     @Autowired
-    private IRoleService       roleService;
+    private IRoleService roleService;
     @Autowired
     private IPermissionService permissionService;
 
@@ -115,14 +115,14 @@ public class RoleController {
         return ResultUtils.wrapList(() -> {
             Long rid = roleId;
             Role role = roleService.getById(roleId);
-            String typesStr2 = typesStr;
+            String typesStr2 = CommonUtils.isEmpty(typesStr) ? "3,4" : typesStr;
+
             if (role == null) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
             } else if (CommonUtils.isEquals(StatusS.DISABLED, role.getStatus())) {
                 ExceptionUtils._throw(PubError.INVALID, "角色：" + roleId);
             } else if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
-                if(CommonUtils.isEmpty(typesStr2)) typesStr2 = "3,4";
             }
             List<String> types = StringUtilsV2.splitStrAndDeDuplication(Separator.COMMA_SIGN, typesStr2);
             if (types.isEmpty()) {
