@@ -20,7 +20,7 @@ public interface UserDepartmentPositionMapper {
     @Delete("DELETE FROM st_user_department_position WHERE user_id=#{userId}")
     int deleteDepartmentPositionByUserId(Long userId);
 
-    @Select("SELECT user_id, department_id as department, position_id as duty, orig_id as org\n" +
+    @Select("SELECT user_id, department_id as department, position_id as duty, org_id as orgId\n" +
             "    FROM st_user_department_position\n" +
             "    WHERE user_id=#{userId}")
     List<DepartmentDuty> findDepartmentPositionByUserId(Long userId);

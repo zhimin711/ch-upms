@@ -26,6 +26,8 @@ public class DepartmentDuty implements Serializable {
      */
     private String duty;
 
+    private String orgId;
+
     private String departmentName;
     private String dutyName;
 
