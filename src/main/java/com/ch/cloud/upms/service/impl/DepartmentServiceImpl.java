@@ -41,7 +41,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         list.forEach(r -> {
             String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString());
             List<Department> subList = super.query().likeRight("parent_id", pid2)
-                    .le(deptType > 0, "date_type", deptType).list();
+                    .le(deptType != null && deptType > 0, "date_type", deptType).list();
             if (subList.isEmpty()) return;
             Map<String, List<Department>> subMap = assembleTree(subList);
             r.setChildren(subMap.get(pid2));
