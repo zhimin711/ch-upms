@@ -40,17 +40,6 @@
     <delete id="deleteAssignRole">
     DELETE FROM st_user_role WHERE USER_ID=#{userId} AND ROLE_ID=#{roleId} and ROLE_ID != 1
   </delete>
-    <insert id="insertDepartmentPosition">
-    INSERT INTO st_user_department_position VALUES (#{userId},#{departmentId},#{positionId})
-  </insert>
-    <delete id="deleteDepartmentPositionByUserId">
-    DELETE FROM st_user_department_position WHERE user_id=#{userId}
-  </delete>
-  <select id="findDepartmentPositionByUserId" resultType="com.ch.cloud.upms.pojo.DepartmentDuty">
-    select user_id, department_id as department, position_id as duty
-    FROM st_user_department_position
-    WHERE user_id=#{userId}
-  </select>
 
     <select id="pageBy" parameterType="com.ch.cloud.upms.model.User" resultType="com.ch.cloud.upms.model.User">
     select t.*, group_concat(t2.department_id order by t2.department_id asc separator '|') as department
@@ -82,7 +71,8 @@
         SELECT distinct t.id,t.`name`,t.DEPARTMENT_ID,t.DEPARTMENT_NAME, IF(u.department_id = t.DEPARTMENT_ID,-1,IFNULL(t.sort,0)) as SORT
         from bt_tenant t
         INNER JOIN st_user_department_position udp
-        on t.DEPARTMENT_ID = udp.department_id
+--         on t.DEPARTMENT_ID = udp.department_id
+        on t.DEPARTMENT_ID like CONCAT(udp.department_id,'%')
         INNER JOIN st_user u
         on u.id = udp.user_id
         where t.DELETED = 0

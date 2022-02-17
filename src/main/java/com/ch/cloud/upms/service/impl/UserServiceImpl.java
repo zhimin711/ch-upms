@@ -5,13 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.UserMapper;
+import com.ch.cloud.upms.mapper2.UserDepartmentPositionMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
 import com.ch.cloud.upms.mapper2.UserProjectNamespaceMapper;
 import com.ch.cloud.upms.mapper2.UserRoleMapper;
-import com.ch.cloud.upms.model.Project;
-import com.ch.cloud.upms.model.Role;
-import com.ch.cloud.upms.model.Tenant;
-import com.ch.cloud.upms.model.User;
+import com.ch.cloud.upms.model.*;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
 import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.service.*;
@@ -54,6 +52,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserProjectNamespaceMapper userProjectNamespaceMapper;
     @Resource
     private UserRoleMapper             userRoleMapper;
+    @Resource
+    private UserDepartmentPositionMapper userDepartmentPositionMapper;
 
     @Override
     public User findByUsername(String username) {
@@ -141,12 +141,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (CommonUtils.isEmpty(record.getDutyList())) {
             ExceptionUtils._throw(PubError.NON_NULL, "组织职位不能为空！");
         }
-        getBaseMapper().deleteDepartmentPositionByUserId(record.getId());
+        userDepartmentPositionMapper.deleteDepartmentPositionByUserId(record.getId());
         record.getDutyList().forEach(r -> {
             if (CommonUtils.isEmpty(r.getDepartment()) || CommonUtils.isEmpty(r.getDuty())) {
                 ExceptionUtils._throw(PubError.NON_NULL, "组织或职位不能为空！");
             }
-            getBaseMapper().insertDepartmentPosition(record.getId(), r.getDepartment(), Long.valueOf(r.getDuty()));
+            Department dept = departmentService.getById(StringUtilsV2.lastId(r.getDepartment()));
+            String deptId = r.getDepartment();
+            String orgId = "";
+            if(dept.getDeptType()!=null && dept.getDeptType().equals(3)){
+                deptId = dept.getParentId();
+            }
+            userDepartmentPositionMapper.insertDepartmentPosition(record.getId(), deptId, Long.valueOf(r.getDuty()),orgId);
         });
         if (CommonUtils.isNotEmpty(record.getDepartmentId())) {
             List<String> names = departmentService.findNames(StringUtilsV2.parseIds(record.getDepartmentId()));
@@ -188,7 +194,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public List<DepartmentDuty> findDepartmentDuty(Long id) {
-        List<DepartmentDuty> records = getBaseMapper().findDepartmentPositionByUserId(id);
+        List<DepartmentDuty> records = userDepartmentPositionMapper.findDepartmentPositionByUserId(id);
         records.forEach(e -> {
             List<String> names = departmentService.findNames(StringUtilsV2.parseIds(e.getDepartment()));
             e.setDepartmentName(String.join(",", names));

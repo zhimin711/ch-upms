@@ -25,12 +25,6 @@ public interface UserMapper extends BaseMapper<User> {
 
     int deleteAssignRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
 
-    int insertDepartmentPosition(@Param("userId") Long userId, @Param("departmentId") String departmentId, @Param("positionId") Long positionId);
-
-    int deleteDepartmentPositionByUserId(Long userId);
-
-    List<DepartmentDuty> findDepartmentPositionByUserId(Long userId);
-
     Page<User> pageBy(IPage<User> page, @Param(Constants.ENTITY) User user);
 
     List<Tenant> findTenantsByUsername(String username);
