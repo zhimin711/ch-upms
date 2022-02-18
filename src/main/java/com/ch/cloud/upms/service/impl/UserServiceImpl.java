@@ -197,7 +197,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public List<DepartmentDuty> findDepartmentDuty(Long id) {
         List<DepartmentDuty> records = userDepartmentPositionMapper.findDepartmentPositionByUserId(id);
         records.forEach(e -> {
-            List<String> names = departmentService.findNames(StringUtilsV2.parseIds(e.getDepartment()));
+            List<String> names = departmentService.findNames(StringUtilsV2.parseIds(CommonUtils.isEmpty(e.getOrgId()) ? e.getDepartment() : e.getOrgId()));
             e.setDepartmentName(String.join(",", names));
             e.setDutyName(positionService.getById(e.getDuty()).getName());
         });
