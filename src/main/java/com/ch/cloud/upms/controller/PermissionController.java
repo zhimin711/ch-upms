@@ -3,6 +3,7 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Num;
 import com.ch.StatusS;
+import com.ch.cloud.upms.fclient.GatewayClientService;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
@@ -37,9 +38,12 @@ import java.util.List;
 public class PermissionController {
 
     @Autowired
-    IRoleService       roleService;
+    IRoleService roleService;
     @Autowired
     IPermissionService permissionService;
+
+    @Autowired
+    private GatewayClientService gatewayClientService;
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Permission> page(Permission record,
@@ -116,7 +120,22 @@ public class PermissionController {
                 }
                 record.setChildren(children);
             }
-            return permissionService.updateWithNull(record);
+            int c = permissionService.updateWithNull(record);
+
+            boolean isNeedClean = false;
+            if (!CommonUtils.isEquals(record.getStatus(), orig.getStatus())) {
+                isNeedClean = true;
+            } else if (!CommonUtils.isEquals(record.getType(), orig.getType())) {
+                isNeedClean = true;
+            } else if (!CommonUtils.isEquals(record.getUrl(), orig.getUrl()) && !Lists.newArrayList(Num.S1, Num.S2).contains(orig.getType())) {
+                isNeedClean = true;
+            } else if (!CommonUtils.isEquals(record.getMethod(), orig.getMethod())) {
+                isNeedClean = true;
+            }
+            if (c > 0 && isNeedClean) {
+                gatewayClientService.cleanPermissions();
+            }
+            return c;
         });
     }
 

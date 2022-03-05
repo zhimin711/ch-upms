@@ -25,8 +25,6 @@ spring:
             standard:
               preciseAlgorithmClassName: com.ch.cloud.upms.sharding.LogShardingStrategy
               shardingColumn: auth_code
-
-
 #====================================spring config===============================================
 #spring:
 #  application:
@@ -82,6 +80,9 @@ mybatis-plus:
 #====================================custom config===============================================
 path:
   temp: share/tmp
-  root: D:\\git\\ch-cloud-new\\ch-admin2
+  root: /
   upload: ${path.root}\\upload
   download: share/download
+
+ch:
+  gateway: ch-gateway

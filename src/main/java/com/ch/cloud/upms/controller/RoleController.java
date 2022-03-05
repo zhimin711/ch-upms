@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Num;
 import com.ch.Separator;
 import com.ch.StatusS;
+import com.ch.cloud.upms.fclient.GatewayClientService;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.service.IPermissionService;
@@ -40,6 +41,8 @@ public class RoleController {
     private IRoleService roleService;
     @Autowired
     private IPermissionService permissionService;
+    @Autowired
+    private GatewayClientService gatewayClientService;
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Role> page(Role record,
@@ -149,7 +152,11 @@ public class RoleController {
                     ids = list.stream().map(Permission::getId).collect(Collectors.toList());
                 }
             }
-            return permissionService.updateRoleAuthPermissions(roleId, ids);
+            int c = permissionService.updateRoleAuthPermissions(roleId, ids);
+            if (c > 0) {
+                gatewayClientService.cleanRolePermissions(roleId);
+            }
+            return c;
         });
     }
 }
