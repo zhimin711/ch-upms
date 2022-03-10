@@ -21,7 +21,8 @@ public interface UserProjectNamespaceMapper {
 
     @Select("SELECT t1.* from bt_namespace t1" +
             " INNER JOIN rt_user_namespace t2 ON t1.id  = t2.NAMESPACE_ID" +
-            " WHERE t2.project_id =#{projectId} and t2.USER_ID=#{userId}")
+            " WHERE EXISTS(SELECT * FROM rt_project_namespace WHERE PROJECT_ID = t2.PROJECT_ID and NAMESPACE_ID =  t2.NAMESPACE_ID)" +
+            " and t2.project_id =#{projectId} and t2.USER_ID=#{userId}")
     List<NamespaceDto> findNamespacesByUserIdAndProjectId(String userId, Long projectId);
 
     @Insert("INSERT INTO rt_user_namespace (PROJECT_ID,USER_ID,NAMESPACE_ID) VALUES (#{projectId},#{userId},#{namespaceId})")
