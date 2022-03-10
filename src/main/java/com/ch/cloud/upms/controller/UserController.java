@@ -84,7 +84,7 @@ public class UserController {
     @PutMapping({"{id:[0-9]+}"})
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody User record) {
         record.setUpdateBy(RequestUtils.getHeaderUser());
-        record.setUpdateAt(DateUtils.current());
+//        record.setUpdateAt(DateUtils.current());
         return ResultUtils.wrapFail(() -> userService.updateById(record));
     }
 
