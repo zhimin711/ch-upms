@@ -89,7 +89,7 @@ public class PermissionController {
             } else {
                 record.setParentName(permissionService.findNameByParseLastId(record.getParentId()));
             }
-            if (CommonUtils.isEquals("3", record.getType()) || CommonUtils.isEquals("5", record.getType())) {
+            if (CommonUtils.isEquals("5", record.getType())) {
                 record.setCode(record.getCode().toUpperCase());
             }
             if (CommonUtils.isNotEmpty(record.getUrl())) {
@@ -104,9 +104,6 @@ public class PermissionController {
             }
             if (r != null && !CommonUtils.isEquals(id, r.getId())) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS, "权限代码已存在！");
-            }
-            if (!CommonUtils.isEquals("2", record.getType())) {
-//                record.setCode(record.getCode().toUpperCase());
             }
             record.setChildren(null);
             if (!CommonUtils.isEquals(record.getParentId(), orig.getParentId()) && Lists.newArrayList(Num.S1, Num.S2).contains(orig.getType())) {

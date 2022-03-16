@@ -123,6 +123,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         record.setUserId(RandomStringUtils.randomNumeric(10));
         boolean c = super.save(record);
         saveDepartmentPosition(record);
+        super.updateById(record);
         return c;
     }
 
