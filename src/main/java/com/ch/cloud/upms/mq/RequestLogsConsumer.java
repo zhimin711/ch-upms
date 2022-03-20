@@ -130,7 +130,10 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
     public static String getIP(JSONObject request) {
         if (!request.containsKey("headers")) return "N/A";
         JSONObject headers = request.getJSONObject("headers");
-        String ip = headers.getString("x-forwarded-for");
+        String ip = headers.getString("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = headers.getString("X-Original-Forwarded-For");
+        }
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = headers.getString("Proxy-Client-IP");
         }
