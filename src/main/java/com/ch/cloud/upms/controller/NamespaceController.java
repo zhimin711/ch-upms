@@ -84,6 +84,7 @@ public class NamespaceController {
     public Result<Boolean> add(@RequestBody Namespace record) {
         return ResultUtils.wrapFail(() -> {
             checkSaveOrUpdate(record);
+            record.setUid(UUIDGenerator.generateUid().toString());
             boolean syncOk = syncNacosNamespace(record, true);
             if (!syncOk) {
                 ExceptionUtils._throw(PubError.CONNECT, "create nacos namespace failed!");
@@ -101,7 +102,6 @@ public class NamespaceController {
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
         param.add("namespaceDesc", record.getDescription());
         if (isNew) {
-            record.setUid(UUIDGenerator.generate());
             param.add("customNamespaceId", record.getUid());
             param.add("namespaceName", record.getName());
         } else {
