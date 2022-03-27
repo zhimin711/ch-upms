@@ -5,12 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.ch.cloud.upms.mapper2.UserProjectNamespaceMapper;
 import com.ch.cloud.upms.model.ApplyRecord;
 import com.ch.cloud.upms.mapper.ApplyRecordMapper;
+import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.service.IApplyRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.s.ApproveStatus;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -35,7 +37,7 @@ public class ApplyRecordServiceImpl extends ServiceImpl<ApplyRecordMapper, Apply
         String userId = object.getString("userId");
         Long projectId = object.getLong("projectId");
         JSONArray array = object.getJSONArray("namespaceIds");
-        array.forEach(e -> userProjectNamespaceMapper.insert(projectId, userId, e.toString()));
+        array.stream().filter(e -> userProjectNamespaceMapper.exists(projectId, userId, e.toString()) <= 0).forEach(e -> userProjectNamespaceMapper.insert(projectId, userId, e.toString()));
         return super.updateById(record);
     }
 }

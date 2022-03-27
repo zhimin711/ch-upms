@@ -246,8 +246,7 @@ public class NamespaceController {
             record.setCreateBy(username);
             record.setType("1");
             record.setDataKey(projectId + "");
-            record.setStatus(ApproveStatus.STAY.getCode());
-            List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record));
+            List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record).in("status", Lists.newArrayList(ApproveStatus.STAY.getCode(), ApproveStatus.SUCCESS.getCode())));
             if (!list.isEmpty()) {
                 ExceptionUtils._throw(PubError.EXISTS, "已提交申请,请联系管理员审核！");
             }
