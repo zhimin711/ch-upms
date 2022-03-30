@@ -10,9 +10,9 @@ pipeline {
 
   }
   stages {
-    stage('init-container') {
+    stage('build') {
       steps {
-        echo '111'
+        container(name: 'gradle', shell: 'gradle clean bootJar')
       }
     }
 
