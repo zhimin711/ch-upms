@@ -5,7 +5,7 @@ pipeline {
       label 'jnlp-slave'
       defaultContainer 'maven'
       idleMinutes 10
-      inheritFrom 'jenkins-slave-nodejs'
+      inheritFrom 'jenkins-slave-gradle'
     }
 
   }
