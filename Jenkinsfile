@@ -5,7 +5,7 @@ pipeline {
       label 'jnlp-slave'
       defaultContainer 'maven'
       idleMinutes 10
-      yamlFile 'jenkins/jenkins_pod_template.yaml'
+      inheritFrom 'jenkins-slave-nodejs'
     }
 
   }
