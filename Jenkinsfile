@@ -3,7 +3,7 @@ pipeline {
     kubernetes {
       cloud 'kubernetes'
       label 'jnlp-slave'
-      defaultContainer 'docker'
+      idleMinutes 5
       inheritFrom 'jenkins-slave-gradle'
     }
 
