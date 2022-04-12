@@ -1,5 +1,4 @@
 apply plugin: 'java'
-//apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 task jarApiBuild(type: Jar, group: 'api') {
@@ -87,4 +86,53 @@ publishing {
 //            }
         }
     }
+}
+
+
+
+configure(allprojects) { project ->
+
+
+    task deletePomXml(type:Delete){
+        def targetPath = "${project.projectDir}";
+        def targetFile = "pom.xml";
+        def file = file(targetPath+"\\"+targetFile);
+        if(file.exists()){
+            setDelete(file);
+            println("delete " + targetPath + "\\" + targetFile)
+        }
+    }
+
+    //复制pom.xml文件
+    task copyPomXml(type: Copy) {
+        def resourcePath = "${project.buildDir}\\publications\\maven";
+        def resourceFile = "pom-default.xml";
+        def targetPath = "${project.projectDir}";
+        def targetFile = "pom.xml";
+
+        //源地址
+        from(file(resourcePath))
+        //包含文件
+        include(resourceFile)
+        //写入目标地址
+        into(file(targetPath))
+        //重命名
+        rename { filename ->
+            filename.replace filename, targetFile
+        }
+        //打印
+        eachFile {
+            println("from " + resourcePath + "\\" + it.name + " to " + targetPath + "\\" + targetFile)
+        }
+    }
+
+    // 通过publishToMavenLocal生成pom.default.xml
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
 }
