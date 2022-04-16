@@ -49,9 +49,9 @@ public class ApplyRecordController {
     }
 
 
-    @ApiOperation(value = "修改", notes = "修改命名空间")
+    @ApiOperation(value = "审核空间", notes = "审核申请命名空间")
     @PostMapping({"/nacos/{id:[0-9]+}/approve"})
-    public Result<Boolean> edit(@RequestBody ApplyRecord record) {
+    public Result<Boolean> approveNacos(@RequestBody ApplyRecord record) {
         return ResultUtils.wrapFail(() -> {
             ApplyRecord orig = applyRecordService.getById(record.getId());
             if (orig == null) ExceptionUtils._throw(PubError.NOT_EXISTS, record.getId());
