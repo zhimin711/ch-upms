@@ -1,10 +1,13 @@
-package com.ch.cloud.upms.controller;
+package com.ch.cloud.nacos.controller;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.cloud.nacos.NacosAPI;
+import com.ch.cloud.nacos.domain.NacosCluster;
 import com.ch.cloud.upms.model.ApplyRecord;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
@@ -23,13 +26,20 @@ import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.s.ApproveStatus;
+import com.ch.toolkit.UUIDGenerator;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.DateUtils;
 import com.ch.utils.VueRecordUtils;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -42,8 +52,8 @@ import java.util.List;
  * @since 2021-09-28
  */
 @RestController
-@RequestMapping("/namespace")
-public class NamespaceController {
+@RequestMapping("/nacos/namespaces")
+public class NacosNamespacesController {
 
     @Autowired
     private INamespaceService   namespaceService;
@@ -52,21 +62,92 @@ public class NamespaceController {
     @Autowired
     private IApplyRecordService applyRecordService;
 
+    @Autowired
+    private RestTemplate restTemplate;
 
-    @ApiOperation(value = "分页查询", notes = "分页查询命名空间")
+
+    @ApiOperation(value = "分页查询" , notes = "分页查询命名空间")
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Namespace> page(Namespace record,
                                       @PathVariable(value = "num") int pageNum,
                                       @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
+            record.setType("1");
             Page<Namespace> page = namespaceService.page(record, pageNum, pageSize);
             return InvokerPage.build(page.getTotal(), page.getRecords());
         });
     }
 
+    @ApiOperation(value = "添加" , notes = "添加命名空间")
+    @PostMapping
+    public Result<Boolean> add(@RequestBody Namespace record) {
+        return ResultUtils.wrapFail(() -> {
+            checkSaveOrUpdate(record);
+            record.setUid(UUIDGenerator.generateUid().toString());
+            boolean syncOk = syncNacosNamespace(record, true);
+            if (!syncOk) {
+                ExceptionUtils._throw(PubError.CONNECT, "create nacos namespace failed!");
+            }
+            record.setCreateBy(RequestUtils.getHeaderUser());
+            record.setCreateAt(DateUtils.current());
+            return namespaceService.save(record);
+        });
+    }
+
+    private boolean syncNacosNamespace(Namespace record, boolean isNew) {
+        NacosCluster cluster = new NacosCluster();
+
+        MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
+        param.add("namespaceDesc" , record.getDescription());
+        if (isNew) {
+            param.add("customNamespaceId" , record.getUid());
+            param.add("namespaceName" , record.getName());
+        } else {
+            param.add("namespace" , record.getUid());
+            param.add("namespaceShowName" , record.getName());
+        }
+        Boolean sync;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(param, headers);
+        if (isNew) {
+            sync = restTemplate.postForObject(cluster.getUrl() + NacosAPI.NAMESPACES, httpEntity, Boolean.class);
+        } else {
+//            restTemplate.put(nacosUrl + NAMESPACE_ADDR, param);
+            ResponseEntity<Boolean> resp = restTemplate.exchange(cluster.getUrl() + NacosAPI.NAMESPACES, HttpMethod.PUT, httpEntity, Boolean.class);
+            if (resp.getStatusCode() == HttpStatus.OK) {
+                sync = resp.getBody();
+            } else {
+                return false;
+            }
+        }
+        return sync != null && sync;
+    }
+
+    private void checkSaveOrUpdate(Namespace record) {
+        if (record.getId() != null) {
+            Namespace orig = namespaceService.getById(record.getId());
+            record.setUid(orig.getUid());
+        }
+    }
+
+    @ApiOperation(value = "修改" , notes = "修改命名空间")
+    @PutMapping({"{id:[0-9]+}"})
+    public Result<Boolean> edit(@RequestBody Namespace record) {
+        return ResultUtils.wrapFail(() -> {
+            checkSaveOrUpdate(record);
+            boolean syncOk = syncNacosNamespace(record, false);
+            if (!syncOk) {
+                ExceptionUtils._throw(PubError.CONNECT, "update nacos namespace failed!");
+            }
+            record.setUpdateBy(RequestUtils.getHeaderUser());
+            record.setUpdateAt(DateUtils.current());
+            return namespaceService.updateById(record);
+        });
+    }
 
     @GetMapping({"available"})
-    public Result<VueRecord> findAvailable(@RequestParam(name = "s", required = false) String name) {
+    public Result<VueRecord> findAvailable(@RequestParam(name = "s" , required = false) String name) {
         return ResultUtils.wrapList(() -> {
             Wrapper<Namespace> wrapper = Wrappers.lambdaQuery(Namespace.class).like(CommonUtils.isNotEmpty(name), Namespace::getName, name);
             List<Namespace> list = namespaceService.list(wrapper);
@@ -79,24 +160,44 @@ public class NamespaceController {
         return ResultUtils.wrapFail(() -> {
             Namespace namespace = namespaceService.getById(id);
             if (namespace == null) return null;
+
+            NacosCluster   cluster = new NacosCluster();
             NamespaceDto dto = BeanUtilsV2.clone(namespace, NamespaceDto.class);
+            String param = "show=all&namespaceId=" + namespace.getUid();
+            NacosNamespace nn = new RestTemplate().getForObject(cluster.getUrl() + NacosAPI.NAMESPACES + "?" + param, NacosNamespace.class);
+            if (nn != null) {
+                dto.setQuota(nn.getQuota());
+                dto.setConfigCount(nn.getConfigCount());
+            }
             return dto;
         });
     }
 
 
-    @ApiOperation(value = "删除", notes = "删除命名空间")
+    @ApiOperation(value = "删除" , notes = "删除命名空间")
     @DeleteMapping({"{id:[0-9]+}"})
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
             Namespace orig = namespaceService.getById(id);
-            if (orig.getSyncNacos()) {
-                //todo delete nacos namespace
-            }
             return namespaceService.removeById(id);
         });
     }
 
+    @ApiOperation(value = "同步" , notes = "同步-NACOS命名空间")
+    @GetMapping({"/sync/{clusterId}"})
+    public Result<Boolean> sync(@PathVariable Long clusterId) {
+        return ResultUtils.wrapFail(() -> {
+            NacosCluster cluster= new NacosCluster();
+            ExceptionUtils.assertEmpty(cluster, PubError.CONFIG, "nacos address");
+            JSONObject resp = new RestTemplate().getForObject(cluster.getUrl() + NacosAPI.NAMESPACES, JSONObject.class);
+            if (resp != null && resp.containsKey("data")) {
+                JSONArray arr = resp.getJSONArray("data");
+                List<NacosNamespace> list = arr.toJavaList(NacosNamespace.class);
+                saveNacosNamespaces(list);
+            }
+            return true;
+        });
+    }
 
     private void saveNacosNamespaces(List<NacosNamespace> list) {
         if (list.isEmpty()) return;
@@ -111,11 +212,9 @@ public class NamespaceController {
             Namespace orig = namespaceService.getOne(Wrappers.lambdaQuery(record).eq(Namespace::getUid, record.getUid()));
             if (orig != null) {
                 orig.setName(e.getNamespaceShowName());
-                orig.setSyncNacos(true);
                 orig.setUpdateBy(user);
                 namespaceService.updateById(orig);
             } else {
-                record.setSyncNacos(true);
                 record.setCreateBy(user);
                 namespaceService.save(record);
             }
@@ -141,24 +240,24 @@ public class NamespaceController {
             record.setCreateBy(username);
             record.setType("1");
             record.setDataKey(projectId + "");
-            List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record).in("status", Lists.newArrayList(ApproveStatus.STAY.getCode())));
+            List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record).in("status" , Lists.newArrayList(ApproveStatus.STAY.getCode())));
             if (!list.isEmpty()) {
                 ExceptionUtils._throw(PubError.EXISTS, "已提交申请,请联系管理员审核！");
             }
             Project project = projectService.getById(projectId);
 
             JSONObject object = new JSONObject();
-            object.put("userId", username);
-            object.put("projectId", projectId);
-            object.put("projectName", project.getName());
-            object.put("namespaceIds", namespaceIds);
+            object.put("userId" , username);
+            object.put("projectId" , projectId);
+            object.put("projectName" , project.getName());
+            object.put("namespaceIds" , namespaceIds);
 
             List<String> names = Lists.newArrayList();
             for (Long nid : namespaceIds) {
                 Namespace n = namespaceService.getById(nid);
                 names.add(n.getName());
             }
-            object.put("namespaceNames", String.join("|", names));
+            object.put("namespaceNames" , String.join("|" , names));
 
             record.setContent(object.toJSONString());
 
@@ -173,7 +272,7 @@ public class NamespaceController {
 
 
     @GetMapping({"{uid}/projects"})
-    public Result<VueRecord> findProjects(@PathVariable String uid, @RequestParam(value = "s", required = false) String name) {
+    public Result<VueRecord> findProjects(@PathVariable String uid, @RequestParam(value = "s" , required = false) String name) {
         return ResultUtils.wrapList(() -> {
             Namespace q = new Namespace();
             q.setUid(uid);

@@ -86,8 +86,8 @@ dependencies {
 //    implementation 'com.alibaba:druid:1.0.18'
     implementation 'mysql:mysql-connector-java:8.0.25'
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.1'
-    
 
+    implementation 'org.apache.skywalking:apm-toolkit-logback-1.x:8.8.0'
 //    implementation "io.jsonwebtoken:jjwt:+"
 
 //    runtimeOnly('org.springframework.boot:spring-boot-devtools')

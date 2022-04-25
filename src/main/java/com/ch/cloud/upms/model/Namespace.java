@@ -38,6 +38,16 @@ public class Namespace extends Model<Namespace> {
     private Long id;
 
     /**
+     * 类型：0. 1.NACOS 2.RocketMQ 3.Kafka
+     */
+    private String type;
+
+    /**
+     * 集群ID
+     */
+    private Long clusterId;
+
+    /**
      * 命名空间唯一标识
      */
     private String uid;
@@ -51,11 +61,6 @@ public class Namespace extends Model<Namespace> {
      * 描述
      */
     private String description;
-
-    /**
-     * 同步到Nacos状态：0.未同步 1.已同步
-     */
-    private Boolean syncNacos;
 
     /**
      * 逻辑删除：0.否 1.是
