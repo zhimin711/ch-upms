@@ -7,12 +7,15 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.nacos.NacosAPI;
+import com.ch.cloud.nacos.client.NacosNamespacesClient;
 import com.ch.cloud.nacos.domain.NacosCluster;
+import com.ch.cloud.nacos.service.INacosClusterService;
 import com.ch.cloud.upms.model.ApplyRecord;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.pojo.NacosNamespace;
 import com.ch.cloud.upms.pojo.NamespaceDto;
+import com.ch.cloud.upms.pojo.NamespaceType;
 import com.ch.cloud.upms.pojo.UserProjectNamespaceDto;
 import com.ch.cloud.upms.service.IApplyRecordService;
 import com.ch.cloud.upms.service.INamespaceService;
@@ -56,103 +59,64 @@ import java.util.List;
 public class NacosNamespacesController {
 
     @Autowired
-    private INamespaceService   namespaceService;
+    private INamespaceService    namespaceService;
     @Autowired
-    private IProjectService     projectService;
+    private INacosClusterService nacosClusterService;
     @Autowired
-    private IApplyRecordService applyRecordService;
+    private IProjectService      projectService;
+    @Autowired
+    private IApplyRecordService  applyRecordService;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private NacosNamespacesClient nacosNamespacesClient;
 
 
-    @ApiOperation(value = "分页查询" , notes = "分页查询命名空间")
+    @ApiOperation(value = "分页查询", notes = "分页查询命名空间")
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Namespace> page(Namespace record,
                                       @PathVariable(value = "num") int pageNum,
                                       @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
-            record.setType("1");
+            record.setType(NamespaceType.NACOS);
             Page<Namespace> page = namespaceService.page(record, pageNum, pageSize);
             return InvokerPage.build(page.getTotal(), page.getRecords());
         });
     }
 
-    @ApiOperation(value = "添加" , notes = "添加命名空间")
+    @ApiOperation(value = "添加", notes = "添加命名空间")
     @PostMapping
     public Result<Boolean> add(@RequestBody Namespace record) {
         return ResultUtils.wrapFail(() -> {
             checkSaveOrUpdate(record);
             record.setUid(UUIDGenerator.generateUid().toString());
-            boolean syncOk = syncNacosNamespace(record, true);
+            boolean syncOk = nacosNamespacesClient.add(record);
             if (!syncOk) {
                 ExceptionUtils._throw(PubError.CONNECT, "create nacos namespace failed!");
             }
-            record.setCreateBy(RequestUtils.getHeaderUser());
-            record.setCreateAt(DateUtils.current());
             return namespaceService.save(record);
         });
     }
 
-    private boolean syncNacosNamespace(Namespace record, boolean isNew) {
-        NacosCluster cluster = new NacosCluster();
-
-        MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
-        param.add("namespaceDesc" , record.getDescription());
-        if (isNew) {
-            param.add("customNamespaceId" , record.getUid());
-            param.add("namespaceName" , record.getName());
-        } else {
-            param.add("namespace" , record.getUid());
-            param.add("namespaceShowName" , record.getName());
-        }
-        Boolean sync;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(param, headers);
-        if (isNew) {
-            sync = restTemplate.postForObject(cluster.getUrl() + NacosAPI.NAMESPACES, httpEntity, Boolean.class);
-        } else {
-//            restTemplate.put(nacosUrl + NAMESPACE_ADDR, param);
-            ResponseEntity<Boolean> resp = restTemplate.exchange(cluster.getUrl() + NacosAPI.NAMESPACES, HttpMethod.PUT, httpEntity, Boolean.class);
-            if (resp.getStatusCode() == HttpStatus.OK) {
-                sync = resp.getBody();
-            } else {
-                return false;
-            }
-        }
-        return sync != null && sync;
-    }
-
-    private void checkSaveOrUpdate(Namespace record) {
-        if (record.getId() != null) {
-            Namespace orig = namespaceService.getById(record.getId());
-            record.setUid(orig.getUid());
-        }
-    }
-
-    @ApiOperation(value = "修改" , notes = "修改命名空间")
+    @ApiOperation(value = "修改", notes = "修改命名空间")
     @PutMapping({"{id:[0-9]+}"})
     public Result<Boolean> edit(@RequestBody Namespace record) {
         return ResultUtils.wrapFail(() -> {
             checkSaveOrUpdate(record);
-            boolean syncOk = syncNacosNamespace(record, false);
+            boolean syncOk = nacosNamespacesClient.edit(record);
             if (!syncOk) {
                 ExceptionUtils._throw(PubError.CONNECT, "update nacos namespace failed!");
             }
-            record.setUpdateBy(RequestUtils.getHeaderUser());
-            record.setUpdateAt(DateUtils.current());
             return namespaceService.updateById(record);
         });
     }
 
-    @GetMapping({"available"})
-    public Result<VueRecord> findAvailable(@RequestParam(name = "s" , required = false) String name) {
-        return ResultUtils.wrapList(() -> {
-            Wrapper<Namespace> wrapper = Wrappers.lambdaQuery(Namespace.class).like(CommonUtils.isNotEmpty(name), Namespace::getName, name);
-            List<Namespace> list = namespaceService.list(wrapper);
-            return VueRecordUtils.covertIdTree(list);
-        });
+    private void checkSaveOrUpdate(Namespace record) {
+        record.setType(NamespaceType.NACOS);
+        if (record.getId() != null) {
+            Namespace orig = namespaceService.getById(record.getId());
+            record.setClusterId(orig.getClusterId());
+            record.setUid(orig.getUid());
+        }
     }
 
     @GetMapping({"{id:[0-9]+}"})
@@ -160,21 +124,20 @@ public class NacosNamespacesController {
         return ResultUtils.wrapFail(() -> {
             Namespace namespace = namespaceService.getById(id);
             if (namespace == null) return null;
-
-            NacosCluster   cluster = new NacosCluster();
+            NacosCluster cluster = nacosClusterService.getById(namespace.getClusterId());
             NamespaceDto dto = BeanUtilsV2.clone(namespace, NamespaceDto.class);
-            String param = "show=all&namespaceId=" + namespace.getUid();
-            NacosNamespace nn = new RestTemplate().getForObject(cluster.getUrl() + NacosAPI.NAMESPACES + "?" + param, NacosNamespace.class);
+            namespace.setAddr(cluster.getUrl());
+            NacosNamespace nn = nacosNamespacesClient.fetch(namespace);
             if (nn != null) {
-                dto.setQuota(nn.getQuota());
                 dto.setConfigCount(nn.getConfigCount());
+                dto.setQuota(nn.getQuota());
             }
             return dto;
         });
     }
 
 
-    @ApiOperation(value = "删除" , notes = "删除命名空间")
+    @ApiOperation(value = "删除", notes = "删除命名空间")
     @DeleteMapping({"{id:[0-9]+}"})
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
@@ -183,39 +146,35 @@ public class NacosNamespacesController {
         });
     }
 
-    @ApiOperation(value = "同步" , notes = "同步-NACOS命名空间")
+    @ApiOperation(value = "同步", notes = "同步-NACOS命名空间")
     @GetMapping({"/sync/{clusterId}"})
     public Result<Boolean> sync(@PathVariable Long clusterId) {
         return ResultUtils.wrapFail(() -> {
-            NacosCluster cluster= new NacosCluster();
+            NacosCluster cluster = nacosClusterService.getById(clusterId);
             ExceptionUtils.assertEmpty(cluster, PubError.CONFIG, "nacos address");
             JSONObject resp = new RestTemplate().getForObject(cluster.getUrl() + NacosAPI.NAMESPACES, JSONObject.class);
             if (resp != null && resp.containsKey("data")) {
                 JSONArray arr = resp.getJSONArray("data");
                 List<NacosNamespace> list = arr.toJavaList(NacosNamespace.class);
-                saveNacosNamespaces(list);
+                saveNacosNamespaces(list,clusterId);
             }
             return true;
         });
     }
 
-    private void saveNacosNamespaces(List<NacosNamespace> list) {
+    private void saveNacosNamespaces(List<NacosNamespace> list, Long clusterId) {
         if (list.isEmpty()) return;
-        String user = RequestUtils.getHeaderUser();
         list.forEach(e -> {
             Namespace record = new Namespace();
+            record.setClusterId(clusterId);
+            record.setType(NamespaceType.NACOS);
             record.setUid(e.getNamespace());
             record.setName(e.getNamespaceShowName());
-            if (CommonUtils.isEmpty(record.getUid())) {
-
-            }
             Namespace orig = namespaceService.getOne(Wrappers.lambdaQuery(record).eq(Namespace::getUid, record.getUid()));
             if (orig != null) {
                 orig.setName(e.getNamespaceShowName());
-                orig.setUpdateBy(user);
                 namespaceService.updateById(orig);
             } else {
-                record.setCreateBy(user);
                 namespaceService.save(record);
             }
         });
@@ -240,24 +199,24 @@ public class NacosNamespacesController {
             record.setCreateBy(username);
             record.setType("1");
             record.setDataKey(projectId + "");
-            List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record).in("status" , Lists.newArrayList(ApproveStatus.STAY.getCode())));
+            List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record).in("status", Lists.newArrayList(ApproveStatus.STAY.getCode())));
             if (!list.isEmpty()) {
                 ExceptionUtils._throw(PubError.EXISTS, "已提交申请,请联系管理员审核！");
             }
             Project project = projectService.getById(projectId);
 
             JSONObject object = new JSONObject();
-            object.put("userId" , username);
-            object.put("projectId" , projectId);
-            object.put("projectName" , project.getName());
-            object.put("namespaceIds" , namespaceIds);
+            object.put("userId", username);
+            object.put("projectId", projectId);
+            object.put("projectName", project.getName());
+            object.put("namespaceIds", namespaceIds);
 
             List<String> names = Lists.newArrayList();
             for (Long nid : namespaceIds) {
                 Namespace n = namespaceService.getById(nid);
                 names.add(n.getName());
             }
-            object.put("namespaceNames" , String.join("|" , names));
+            object.put("namespaceNames", String.join("|", names));
 
             record.setContent(object.toJSONString());
 
@@ -272,7 +231,7 @@ public class NacosNamespacesController {
 
 
     @GetMapping({"{uid}/projects"})
-    public Result<VueRecord> findProjects(@PathVariable String uid, @RequestParam(value = "s" , required = false) String name) {
+    public Result<VueRecord> findProjects(@PathVariable String uid, @RequestParam(value = "s", required = false) String name) {
         return ResultUtils.wrapList(() -> {
             Namespace q = new Namespace();
             q.setUid(uid);
