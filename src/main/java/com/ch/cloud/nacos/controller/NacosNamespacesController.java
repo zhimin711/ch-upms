@@ -142,6 +142,7 @@ public class NacosNamespacesController {
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
             Namespace orig = namespaceService.getById(id);
+            nacosNamespacesClient.delete(orig);
             return namespaceService.removeById(id);
         });
     }
@@ -152,11 +153,9 @@ public class NacosNamespacesController {
         return ResultUtils.wrapFail(() -> {
             NacosCluster cluster = nacosClusterService.getById(clusterId);
             ExceptionUtils.assertEmpty(cluster, PubError.CONFIG, "nacos address");
-            JSONObject resp = new RestTemplate().getForObject(cluster.getUrl() + NacosAPI.NAMESPACES, JSONObject.class);
-            if (resp != null && resp.containsKey("data")) {
-                JSONArray arr = resp.getJSONArray("data");
-                List<NacosNamespace> list = arr.toJavaList(NacosNamespace.class);
-                saveNacosNamespaces(list,clusterId);
+            List<NacosNamespace> list = nacosNamespacesClient.fetchAll(cluster.getUrl());
+            if (CommonUtils.isNotEmpty(list)) {
+                saveNacosNamespaces(list, clusterId);
             }
             return true;
         });
@@ -181,7 +180,7 @@ public class NacosNamespacesController {
     }
 
     @GetMapping({"{id:[0-9]+}/{projectId:[0-9]+}/users"})
-    public Result<UserProjectNamespaceDto> findProjectUser(@PathVariable Long id, @PathVariable Long projectId) {
+    public Result<UserProjectNamespaceDto> findNamespaceProjectUsers(@PathVariable Long id, @PathVariable Long projectId) {
         return ResultUtils.wrapList(() -> namespaceService.findUsers(id, projectId));
     }
 
@@ -190,54 +189,16 @@ public class NacosNamespacesController {
         return ResultUtils.wrap(() -> namespaceService.assignUsers(id, projectId, userIds));
     }
 
-    @PostMapping({"apply/{projectId:[0-9]+}"})
-    public Result<Boolean> apply(@PathVariable Long projectId, @RequestBody List<Long> namespaceIds) {
-        return ResultUtils.wrap(() -> {
-            String username = RequestUtils.getHeaderUser();
-            checkUserProject(username, projectId);
-            ApplyRecord record = new ApplyRecord();
-            record.setCreateBy(username);
-            record.setType("1");
-            record.setDataKey(projectId + "");
-            List<ApplyRecord> list = applyRecordService.list(Wrappers.query(record).in("status", Lists.newArrayList(ApproveStatus.STAY.getCode())));
-            if (!list.isEmpty()) {
-                ExceptionUtils._throw(PubError.EXISTS, "已提交申请,请联系管理员审核！");
-            }
-            Project project = projectService.getById(projectId);
-
-            JSONObject object = new JSONObject();
-            object.put("userId", username);
-            object.put("projectId", projectId);
-            object.put("projectName", project.getName());
-            object.put("namespaceIds", namespaceIds);
-
-            List<String> names = Lists.newArrayList();
-            for (Long nid : namespaceIds) {
-                Namespace n = namespaceService.getById(nid);
-                names.add(n.getName());
-            }
-            object.put("namespaceNames", String.join("|", names));
-
-            record.setContent(object.toJSONString());
-
-            return applyRecordService.save(record);
-        });
-    }
-
     private void checkUserProject(String username, Long projectId) {
         boolean exists = projectService.exists(username, projectId);
         if (!exists) ExceptionUtils._throw(PubError.NOT_EXISTS, username + "+" + projectId);
     }
 
 
-    @GetMapping({"{uid}/projects"})
-    public Result<VueRecord> findProjects(@PathVariable String uid, @RequestParam(value = "s", required = false) String name) {
+    @GetMapping({"{id}/projects"})
+    public Result<VueRecord> findProjects(@PathVariable Long id, @RequestParam(value = "s", required = false) String name) {
         return ResultUtils.wrapList(() -> {
-            Namespace q = new Namespace();
-            q.setUid(uid);
-            Namespace ns = namespaceService.getOne(Wrappers.query(q));
-            if (ns == null) ExceptionUtils._throw(PubError.NOT_EXISTS, uid);
-            List<Project> projects = projectService.findByNamespaceIdAndName(ns.getId(), name);
+            List<Project> projects = projectService.findByNamespaceIdAndName(id, name);
             return VueRecordUtils.covertIdList(projects);
         });
     }

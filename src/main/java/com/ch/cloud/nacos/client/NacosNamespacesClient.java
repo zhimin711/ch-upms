@@ -1,5 +1,6 @@
 package com.ch.cloud.nacos.client;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ch.cloud.nacos.NacosAPI;
 import com.ch.cloud.nacos.domain.NacosCluster;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 /**
  * desc:
@@ -64,10 +67,21 @@ public class NacosNamespacesClient {
     }
 
     public NacosNamespace fetch(Namespace namespace) {
-
         String param = "show=all&namespaceId=" + namespace.getUid();
         NacosNamespace nn = restTemplate.getForObject(namespace.getAddr() + NacosAPI.NAMESPACES + "?" + param, NacosNamespace.class);
-
         return nn;
+    }
+
+    public List<NacosNamespace> fetchAll(String url) {
+        JSONObject resp = restTemplate.getForObject(url + NacosAPI.NAMESPACES, JSONObject.class);
+        if (resp != null && resp.containsKey("data")) {
+            JSONArray arr = resp.getJSONArray("data");
+            return arr.toJavaList(NacosNamespace.class);
+        }
+        return null;
+    }
+
+    public void delete(Namespace orig) {
+
     }
 }

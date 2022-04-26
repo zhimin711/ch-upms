@@ -90,35 +90,7 @@ public class NamespaceController {
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
             Namespace orig = namespaceService.getById(id);
-            if (orig.getSyncNacos()) {
-                //todo delete nacos namespace
-            }
             return namespaceService.removeById(id);
-        });
-    }
-
-
-    private void saveNacosNamespaces(List<NacosNamespace> list) {
-        if (list.isEmpty()) return;
-        String user = RequestUtils.getHeaderUser();
-        list.forEach(e -> {
-            Namespace record = new Namespace();
-            record.setUid(e.getNamespace());
-            record.setName(e.getNamespaceShowName());
-            if (CommonUtils.isEmpty(record.getUid())) {
-
-            }
-            Namespace orig = namespaceService.getOne(Wrappers.lambdaQuery(record).eq(Namespace::getUid, record.getUid()));
-            if (orig != null) {
-                orig.setName(e.getNamespaceShowName());
-                orig.setSyncNacos(true);
-                orig.setUpdateBy(user);
-                namespaceService.updateById(orig);
-            } else {
-                record.setSyncNacos(true);
-                record.setCreateBy(user);
-                namespaceService.save(record);
-            }
         });
     }
 
