@@ -64,16 +64,6 @@ public class NamespaceController {
         });
     }
 
-
-    @GetMapping({"available"})
-    public Result<VueRecord> findAvailable(@RequestParam(name = "s", required = false) String name) {
-        return ResultUtils.wrapList(() -> {
-            Wrapper<Namespace> wrapper = Wrappers.lambdaQuery(Namespace.class).like(CommonUtils.isNotEmpty(name), Namespace::getName, name);
-            List<Namespace> list = namespaceService.list(wrapper);
-            return VueRecordUtils.covertIdTree(list);
-        });
-    }
-
     @GetMapping({"{id:[0-9]+}"})
     public Result<NamespaceDto> find(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
@@ -92,16 +82,6 @@ public class NamespaceController {
             Namespace orig = namespaceService.getById(id);
             return namespaceService.removeById(id);
         });
-    }
-
-    @GetMapping({"{id:[0-9]+}/{projectId:[0-9]+}/users"})
-    public Result<UserProjectNamespaceDto> findProjectUser(@PathVariable Long id, @PathVariable Long projectId) {
-        return ResultUtils.wrapList(() -> namespaceService.findUsers(id, projectId));
-    }
-
-    @PostMapping({"{id:[0-9]+}/{projectId:[0-9]+}/users"})
-    public Result<Integer> saveProjectUsers(@PathVariable Long id, @PathVariable Long projectId, @RequestBody List<String> userIds) {
-        return ResultUtils.wrap(() -> namespaceService.assignUsers(id, projectId, userIds));
     }
 
     @PostMapping({"apply/{projectId:[0-9]+}"})
@@ -154,6 +134,17 @@ public class NamespaceController {
             List<Project> projects = projectService.findByNamespaceIdAndName(ns.getId(), name);
             return VueRecordUtils.covertIdList(projects);
         });
+    }
+
+
+//    @GetMapping({"{id:[0-9]+}/{projectId:[0-9]+}/users"})
+    public Result<UserProjectNamespaceDto> findProjectUser(@PathVariable Long id, @PathVariable Long projectId) {
+        return ResultUtils.wrapList(() -> namespaceService.findUsers(id, projectId));
+    }
+
+//    @PostMapping({"{id:[0-9]+}/{projectId:[0-9]+}/users"})
+    public Result<Integer> saveProjectUsers(@PathVariable Long id, @PathVariable Long projectId, @RequestBody List<String> userIds) {
+        return ResultUtils.wrap(() -> namespaceService.assignUsers(id, projectId, userIds));
     }
 }
 

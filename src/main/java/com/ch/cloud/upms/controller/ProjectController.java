@@ -6,6 +6,7 @@ import com.ch.Separator;
 import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.pojo.UserInfo;
+import com.ch.cloud.upms.pojo.UserProjectNamespaceDto;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.utils.RequestUtils;
@@ -38,6 +39,7 @@ public class ProjectController {
     private IProjectService    projectService;
     @Autowired
     private IDepartmentService departmentService;
+
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Project> page(Project record,
@@ -121,5 +123,6 @@ public class ProjectController {
     public Result<Integer> saveProjectNamespaces(@PathVariable Long id, @RequestBody List<Long> namespaceIds) {
         return ResultUtils.wrap(() -> projectService.assignNamespaces(id, namespaceIds));
     }
+
 }
 
