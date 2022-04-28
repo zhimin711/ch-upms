@@ -14,35 +14,28 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author 01370603
  * @date 2019/5/28
  */
+@FeignClient(name = "${feign.client.upms:ch-upms}", contextId = "userClientService", path = "user")
+public interface UpmsUserClientService {
 
-@FeignClient(name = UpmsConstants.NAME)
-public interface UpmsClientService {
-
-    @GetMapping("user/{username}/login")
+    @GetMapping("{username}/login")
     Result<LoginUserDto> findUserByUsername(@PathVariable String username);
 
-    @GetMapping("user/{username}/info")
+    @GetMapping("{username}/info")
     Result<UserDto> findInfo2(@PathVariable String username);
 
-    @GetMapping({"user/{username}/role"})
+    @GetMapping({"{username}/role"})
     Result<RoleDto> findRoleByUsername(@PathVariable String username);
 
-    @GetMapping({"user/{username}/tenants"})
+    @GetMapping({"{username}/tenants"})
     Result<TenantDto> findTenantsByUserId(@PathVariable String username);
 
-    @PostMapping({"user/roles"})
+    @PostMapping({"roles"})
     Result<RoleDto> findRolesByUserId2(@RequestParam Long userId);
 
-    @GetMapping({"user/{userId:[0-9]+}/roles"})
+    @GetMapping({"{userId:[0-9]+}/roles"})
     Result<RoleDto> findRolesByUserId(@PathVariable Long userId);
 
-    @GetMapping({"role/{roleId:[0-9]+}/menus"})
-    Result<PermissionDto> findMenusByRoleId(@PathVariable Long roleId);
-
-    @GetMapping({"role/{roleId:[0-9]+}/permissions"})
-    Result<PermissionDto> findPermissionsByRoleId(@PathVariable Long roleId, @RequestParam(value = "types", required = false) String typesStr);
-
-    @GetMapping({"permission/hidden"})
-    Result<PermissionDto> findHiddenPermissions();
+    @GetMapping({"{userId:[0-9]+}/projects"})
+    Result<RoleDto> findProjectsByUserId(@PathVariable Long userId);
 
 }

@@ -1,6 +1,6 @@
 package com.ch.cloud.client;
 
-import com.ch.cloud.client.dto.UserDto;
+import com.ch.cloud.client.dto.ProjectDto;
 import com.ch.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @date 2019/5/28
  */
 
-@FeignClient(name = "${feign.client.upms:ch-upms}", contextId = "projectClientService", path = "projects")
-public interface UpmsProjectClientService {
+@FeignClient(name = "${feign.client.upms:ch-upms}", contextId = "tenantClientService", path = "tenant")
+public interface UpmsTenantClientService {
 
-    @GetMapping({"{id:[0-9]+}/users"})
-    Result<UserDto> findUsers(@PathVariable Long id);
+    @GetMapping({"{id:[0-9]+}/projects"})
+    Result<ProjectDto> findProjects(@PathVariable Long id);
 
 
 }
