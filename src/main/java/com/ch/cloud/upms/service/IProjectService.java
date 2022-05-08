@@ -34,4 +34,5 @@ public interface IProjectService extends IService<Project> {
     List<Project> findByNamespaceIdAndName(Long namespaceId, String name);
 
     List<Project> findByTenantId(Long tenantId);
+
 }
