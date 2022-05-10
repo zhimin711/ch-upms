@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.cloud.upms.mapper.ProjectMapper;
@@ -10,9 +11,11 @@ import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.utils.RoleType;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.SQLUtils;
+import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -146,6 +149,14 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
             name = SQLUtils.likeAny(name);
         }
         return getBaseMapper().findByNamespaceIdAndName(namespaceId, name);
+    }
+
+    @Override
+    public List<Project> findByTenantId(Long tenantId) {
+        if(tenantId == null) return Lists.newArrayList();
+        Project record = new Project();
+        record.setTenantId(tenantId);
+        return super.list(Wrappers.query(record));
     }
 
 }

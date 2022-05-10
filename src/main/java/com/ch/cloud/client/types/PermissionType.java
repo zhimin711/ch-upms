@@ -1,4 +1,4 @@
-package com.ch.cloud.client.dto;
+package com.ch.cloud.client.types;
 
 /**
  * <p>

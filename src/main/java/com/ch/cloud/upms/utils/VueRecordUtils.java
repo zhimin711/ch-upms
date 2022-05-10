@@ -3,7 +3,7 @@ package com.ch.cloud.upms.utils;
 import com.ch.Constants;
 import com.ch.Num;
 import com.ch.Separator;
-import com.ch.cloud.client.dto.PermissionType;
+import com.ch.cloud.client.types.PermissionType;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.pojo.VueRecord;
 import com.ch.pojo.VueRecord2;

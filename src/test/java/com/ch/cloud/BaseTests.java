@@ -1,8 +1,5 @@
 package com.ch.cloud;
 
-import com.alibaba.fastjson.JSON;
-import com.ch.cloud.upms.model.OPRecord;
-import com.ch.cloud.upms.mq.RequestLogsConsumer;
 import com.ch.utils.CharUtils;
 import com.ch.utils.CommonUtils;
 import org.junit.Test;
@@ -19,7 +16,6 @@ public class BaseTests {
     public void pwd(){
         System.out.println(new BCryptPasswordEncoder().encode("secret"));
         System.out.println(new BCryptPasswordEncoder().encode("123456"));
-
     }
 
 

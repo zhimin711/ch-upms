@@ -18,8 +18,8 @@ import org.springframework.util.AntPathMatcher;
 import javax.annotation.Resource;
 import java.util.List;
 
-@Service
-@RocketMQMessageListener(consumerGroup = "ch-upms", topic = "request-logs")
+//@Service
+//@RocketMQMessageListener(consumerGroup = "ch-upms", topic = "request-logs")
 @Log4j2
 public class RequestLogsConsumer implements RocketMQListener<String> {
 

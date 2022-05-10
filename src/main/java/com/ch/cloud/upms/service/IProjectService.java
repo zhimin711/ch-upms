@@ -32,4 +32,7 @@ public interface IProjectService extends IService<Project> {
     Project getWithUserById(Long id);
 
     List<Project> findByNamespaceIdAndName(Long namespaceId, String name);
+
+    List<Project> findByTenantId(Long tenantId);
+
 }

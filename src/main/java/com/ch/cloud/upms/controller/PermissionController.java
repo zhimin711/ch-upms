@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Num;
 import com.ch.StatusS;
@@ -17,13 +18,16 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
+import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * desc:
@@ -38,7 +42,7 @@ import java.util.List;
 public class PermissionController {
 
     @Autowired
-    IRoleService roleService;
+    IRoleService       roleService;
     @Autowired
     IPermissionService permissionService;
 
@@ -49,7 +53,27 @@ public class PermissionController {
     public PageResult<Permission> page(Permission record,
                                        @PathVariable(value = "num") int pageNum,
                                        @PathVariable(value = "size") int pageSize) {
-        Page<Permission> pageInfo = permissionService.findTreePage2(record, pageNum, pageSize);
+        Set<Long> ids = Sets.newHashSet();
+        if (CommonUtils.isNotEmpty(record.getName(), record.getCode())) {
+            List<Permission> list = permissionService.list(Wrappers.query(new Permission())
+                    .like(CommonUtils.isNotEmpty(record.getCode()), "code", record.getCode())
+                    .like(CommonUtils.isNotEmpty(record.getName()), "name", record.getName())
+                    .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus()));
+            if (CommonUtils.isNotEmpty(list)) {
+                list.forEach(e -> {
+                    if (CommonUtils.isEquals(e.getParentId(), "0")) {
+                        ids.add(e.getId());
+                    } else {
+                        List<Long> ids2 = StringUtilsV2.parseIds(e.getParentId());
+                        ids.add(ids2.get(0));
+                    }
+                });
+            }
+        }
+        Permission param = new Permission();
+        param.setParentId("0");
+        param.setStatus(record.getStatus());
+        Page<Permission> pageInfo = permissionService.page(new Page<>(pageNum, pageSize), Wrappers.query(param).in(!ids.isEmpty(), "id", ids));
         return PageResult.success(pageInfo.getTotal(), pageInfo.getRecords());
     }
 
@@ -139,6 +163,19 @@ public class PermissionController {
     @DeleteMapping({"{id:[0-9]+}"})
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> permissionService.delete(id));
+    }
+
+
+    @GetMapping({"{id:[0-9]+}/children"})
+    public Result<Permission> getChildren(Permission record) {
+        return ResultUtils.wrapList(() -> {
+            if (CommonUtils.isEmpty(record.getParentId())) {
+                Permission orig = permissionService.getById(record.getId());
+                if (orig == null) return null;
+                record.setParentId(orig.getParentId());
+            }
+            return permissionService.findChildren(record);
+        });
     }
 
 

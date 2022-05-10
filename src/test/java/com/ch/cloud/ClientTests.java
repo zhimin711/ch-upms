@@ -2,7 +2,7 @@ package com.ch.cloud;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ch.cloud.client.UpmsClientService;
+import com.ch.cloud.client.UpmsUserClientService;
 import com.ch.cloud.upms.pojo.NacosNamespace;
 import org.junit.Test;
 import org.springframework.http.HttpEntity;
@@ -13,14 +13,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest(classes = UpmsApplication.class)
 public class ClientTests {
 
     //	@Autowired
-    UpmsClientService upmsClientService;
+    UpmsUserClientService upmsClientService;
 
     Object o;
 
@@ -28,7 +27,7 @@ public class ClientTests {
     public void contextLoads() {
 
 //		o = upmsClientService.findPermissionsByRoleId(0L);
-        o = upmsClientService.findMenusByRoleId(0L);
+//        o = upmsClientService.findMenusByRoleId(0L);
 
         System.out.println(o);
     }

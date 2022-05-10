@@ -1,0 +1,1 @@
+alter table st_department ADD COLUMN dept_type int null default null comment '部门类型：0集团 1公司 2部门 3团队' after `NAME`;
