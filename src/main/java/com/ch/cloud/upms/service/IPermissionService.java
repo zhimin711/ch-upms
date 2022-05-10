@@ -20,7 +20,9 @@ public interface IPermissionService extends IService<Permission> {
 
     Page<Permission> findTreePage(Permission record, int pageNum, int pageSize);
 
-    Page<Permission> findTreePage2(Permission record, int pageNum, int pageSize);
+    Page<Permission> pageTree(Permission record, int pageNum, int pageSize);
+
+    List<Permission> findChildren(Permission permission);
 
     List<Permission> findTreeByType(String type);
 

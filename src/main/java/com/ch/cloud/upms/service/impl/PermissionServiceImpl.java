@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ch.Constants;
 import com.ch.Num;
 import com.ch.Separator;
 import com.ch.Status;
@@ -61,7 +60,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @SuppressWarnings("unchecked")
     @Override
-    public Page<Permission> findTreePage2(Permission record, int pageNum, int pageSize) {
+    public Page<Permission> pageTree(Permission record, int pageNum, int pageSize) {
         if (CommonUtils.isEmpty(record.getParentId())) {
             record.setParentId("0");
         }
@@ -74,13 +73,13 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         query.orderByAsc(Permission::getSort, Permission::getParentId, Permission::getId);
         Page<Permission> page = query.page(new Page<>(pageNum, pageSize));
         if (page.getTotal() > 0) {
-            findChildren(page.getRecords());
+            findChildrenTree(page.getRecords());
         }
 
         return page;
     }
 
-    private void findChildren(List<Permission> records) {
+    private void findChildrenTree(List<Permission> records) {
         if (records == null || records.isEmpty()) return;
         records.forEach(r -> {
             String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString());
@@ -90,6 +89,19 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             r.setChildren(subMap.get(pid2));
             if (r.getChildren() != null) r.getChildren().sort(Comparator.comparing(Permission::getSort));
         });
+    }
+
+    @Override
+    public List<Permission> findChildren(Permission permission) {
+        if (!CommonUtils.isNotEmpty(permission.getParentId(), permission.getId())) {
+            return Lists.newArrayList();
+        }
+        String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, permission.getParentId(), permission.getId().toString());
+        return super.query().eq("parent_id", pid2)
+                .like(CommonUtils.isNotEmpty(permission.getStatus()), "status", permission.getStatus())
+                .like(CommonUtils.isNotEmpty(permission.getCode()), "code", permission.getCode())
+                .like(CommonUtils.isNotEmpty(permission.getName()), "name", permission.getName())
+                .list();
     }
 
 
@@ -208,7 +220,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Map<String, Object> params = BeanUtilsV2.getDeclaredFieldValueMap(record);
         List<Permission> list = super.query().allEq(params).list();
         if (list.isEmpty()) return list;
-        findChildren(list);
+        findChildrenTree(list);
         list.sort(Comparator.comparing(Permission::getSort));
         return list;
     }
