@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ch.cloud.upms.mapper.UserMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ch.cloud.upms.model.User">
+        <id column="ID" property="id" />
+        <result column="USER_ID" property="userId" />
+        <result column="USERNAME" property="username" />
+        <result column="PASSWORD" property="password" />
+        <result column="REAL_NAME" property="realName" />
+        <result column="BIRTH" property="birth" />
+        <result column="SEX" property="sex" />
+        <result column="EMAIL" property="email" />
+        <result column="MOBILE" property="mobile" />
+        <result column="LOCKED" property="locked" />
+        <result column="EXPIRED" property="expired" />
+        <result column="TYPE" property="type" />
+        <result column="STATUS" property="status" />
+        <result column="deleted" property="deleted" />
+        <result column="LAST_LOGIN_AT" property="lastLoginAt" />
+        <result column="LAST_LOGIN_IP" property="lastLoginIp" />
+        <result column="ERROR_COUNT" property="errorCount" />
+        <result column="REMARK" property="remark" />
+        <result column="CREATE_AT" property="createAt" />
+        <result column="CREATE_BY" property="createBy" />
+        <result column="UPDATE_AT" property="updateAt" />
+        <result column="UPDATE_BY" property="updateBy" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, USER_ID, USERNAME, PASSWORD, REAL_NAME, BIRTH, SEX, EMAIL, MOBILE, LOCKED,
+        EXPIRED, `TYPE`, STATUS, deleted, LAST_LOGIN_AT, LAST_LOGIN_IP, ERROR_COUNT,
+        REMARK, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
+    </sql>
+
+    <insert id="insertAssignRole">
+    INSERT INTO st_user_role (USER_ID,ROLE_ID) VALUES (#{userId},#{roleId})
+  </insert>
+    <delete id="deleteAssignRole">
+    DELETE FROM st_user_role WHERE USER_ID=#{userId} AND ROLE_ID=#{roleId} and ROLE_ID != 1
+  </delete>
+
+    <select id="pageBy" parameterType="com.ch.cloud.upms.model.User" resultType="com.ch.cloud.upms.model.User">
+    select t.*, group_concat(t2.department_id order by t2.department_id asc separator '|') as department
+    FROM st_user t
+    left join st_user_department_position t2 on t.id = t2.user_id
+    <where>
+        <if test="et.userId !=null and et.userId != ''">
+            and t.user_id like #{et.userId}
+        </if>
+        <if test="et.username !=null and et.username != ''">
+            and t.username like #{et.username}
+        </if>
+        <if test="et.realName !=null and et.realName != ''">
+            and t.real_name like #{et.realName}
+        </if>
+        <if test="et.status !=null and et.status != ''">
+            and t.status = #{et.status}
+        </if>
+        <if test="et.mobile !=null and et.mobile != ''">
+            and t.mobile = #{et.mobile}
+        </if>
+        <if test="et.department !=null and et.department != ''">
+            and t2.department_id like #{et.department}
+        </if>
+    </where>
+    group by t.username
+  </select>
+    <select id="findTenantsByUsername" resultType="com.ch.cloud.upms.model.Tenant">
+        SELECT distinct t.id,t.`name`,t.DEPARTMENT_ID,t.DEPARTMENT_NAME, IF(u.department_id = t.DEPARTMENT_ID,-1,IFNULL(t.sort,0)) as SORT
+        from bt_tenant t
+        INNER JOIN st_user_department_position udp
+--         on t.DEPARTMENT_ID = udp.department_id
+        on t.DEPARTMENT_ID like CONCAT(udp.department_id,'%')
+        INNER JOIN st_user u
+        on u.id = udp.user_id
+        where t.DELETED = 0
+        and u.USERNAME = #{username}
+        and t.status = '1'
+        ORDER BY `SORT`
+    </select>
+</mapper>

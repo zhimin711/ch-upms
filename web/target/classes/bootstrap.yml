@@ -1,0 +1,21 @@
+nacos:
+  config:
+    namespace: 4da0a4df-ea8e-4906-b53f-8e30884e1346
+    server-addr: 192.168.0.201:8848
+spring:
+  application:
+    name: ch-upms
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${nacos.config.server-addr}
+        namespace: ${nacos.config.namespace:}
+      config:
+        server-addr: ${nacos.config.server-addr}
+        namespace: ${nacos.config.namespace:}
+        shared-configs:
+          -
+            dataId: ch-upms.yml
+            refresh: true
+        enabled: false
+
