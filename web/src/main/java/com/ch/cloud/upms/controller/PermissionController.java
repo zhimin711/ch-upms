@@ -72,8 +72,22 @@ public class PermissionController {
         Permission param = new Permission();
         param.setParentId("0");
         param.setStatus(record.getStatus());
-        Page<Permission> pageInfo = permissionService.page(new Page<>(pageNum, pageSize), Wrappers.query(param).in(!ids.isEmpty(), "id", ids));
+        Page<Permission> pageInfo = permissionService.page(new Page<>(pageNum, pageSize), Wrappers.query(param)
+                .in(!ids.isEmpty(), "id", ids).orderByAsc("sort", "id"));
+        existsChildren(pageInfo.getRecords());
         return PageResult.success(pageInfo.getTotal(), pageInfo.getRecords());
+    }
+
+    private void existsChildren(List<Permission> records) {
+        if (CommonUtils.isEmpty(records)) {
+            return;
+        }
+        records.forEach(e -> {
+            Permission p = new Permission();
+            p.setParentId(e.getParentId());
+            p.setId(e.getId());
+            e.setHasChildren(CommonUtils.isNotEmpty(permissionService.findChildren(p)));
+        });
     }
 
     @PostMapping
@@ -173,7 +187,9 @@ public class PermissionController {
                 if (orig == null) return null;
                 record.setParentId(orig.getParentId());
             }
-            return permissionService.findChildren(record);
+            List<Permission> list = permissionService.findChildren(record);
+            existsChildren(list);
+            return list;
         });
     }
 

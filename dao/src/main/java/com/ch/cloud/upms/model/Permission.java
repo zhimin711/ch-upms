@@ -89,7 +89,8 @@ public class Permission extends Model<Permission> {
     @ApiModelProperty(value = "更新时间")
     private Date updateAt;
 
-
     @TableField(exist = false)
-    List<Permission> children;
+    private Boolean hasChildren;
+    @TableField(exist = false)
+    private List<Permission> children;
 }
