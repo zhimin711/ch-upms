@@ -33,16 +33,18 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Value("${path.upload:}")
     private String uploadPath;
-
+/*
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
+                .allowedOriginPatterns("*")
                 .allowCredentials(true)
+                .allowedHeaders("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .maxAge(3600);
-    }
+    }*/
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

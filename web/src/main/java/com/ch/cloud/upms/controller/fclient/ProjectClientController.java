@@ -1,13 +1,16 @@
-package com.ch.cloud.upms.controller.f;
+package com.ch.cloud.upms.controller.fclient;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ch.cloud.upms.client.UpmsProjectClientService;
 import com.ch.cloud.upms.dto.ProjectDto;
 import com.ch.cloud.upms.dto.UserDto;
+import com.ch.cloud.upms.mapstrut.MapperProject;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,14 +48,21 @@ public class ProjectClientController implements UpmsProjectClientService {
         });
     }
 
+    @GetMapping("list")
+//    @Override
+    public Result<ProjectDto> list(@RequestParam String name) {
+        List<Project> projectList = projectService.list(Wrappers.query(new Project())
+                .eq("status", "1")
+                .like(CommonUtils.isNotEmpty(name), "name", name));
+        return ResultUtils.wrapList(() -> projectList.stream()
+                .map(MapperProject.INSTANCE::toClientDto).collect(Collectors.toList()));
+    }
+
     @PostMapping
     @Override
     public Result<ProjectDto> findByIds(@RequestBody List<Long> ids) {
         List<Project> projectList = projectService.listByIds(ids);
-        return ResultUtils.wrapList(() -> {
-            return projectList.stream().map(e -> {
-                return new ProjectDto();
-            }).collect(Collectors.toList());
-        });
+        return ResultUtils.wrapList(() -> projectList.stream()
+                .map(MapperProject.INSTANCE::toClientDto).collect(Collectors.toList()));
     }
 }

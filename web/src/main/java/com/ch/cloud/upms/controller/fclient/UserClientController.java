@@ -1,4 +1,4 @@
-package com.ch.cloud.upms.controller.f;
+package com.ch.cloud.upms.controller.fclient;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ch.cloud.upms.dto.LoginUserDto;

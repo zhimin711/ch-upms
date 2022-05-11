@@ -21,4 +21,12 @@ public class ProjectDto {
      * 名称
      */
     private String name;
+    /**
+     * 租户名称
+     */
+    private String tenantName;
+    /**
+     * 负责人
+     */
+    private String manager;
 }

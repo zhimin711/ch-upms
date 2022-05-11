@@ -1,4 +1,4 @@
-package com.ch.cloud.upms.controller.f;
+package com.ch.cloud.upms.controller.fclient;
 
 import com.ch.cloud.upms.client.UpmsTenantClientService;
 import com.ch.cloud.upms.dto.ProjectDto;

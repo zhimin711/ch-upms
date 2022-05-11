@@ -37,29 +37,29 @@ import java.util.List;
 public class SpringFoxSwaggerConfig {
     /**
      * 配置基本信息
-     * @return
+     * @return ApiInfo
      */
     @Bean
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Swagger Test App Restful API")
-                .description("swagger test app restful api")
-                .termsOfServiceUrl("https://github.com/geekxingyun")
-                .contact(new Contact("技术宅星云","https://xingyun.blog.csdn.net","fairy_xingyun@hotmail.com"))
-                .version("1.0")
+                .title("Chao Hua UPMS Restful API")
+                .description("Chao Hua User Permission Management System Restful API")
+                .termsOfServiceUrl("https://github.com/zhimin")
+                .contact(new Contact("朝华去","http://xxx","zhimin711@sina.com"))
+                .version("2.0.0")
                 .build();
     }
 
     /**
      * 配置文档生成最佳实践
-     * @param apiInfo
-     * @return
+     * @param apiInfo api information
+     * @return Docket
      */
     @Bean
     public Docket createRestApi(ApiInfo apiInfo) {
         return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo)
-                .groupName("SwaggerGroupOneAPI")
+                .groupName("ChaoHuaOpenAPI")
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.any())
@@ -75,7 +75,7 @@ public class SpringFoxSwaggerConfig {
                                                                          ControllerEndpointsSupplier controllerEndpointsSupplier,
                                                                          EndpointMediaTypes endpointMediaTypes, CorsEndpointProperties corsProperties,
                                                                          WebEndpointProperties webEndpointProperties, Environment environment) {
-        List<ExposableEndpoint<?>> allEndpoints = new ArrayList();
+        List<ExposableEndpoint<?>> allEndpoints = new ArrayList<>();
         Collection<ExposableWebEndpoint> webEndpoints = webEndpointsSupplier.getEndpoints();
         allEndpoints.addAll(webEndpoints);
         allEndpoints.addAll(servletEndpointsSupplier.getEndpoints());

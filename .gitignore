@@ -72,3 +72,4 @@ logs/
 Thumbs.db
 
 upload/
+target/
