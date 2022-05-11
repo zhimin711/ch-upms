@@ -17,5 +17,5 @@ spring:
           -
             dataId: ch-upms.yml
             refresh: true
-        enabled: false
+#        enabled: false
 

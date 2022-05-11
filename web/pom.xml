@@ -14,6 +14,7 @@
 
     <properties>
         <file_encoding>UTF-8</file_encoding>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
     <dependencies>
 
@@ -199,7 +200,8 @@
                     </archive>
                     <excludes>
                         <exclude>**/*.properties</exclude>
-                        <exclude>config/application-*.xml</exclude>
+                        <exclude>config/application-*.yml</exclude>
+                        <exclude>config/application-*.yaml</exclude>
                         <exclude>static/**</exclude>
                         <exclude>public/**</exclude>
                         <exclude>templates/**</exclude>
