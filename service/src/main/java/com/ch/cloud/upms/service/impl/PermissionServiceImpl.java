@@ -101,6 +101,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 .like(CommonUtils.isNotEmpty(permission.getStatus()), "status", permission.getStatus())
                 .like(CommonUtils.isNotEmpty(permission.getCode()), "code", permission.getCode())
                 .like(CommonUtils.isNotEmpty(permission.getName()), "name", permission.getName())
+                .orderByAsc("sort", "id")
                 .list();
     }
 
