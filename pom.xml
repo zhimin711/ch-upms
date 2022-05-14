@@ -27,6 +27,7 @@
         <java_source_version>1.8</java_source_version>
         <java_target_version>1.8</java_target_version>
         <file_encoding>UTF-8</file_encoding>
+        <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
         <ch.cloud.version>2.0.0-SNAPSHOT</ch.cloud.version>
     </properties>
 
@@ -69,7 +70,44 @@
                     <target>${java_target_version}</target>
                     <encoding>${file_encoding}</encoding>
                 </configuration>
-            </plugin>
+            </plugin> <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>flatten-maven-plugin</artifactId>
+            <version>${flatten-maven-plugin.version}</version>
+            <configuration>
+                <updatePomFile>true</updatePomFile>
+                <flattenMode>resolveCiFriendliesOnly</flattenMode>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>flatten</id>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>flatten</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>flatten.clean</id>
+                    <phase>clean</phase>
+                    <goals>
+                        <goal>clean</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ch-nexus-snapshots</id>
+            <name>Nexus Snapshots Repository</name>
+            <url>http://nexus.ch.cn/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ch-nexus-release</id>
+            <name>Nexus Release Repository</name>
+            <url>http://nexus.ch.cn/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
 </project>
