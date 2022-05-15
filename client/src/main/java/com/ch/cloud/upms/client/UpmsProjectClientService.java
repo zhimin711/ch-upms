@@ -23,12 +23,15 @@ public interface UpmsProjectClientService {
 
 
     @GetMapping("page/{num:[0-9]+}/{size:[0-9]+}")
-    PageResult<ProjectDto> page(ProjectDto projectDto,
-                                @PathVariable(value = "num") int pageNum,
-                                @PathVariable(value = "size") int pageSize);
+    PageResult<ProjectDto> page(@PathVariable(value = "num") int pageNum,
+                                @PathVariable(value = "size") int pageSize,
+                                @RequestParam(value = "code", required = false) String code,
+                                @RequestParam(value = "name", required = false) String name,
+                                @RequestParam(value = "tenantName", required = false) String tenantName);
 
     @GetMapping("list")
-    Result<ProjectDto> list(@RequestParam String name, @RequestParam String tenant);
+    Result<ProjectDto> list(@RequestParam(value = "name", required = false) String name,
+                            @RequestParam(value = "tenant", required = false) String tenant);
 
     @PostMapping
     Result<ProjectDto> findByIds(@RequestBody List<Long> ids);

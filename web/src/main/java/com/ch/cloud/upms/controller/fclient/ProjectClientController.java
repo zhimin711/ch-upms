@@ -53,15 +53,17 @@ public class ProjectClientController implements UpmsProjectClientService {
 
     @GetMapping("page/{num:[0-9]+}/{size:[0-9]+}")
     @Override
-    public PageResult<ProjectDto> page(ProjectDto projectDto,
-                                       @PathVariable(value = "num") int pageNum,
-                                       @PathVariable(value = "size") int pageSize) {
+    public PageResult<ProjectDto> page(@PathVariable(value = "num") int pageNum,
+                                @PathVariable(value = "size") int pageSize,
+                                @RequestParam(value = "code", required = false) String code,
+                                @RequestParam(value = "name", required = false) String name,
+                                @RequestParam(value = "tenantName", required = false) String tenantName) {
         return ResultUtils.wrapPage(() -> {
 
             Page<Project> page = projectService.page(new Page<>(pageNum, pageSize), Wrappers.query(new Project())
                     .eq("status", "1")
-                    .like(CommonUtils.isNotEmpty(projectDto.getName()), "name", projectDto.getName())
-                    .like(CommonUtils.isNotEmpty(projectDto.getTenantName()), "tenant_name", projectDto.getName()));
+                    .like(CommonUtils.isNotEmpty(name), "name", name)
+                    .like(CommonUtils.isNotEmpty(tenantName), "tenant_name", tenantName));
             List<ProjectDto> list = page.getRecords().stream()
                     .map(MapperProject.INSTANCE::toClientDto).collect(Collectors.toList());
             return InvokerPage.build(page.getTotal(), list);
@@ -70,7 +72,8 @@ public class ProjectClientController implements UpmsProjectClientService {
 
     @GetMapping("list")
     @Override
-    public Result<ProjectDto> list(@RequestParam String name, @RequestParam String tenant) {
+    public Result<ProjectDto> list(@RequestParam(value = "name", required = false) String name,
+                                   @RequestParam(value = "tenant", required = false) String tenant) {
         List<Project> projectList = projectService.list(Wrappers.query(new Project())
                 .eq("status", "1")
                 .like(CommonUtils.isNotEmpty(name), "name", name)
