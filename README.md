@@ -13,6 +13,11 @@ UPMS是User Permissions Management Service，用户权限管理微服务.
 [docker](https://docs.docker.com/engine/security/certificates)
 
 #### 安装教程
+maven need install local jar
+```shell
+mvn install:install-file -Dfile=xxx/libs/third/ueditor-1.1.2.jar -DgroupId=com.baidu -DartifactId=ueditor -Dversion=1.1.2 -Dpackaging=jar
+```
+
 
 1. 初化数据库  
 使用other目录db初始化数据库
