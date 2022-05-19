@@ -9,10 +9,12 @@ import com.ch.cloud.upms.mapstrut.MapperProject;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.e.PubError;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.AssertUtils;
 import com.ch.utils.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -54,10 +56,10 @@ public class ProjectClientController implements UpmsProjectClientService {
     @GetMapping("page/{num:[0-9]+}/{size:[0-9]+}")
     @Override
     public PageResult<ProjectDto> page(@PathVariable(value = "num") int pageNum,
-                                @PathVariable(value = "size") int pageSize,
-                                @RequestParam(value = "code", required = false) String code,
-                                @RequestParam(value = "name", required = false) String name,
-                                @RequestParam(value = "tenantName", required = false) String tenantName) {
+                                       @PathVariable(value = "size") int pageSize,
+                                       @RequestParam(value = "code", required = false) String code,
+                                       @RequestParam(value = "name", required = false) String name,
+                                       @RequestParam(value = "tenantName", required = false) String tenantName) {
         return ResultUtils.wrapPage(() -> {
 
             Page<Project> page = projectService.page(new Page<>(pageNum, pageSize), Wrappers.query(new Project())
@@ -84,9 +86,24 @@ public class ProjectClientController implements UpmsProjectClientService {
                 .map(MapperProject.INSTANCE::toClientDto).collect(Collectors.toList()));
     }
 
-    @PostMapping
+    @GetMapping("info")
     @Override
-    public Result<ProjectDto> findByIds(@RequestBody List<Long> ids) {
+    public Result<ProjectDto> infoByIdOrCode(@RequestParam(value = "id", required = false) Long id, @RequestParam(value = "code", required = false) String code) {
+        return ResultUtils.wrap(() -> {
+            AssertUtils.isTrue(id == null && CommonUtils.isEmpty(code), PubError.NON_NULL, "id or code");
+            Project record;
+            if (id != null) {
+                record = projectService.getById(id);
+            } else {
+                record = projectService.findByCode(code);
+            }
+            return MapperProject.INSTANCE.toClientDto(record);
+        });
+    }
+
+    @PostMapping("info")
+    @Override
+    public Result<ProjectDto> infoByIds(@RequestBody List<Long> ids) {
         List<Project> projectList = projectService.listByIds(ids);
         return ResultUtils.wrapList(() -> projectList.stream()
                 .map(MapperProject.INSTANCE::toClientDto).collect(Collectors.toList()));

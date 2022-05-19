@@ -11,7 +11,7 @@ import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.cloud.upms.utils.VueRecordUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
-import com.ch.pojo.VueRecord;
+import com.ch.pojo.VueRecord2;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
@@ -196,7 +196,7 @@ public class PermissionController {
 
     @ApiOperation(value = "获取权限树", notes = "0.全部 1.目录 2.菜单 3.按钮、链接 4.可以授权接口 9.可授权权限")
     @GetMapping({"tree/{type:[0-9]+}"})
-    public Result<VueRecord> tree(@PathVariable String type) {
+    public Result<VueRecord2> tree(@PathVariable String type) {
         return ResultUtils.wrapList(() -> {
             List<Permission> records = permissionService.findTreeByType(type);
             return VueRecordUtils.convertTreeByType(records, type);

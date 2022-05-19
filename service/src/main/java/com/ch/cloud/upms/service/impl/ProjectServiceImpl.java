@@ -144,7 +144,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Override
     public List<Project> findByNamespaceIdAndName(Long namespaceId, String name) {
-        if(CommonUtils.isNotEmpty(name)){
+        if (CommonUtils.isNotEmpty(name)) {
             name = SQLUtils.likeAny(name);
         }
         return getBaseMapper().findByNamespaceIdAndName(namespaceId, name);
@@ -152,10 +152,18 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
 
     @Override
     public List<Project> findByTenantId(Long tenantId) {
-        if(tenantId == null) return Lists.newArrayList();
+        if (tenantId == null) return Lists.newArrayList();
         Project record = new Project();
         record.setTenantId(tenantId);
         return super.list(Wrappers.query(record));
+    }
+
+    @Override
+    public Project findByCode(String code) {
+        if (CommonUtils.isEmpty(code)) return null;
+        Project param = new Project();
+        param.setCode(code);
+        return super.getOne(Wrappers.query(param));
     }
 
 }

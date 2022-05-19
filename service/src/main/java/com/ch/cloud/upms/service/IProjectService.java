@@ -35,4 +35,5 @@ public interface IProjectService extends IService<Project> {
 
     List<Project> findByTenantId(Long tenantId);
 
+    Project findByCode(String code);
 }
