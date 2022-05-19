@@ -73,9 +73,11 @@ public class ProjectClientController implements UpmsProjectClientService {
     @GetMapping("list")
     @Override
     public Result<ProjectDto> list(@RequestParam(value = "name", required = false) String name,
+                                   @RequestParam(value = "code", required = false) String code,
                                    @RequestParam(value = "tenant", required = false) String tenant) {
         List<Project> projectList = projectService.list(Wrappers.query(new Project())
                 .eq("status", "1")
+                .like(CommonUtils.isNotEmpty(name), "code", code)
                 .like(CommonUtils.isNotEmpty(name), "name", name)
                 .like(CommonUtils.isNotEmpty(tenant), "tenant_name", tenant));
         return ResultUtils.wrapList(() -> projectList.stream()

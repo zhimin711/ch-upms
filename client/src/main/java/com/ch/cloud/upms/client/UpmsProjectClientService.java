@@ -31,8 +31,10 @@ public interface UpmsProjectClientService {
 
     @GetMapping("list")
     Result<ProjectDto> list(@RequestParam(value = "name", required = false) String name,
+                            @RequestParam(value = "code", required = false) String code,
                             @RequestParam(value = "tenant", required = false) String tenant);
 
     @PostMapping
     Result<ProjectDto> findByIds(@RequestBody List<Long> ids);
+
 }
