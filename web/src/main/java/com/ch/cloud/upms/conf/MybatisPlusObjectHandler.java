@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * desc:  自动补充插入或更新时的值
  *
  * @author zhimin
- * @date 2022/3/11 12:13 AM
+ * @since 2022/3/11 12:13 AM
  */
 @Component
 public class MybatisPlusObjectHandler implements MetaObjectHandler {

@@ -10,7 +10,7 @@ import java.io.Serializable;
  * decs:
  *
  * @author 01370603
- * @date 2019/5/28
+ * @since 2019/5/28
  */
 @Data
 @ApiModel("用户信息")

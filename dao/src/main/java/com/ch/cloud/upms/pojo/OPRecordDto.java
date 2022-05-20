@@ -8,7 +8,7 @@ import lombok.Data;
  * OPRecordDto 扩展对象
  * 
  * @author zhimi
- * @date Sat Mar 21 16:54:49 CST 2020
+ * @since Sat Mar 21 16:54:49 CST 2020
  */
 @Data
 public class OPRecordDto implements Serializable {

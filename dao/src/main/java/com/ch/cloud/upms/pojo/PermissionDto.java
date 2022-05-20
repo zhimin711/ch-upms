@@ -7,7 +7,7 @@ import java.util.Date;
  * PermissionDto 扩展对象
  * 
  * @author 01370603
- * @date Fri Oct 18 17:54:42 CST 2019
+ * @since Fri Oct 18 17:54:42 CST 2019
  */
 public class PermissionDto implements Serializable {
     

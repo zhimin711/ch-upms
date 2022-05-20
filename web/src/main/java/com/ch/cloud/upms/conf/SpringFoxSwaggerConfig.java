@@ -1,6 +1,5 @@
 package com.ch.cloud.upms.conf;
 
-import com.ulisesbocchio.jasyptspringboot.annotation.ConditionalOnMissingBean;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementPortType;
@@ -29,14 +28,14 @@ import java.util.List;
 
 /***
  * @author zhimin.ma
- * @date 2022/3/26
- * @apiNote
+ * @since 2022/3/26
  */
 @EnableOpenApi
 @Configuration
 public class SpringFoxSwaggerConfig {
     /**
      * 配置基本信息
+     *
      * @return ApiInfo
      */
     @Bean
@@ -45,13 +44,14 @@ public class SpringFoxSwaggerConfig {
                 .title("Chao Hua UPMS Restful API")
                 .description("Chao Hua User Permission Management System Restful API")
                 .termsOfServiceUrl("https://github.com/zhimin")
-                .contact(new Contact("朝华去","http://xxx","zhimin711@sina.com"))
+                .contact(new Contact("朝华去", "http://xxx", "zhimin711@sina.com"))
                 .version("2.0.0")
                 .build();
     }
 
     /**
      * 配置文档生成最佳实践
+     *
      * @param apiInfo api information
      * @return Docket
      */
@@ -68,7 +68,16 @@ public class SpringFoxSwaggerConfig {
 
     /**
      * 增加如下配置可解决Spring Boot 6.x 与Swagger 3.0.0 不兼容问题
-     **/
+     *
+     * @param webEndpointsSupplier        webEndpointsSupplier
+     * @param servletEndpointsSupplier    servletEndpointsSupplier
+     * @param controllerEndpointsSupplier controllerEndpointsSupplier
+     * @param endpointMediaTypes          endpointMediaTypes
+     * @param corsProperties              corsProperties
+     * @param webEndpointProperties       webEndpointProperties
+     * @param environment                 environment
+     * @return WebMvcEndpointHandlerMapping
+     */
     @Bean
     public WebMvcEndpointHandlerMapping webEndpointServletHandlerMapping(WebEndpointsSupplier webEndpointsSupplier,
                                                                          ServletEndpointsSupplier servletEndpointsSupplier,
@@ -85,6 +94,7 @@ public class SpringFoxSwaggerConfig {
         boolean shouldRegisterLinksMapping = this.shouldRegisterLinksMapping(webEndpointProperties, environment, basePath);
         return new WebMvcEndpointHandlerMapping(endpointMapping, webEndpoints, endpointMediaTypes, corsProperties.toCorsConfiguration(), new EndpointLinksResolver(allEndpoints, basePath), shouldRegisterLinksMapping, null);
     }
+
     private boolean shouldRegisterLinksMapping(WebEndpointProperties webEndpointProperties, Environment environment, String basePath) {
         return webEndpointProperties.getDiscovery().isEnabled() && (StringUtils.hasText(basePath) || ManagementPortType.get(environment).equals(ManagementPortType.DIFFERENT));
     }
