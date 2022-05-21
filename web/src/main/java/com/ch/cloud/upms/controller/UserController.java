@@ -5,7 +5,6 @@ import com.ch.cloud.upms.fclient.SsoClientService;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.User;
-import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.pojo.UserInfo;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
@@ -220,20 +219,6 @@ public class UserController {
                 record.setValue(e.getId() + "");
                 record.setLabel(e.getName());
                 record.setKey(e.getCode() + "");
-                return record;
-            }).collect(Collectors.toList());
-        });
-    }
-
-    @GetMapping({"project/{projectId:[0-9]+}/namespaces"})
-    public Result<VueRecord2> findNamespaces(@PathVariable Long projectId) {
-        return ResultUtils.wrapList(() -> {
-            List<NamespaceDto> projectList = userService.findNamespacesByUsernameAndProjectId(RequestUtils.getHeaderUser(), projectId);
-            return projectList.stream().map(e -> {
-                VueRecord2 record = new VueRecord2();
-                record.setValue(e.getId() + "");
-                record.setLabel(e.getName());
-                record.setKey(e.getUid());
                 return record;
             }).collect(Collectors.toList());
         });

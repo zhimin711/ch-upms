@@ -2,7 +2,6 @@ package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
 
 import java.util.List;
@@ -19,10 +18,6 @@ public interface IProjectService extends IService<Project> {
 
     Page<Project> page(Project record, int pageNum, int pageSize);
 
-    List<Namespace> findNamespaces(Long id);
-
-    int assignNamespaces(Long id, List<Long> namespaceIds);
-
     List<String> findUsers(Long id);
 
     int assignUsers(Long id, List<String> userIds);
@@ -30,8 +25,6 @@ public interface IProjectService extends IService<Project> {
     boolean exists(String userId, Long projectId);
 
     Project getWithUserById(Long id);
-
-    List<Project> findByNamespaceIdAndName(Long namespaceId, String name);
 
     List<Project> findByTenantId(Long tenantId);
 

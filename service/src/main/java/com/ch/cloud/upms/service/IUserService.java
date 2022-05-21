@@ -6,7 +6,6 @@ import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
-import com.ch.cloud.upms.pojo.NamespaceDto;
 
 import java.util.List;
 
@@ -41,8 +40,6 @@ public interface IUserService extends IService<User> {
     List<Tenant> findTenantsByUsername(String username);
 
     List<Project> findProjectsByUsernameAndTenantId(String username, Long tenantId);
-
-    List<NamespaceDto> findNamespacesByUsernameAndProjectId(String username, Long projectId);
 
     User getDefaultInfo(String username);
 

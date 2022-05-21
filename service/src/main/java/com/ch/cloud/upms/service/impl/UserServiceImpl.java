@@ -8,11 +8,9 @@ import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.mapper2.UserDepartmentPositionMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
-import com.ch.cloud.upms.mapper2.UserProjectNamespaceMapper;
 import com.ch.cloud.upms.mapper2.UserRoleMapper;
 import com.ch.cloud.upms.model.*;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
-import com.ch.cloud.upms.pojo.NamespaceDto;
 import com.ch.cloud.upms.service.*;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
@@ -48,8 +46,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private UserProjectMapper userProjectMapper;
-    @Resource
-    private UserProjectNamespaceMapper userProjectNamespaceMapper;
     @Resource
     private UserRoleMapper userRoleMapper;
     @Resource
@@ -213,11 +209,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public List<Project> findProjectsByUsernameAndTenantId(String userId, Long tenantId) {
         return userProjectMapper.findProjectsByUserIdAndTenantId(userId, tenantId);
-    }
-
-    @Override
-    public List<NamespaceDto> findNamespacesByUsernameAndProjectId(String username, Long projectId) {
-        return userProjectNamespaceMapper.findNamespacesByUserIdAndProjectId(username, projectId);
     }
 
     @Override

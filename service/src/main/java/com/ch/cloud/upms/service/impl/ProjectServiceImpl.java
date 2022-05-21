@@ -5,19 +5,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.cloud.upms.mapper.ProjectMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
-import com.ch.cloud.upms.model.Namespace;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.enums.RoleType;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.SQLUtils;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -40,27 +37,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 .like(CommonUtils.isNotEmpty(record.getName()), "name", record.getName())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
                 .orderByAsc("sort", "id").page(new Page<>(pageNum, pageSize));
-    }
-
-    @Override
-    public List<Namespace> findNamespaces(Long id) {
-        return getBaseMapper().findNamespaces(id);
-    }
-
-    @Override
-    public int assignNamespaces(Long id, List<Long> namespaceIds) {
-        List<Namespace> list = findNamespaces(id);
-        List<Long> uNamespaceIds = list.stream().map(Namespace::getId).collect(Collectors.toList());
-//        List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(Role::getId).collect(Collectors.toList());
-
-        AtomicInteger c = new AtomicInteger();
-        if (!namespaceIds.isEmpty()) {//1，2，3 | 3、4、5
-            namespaceIds.stream().filter(r -> !uNamespaceIds.contains(r)).forEach(r -> c.getAndAdd(getBaseMapper().insertAssignNamespace(id, r)));
-            uNamespaceIds.stream().filter(r -> !namespaceIds.contains(r)).forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignNamespace(id, r)));
-        } else if (!uNamespaceIds.isEmpty()) {
-            uNamespaceIds.forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignNamespace(id, r)));
-        }
-        return c.get();
     }
 
     @Override
@@ -140,14 +116,6 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         assignUsers(record.getId(), record.getDevUserIds(), RoleType.DEV);
         assignUsers(record.getId(), record.getTestUserIds(), RoleType.TEST);
         return true;
-    }
-
-    @Override
-    public List<Project> findByNamespaceIdAndName(Long namespaceId, String name) {
-        if (CommonUtils.isNotEmpty(name)) {
-            name = SQLUtils.likeAny(name);
-        }
-        return getBaseMapper().findByNamespaceIdAndName(namespaceId, name);
     }
 
     @Override

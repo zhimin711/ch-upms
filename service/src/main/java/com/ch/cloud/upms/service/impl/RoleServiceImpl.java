@@ -67,6 +67,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
                 .like(CommonUtils.isNotEmpty(record.getName()), "name", record.getName())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
                 .in("type", Lists.newArrayList("1", "2"))
-                .orderByAsc("type", "id").page(new Page<>(pageNum, pageSize));
+                .orderByDesc("type", "id").page(new Page<>(pageNum, pageSize));
     }
 }

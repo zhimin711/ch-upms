@@ -26,27 +26,4 @@
         ID, TENANT_ID, TENANT_NAME, NAME, CODE, DEPARTMENT, MANAGER, SORT, DESCRIPTION, STATUS, DELETED, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
     </sql>
 
-    <select id="findNamespaces" resultType="com.ch.cloud.upms.model.Namespace">
-        select t2.id, t2.name, t2.uid
-        FROM rt_project_namespace t1
-        inner join bt_namespace t2
-        on t1.namespace_id = t2.id
-        WHERE t1.project_id=#{id}
-    </select>
-
-    <insert id="insertAssignNamespace">
-        INSERT INTO rt_project_namespace (PROJECT_ID,NAMESPACE_ID) VALUES (#{projectId},#{namespaceId})
-     </insert>
-    <delete id="deleteAssignNamespace">
-        DELETE FROM rt_project_namespace WHERE PROJECT_ID=#{projectId} AND NAMESPACE_ID=#{namespaceId}
-     </delete>
-    <select id="findByNamespaceIdAndName" resultMap="BaseResultMap">
-        select t1.* from bt_project t1
-        inner join rt_project_namespace t2
-        on t1.id = t2.PROJECT_ID
-        where t2.NAMESPACE_ID = #{namespaceId}
-        <if test="name!=null and name!=''">
-            t1.name like #{name}
-        </if>
-    </select>
 </mapper>
