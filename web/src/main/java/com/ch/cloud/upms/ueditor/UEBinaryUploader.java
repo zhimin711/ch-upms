@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * @author 01370603
- * @date 2018/12/24 11:54
+ * @since 2018/12/24 11:54
  */
 public class UEBinaryUploader {
 

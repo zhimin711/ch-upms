@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
  * desc:
  *
  * @author zhimin
- * @date 2022/5/11 22:25
+ * @since 2022/5/11 22:25
  */
 @Mapper
 public interface MapperProject {

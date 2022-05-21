@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author 01370603
- * @date 2018/12/24 13:51
+ * @since 2018/12/24 13:51
  */
 public class UEResult implements Serializable {
 

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * decs:通用用户权限客户端接口
  *
  * @author 01370603
- * @date 2019/5/28
+ * @since 2019/5/28
  */
 @FeignClient(name = "${feign.client.upms:ch-upms}", contextId = "roleClientService", path = "role")
 public interface UpmsRoleClientService {

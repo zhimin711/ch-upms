@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author 01370603
- * @date 2018/12/24 13:51
+ * @since 2018/12/24 13:51
  */
 public class UEListResult implements Serializable {
 

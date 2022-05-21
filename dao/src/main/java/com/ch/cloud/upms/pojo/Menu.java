@@ -7,7 +7,7 @@ import java.util.List;
  * Vue 菜单
  *
  * @author 01370603
- * @date 2018/12/22 16:45
+ * @since 2018/12/22 16:45
  */
 public class Menu implements Serializable {
 
