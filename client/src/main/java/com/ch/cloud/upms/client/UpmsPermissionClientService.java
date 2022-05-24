@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface UpmsPermissionClientService {
 
     @GetMapping({"hidden"})
-    Result<PermissionDto> findHiddenPermissions();
+    Result<PermissionDto> hidden();
 
+    @GetMapping({"whitelist"})
+    Result<PermissionDto> whitelist();
+
+    @GetMapping({"cookie"})
+    Result<PermissionDto> cookie();
 }
