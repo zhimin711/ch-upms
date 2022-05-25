@@ -3,14 +3,15 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Num;
-import com.ch.cloud.upms.fclient.GatewayClientService;
 import com.ch.cloud.upms.model.Permission;
+import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.cloud.upms.utils.VueRecordUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
+import com.ch.pojo.KeyValue;
 import com.ch.pojo.VueRecord2;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
@@ -46,7 +47,7 @@ public class PermissionController {
     IPermissionService permissionService;
 
     @Autowired
-    private GatewayClientService gatewayClientService;
+    private GatewayNotifySender gatewayNotifySender;
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Permission> page(Permission record,
@@ -167,7 +168,7 @@ public class PermissionController {
                 isNeedClean = true;
             }
             if (c > 0 && isNeedClean) {
-                gatewayClientService.cleanPermissions();
+                gatewayNotifySender.cleanNotify(new KeyValue("permissions", "all"));
             }
             return c;
         });

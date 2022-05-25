@@ -4,14 +4,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Num;
 import com.ch.Separator;
 import com.ch.StatusS;
-import com.ch.cloud.upms.fclient.GatewayClientService;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.model.Role;
+import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
+import com.ch.pojo.KeyValue;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
@@ -38,11 +39,11 @@ public class RoleController {
 
 
     @Autowired
-    private IRoleService roleService;
+    private IRoleService        roleService;
     @Autowired
-    private IPermissionService permissionService;
+    private IPermissionService  permissionService;
     @Autowired
-    private GatewayClientService gatewayClientService;
+    private GatewayNotifySender gatewayNotifySender;
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Role> page(Role record,
@@ -154,7 +155,7 @@ public class RoleController {
             }
             int c = permissionService.updateRoleAuthPermissions(roleId, ids);
             if (c > 0) {
-                gatewayClientService.cleanRolePermissions(roleId);
+                gatewayNotifySender.cleanNotify(new KeyValue("permissions", roleId + ""));
             }
             return c;
         });
