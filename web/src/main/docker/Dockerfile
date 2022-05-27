@@ -1,6 +1,6 @@
 FROM java:openjdk-8-alpine
 VOLUME /tmp
-ADD ch-upms-1.0.0-SNAPSHOT.jar app.jar
+ADD ch-upms-*-SNAPSHOT.jar app.jar
 RUN sh -c 'touch /app.jar'
 ENV JAVA_OPTS="-Dnacos.config.server-addr=nacos.12301.io:80 -Dnacos.config.namespace=cloud-dev"
 
