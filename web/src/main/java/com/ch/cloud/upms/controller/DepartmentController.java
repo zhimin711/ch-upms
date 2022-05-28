@@ -17,6 +17,7 @@ import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.AssertUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.VueRecordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +65,15 @@ public class DepartmentController {
         record.setUpdateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> {
             getAndCheck(record);
+
             return departmentService.updateById(record);
         });
     }
 
     private void getAndCheck(Department record) {
+        if (CommonUtils.isEquals(record.getPid(), 0)) {
+            return;
+        }
         if (CommonUtils.isEquals(record.getPid(), record.getId())) {
             ExceptionUtils._throw(PubError.NOT_ALLOWED, "id and pid is same");
         }
@@ -82,7 +87,11 @@ public class DepartmentController {
 
     @DeleteMapping("/{id:[0-9]+}")
     public Result<Boolean> delete(@PathVariable Long id) {
-        return ResultUtils.wrapFail(() -> departmentService.removeById(id));
+        return ResultUtils.wrapFail(() -> {
+            Department dept = departmentService.getById(id);
+            AssertUtils.isTrue(CommonUtils.isEquals(dept.getPid(), 0), PubError.NOT_ALLOWED, "top department not allow delete");
+            return departmentService.removeById(id);
+        });
     }
 
     @GetMapping("/{id:[0-9]+}/positions")

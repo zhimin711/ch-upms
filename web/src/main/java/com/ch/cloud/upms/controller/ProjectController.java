@@ -4,15 +4,20 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Separator;
 import com.ch.cloud.upms.model.Project;
+import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IProjectService;
+import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.AssertUtils;
+import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.StringUtilsV2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +38,8 @@ public class ProjectController {
     private IProjectService    projectService;
     @Autowired
     private IDepartmentService departmentService;
+    @Autowired
+    private ITenantService tenantService;
 
 
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
@@ -43,8 +50,13 @@ public class ProjectController {
         return PageResult.success(pageInfo.getTotal(), pageInfo.getRecords());
     }
 
+    @GetMapping({"{id:[0-9]+}"})
+    public Result<Project> get(@PathVariable Long id) {
+        return ResultUtils.wrapFail(() -> projectService.getWithUserById(id));
+    }
+
     @PostMapping
-    public Result<Boolean> add(@RequestBody Project record) {
+    public Result<Boolean> add(@Validated @RequestBody Project record) {
         checkSaveOrUpdate(record);
         record.setCreateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> projectService.save(record));
@@ -54,11 +66,8 @@ public class ProjectController {
         List<Long> deptIds = StringUtilsV2.parseIds(record.getDepartment());
         List<String> names = departmentService.findNames(deptIds);
         record.setDepartmentName(String.join(Separator.OBLIQUE_LINE, names));
-    }
-
-    @GetMapping({"{id:[0-9]+}"})
-    public Result<Project> get(@PathVariable Long id) {
-        return ResultUtils.wrapFail(() -> projectService.getWithUserById(id));
+        Tenant tenant = tenantService.getById(record.getTenantId());
+        record.setTenantName(tenant.getName());
     }
 
     @PutMapping({"{id:[0-9]+}"})

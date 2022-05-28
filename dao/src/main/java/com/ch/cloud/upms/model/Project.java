@@ -13,6 +13,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * <p>
  * 业务-项目表
@@ -38,6 +40,7 @@ public class Project extends Model<Project> {
     /**
      * 租户ID(控制在两层)
      */
+    @NotNull
     private Long tenantId;
 
     /**
@@ -53,11 +56,13 @@ public class Project extends Model<Project> {
     /**
      * 代码
      */
+    @NotNull
     private String code;
 
     /**
      * 所属部门
      */
+    @NotNull
     private String department;
 
     /**
