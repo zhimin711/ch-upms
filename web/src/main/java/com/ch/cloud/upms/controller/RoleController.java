@@ -21,6 +21,7 @@ import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
  * @since 2018/12/22 22:35
  */
 @RestController
+@Slf4j
 @RequestMapping("/role")
 public class RoleController {
 
@@ -154,6 +156,7 @@ public class RoleController {
                 }
             }
             int c = permissionService.updateRoleAuthPermissions(roleId, ids);
+            log.info("updateRoleAuthPermissions size: {} -> {}",c,c > 0);
             if (c > 0) {
                 gatewayNotifySender.cleanNotify(new KeyValue("permissions", roleId + ""));
             }
