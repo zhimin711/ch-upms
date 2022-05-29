@@ -140,7 +140,13 @@ public class RoleController {
 
     @PostMapping({"{roleId:[0-9]+}/permissions"})
     public Result<Integer> editPermissions(@PathVariable Long roleId, @RequestBody Long[] permissionIds) {
-        return ResultUtils.wrap(() -> permissionService.updateRolePermissions(roleId, Lists.newArrayList(permissionIds)));
+        return ResultUtils.wrap(() -> {
+            int c = permissionService.updateRolePermissions(roleId, Lists.newArrayList(permissionIds));
+            if (c > 0) {
+                gatewayNotifySender.cleanNotify(new KeyValue("permissions", roleId + ""));
+            }
+            return c;
+        });
     }
 
     @PutMapping({"{roleId:[0-9]+}/permissions"})
@@ -156,7 +162,6 @@ public class RoleController {
                 }
             }
             int c = permissionService.updateRoleAuthPermissions(roleId, ids);
-            log.info("updateRoleAuthPermissions size: {} -> {}",c,c > 0);
             if (c > 0) {
                 gatewayNotifySender.cleanNotify(new KeyValue("permissions", roleId + ""));
             }
