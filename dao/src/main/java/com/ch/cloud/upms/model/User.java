@@ -119,4 +119,6 @@ public class User extends Model<User> {
     private String tenantName;
     @ApiModelProperty(value = "所属部门职位ID")
     private Long   positionId;
+    @ApiModelProperty(value = "所属部门职位名称")
+    private String   positionName;
 }

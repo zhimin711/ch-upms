@@ -156,7 +156,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             List<String> names = departmentService.findNames(StringUtilsV2.parseIds(record.getDepartmentId()));
             record.setDepartmentName(String.join(",", names));
         }
-
+        if (CommonUtils.isNotEmpty(record.getPositionId())) {
+            Position pos = positionService.getById(record.getPositionId());
+            if (pos != null) {
+                record.setPositionName(pos.getName());
+            }
+        }
+        if (CommonUtils.isNotEmpty(record.getTenantId())) {
+            Tenant tenant = tenantService.getById(record.getTenantId());
+            if (tenant != null) {
+                record.setTenantName(tenant.getName());
+            }
+        }
     }
 
     @Override
