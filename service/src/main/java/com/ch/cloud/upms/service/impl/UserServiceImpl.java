@@ -146,7 +146,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             Department dept = departmentService.getById(StringUtilsV2.lastId(r.getDepartment()));
             String deptId = r.getDepartment();
             String orgId = "";
-            if (dept.getDeptType() != null && dept.getDeptType().equals(3)) {
+            if (dept != null && dept.getDeptType() != null && dept.getDeptType().equals(3)) {
                 deptId = dept.getParentId();
                 orgId = r.getDepartment();
             }
