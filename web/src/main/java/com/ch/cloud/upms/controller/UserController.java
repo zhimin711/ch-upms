@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
+import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.fclient.SsoClientService;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
@@ -92,13 +93,11 @@ public class UserController {
     }
 
     @PostMapping("changeTenant")
-    public Result<Boolean> changTenant(@RequestHeader(Constants.X_TOKEN) String token, @RequestBody TenantChangeVO record) {
+    public Result<TenantDto> changTenant(@RequestHeader(Constants.X_TOKEN) String token, @RequestBody TenantChangeVO record) {
         return ResultUtils.wrapFail(() -> {
             String username = RequestUtils.getHeaderUser();
             User user = userService.findByUsername(username);
-            if (user == null) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS, "用户不存在: " + username);
-            }
+            AssertUtils.isNull(user, PubError.NOT_EXISTS, "用户不存在: " + username);
             List<Tenant> tenants = userService.findTenantsByUsername(username);
             AssertUtils.isEmpty(tenants, PubError.NOT_EXISTS, username + "用户租户");
             List<Long> existsTenantIds = tenants.stream().map(Tenant::getId).collect(Collectors.toList());
@@ -110,7 +109,10 @@ public class UserController {
                 userService.updateById(user);
             }
             gatewayNotifySender.cleanNotify(new KeyValue("users", token));
-            return true;
+            TenantDto dto = new TenantDto();
+            dto.setId(tenant.getId());
+            dto.setName(tenant.getName());
+            return dto;
         });
     }
 
