@@ -78,6 +78,6 @@
         where t.DELETED = 0
         and u.USERNAME = #{username}
         and t.status = '1'
-        ORDER BY `SORT`
+        ORDER BY `SORT`, t.id ASC
     </select>
 </mapper>
