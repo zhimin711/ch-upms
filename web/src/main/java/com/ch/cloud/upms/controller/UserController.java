@@ -102,7 +102,7 @@ public class UserController {
             List<Tenant> tenants = userService.findTenantsByUsername(username);
             AssertUtils.isEmpty(tenants, PubError.NOT_EXISTS, username + "用户租户");
             List<Long> existsTenantIds = tenants.stream().map(Tenant::getId).collect(Collectors.toList());
-            AssertUtils.isTrue(existsTenantIds.contains(record.getId()), PubError.NOT_AUTH, "租户" + record.getId());
+            AssertUtils.isFalse(existsTenantIds.contains(record.getId()), PubError.NOT_AUTH, "租户" + record.getId());
             Tenant tenant = tenants.stream().filter(e -> CommonUtils.isEquals(record.getId(), e.getId())).findFirst().orElse(new Tenant());
             if (record.isSetDefault() && !CommonUtils.isEquals(record.getId(), user.getTenantId())) {
                 user.setTenantId(record.getId());
