@@ -85,10 +85,9 @@ public class UserController {
             if (!exists) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS, role.getId());
             }
-            user.setRoleId(role.getId());
-            user.setUpdateBy(username);
-            user.setUpdateAt(DateUtils.current());
-            return userService.updateById(user);
+            User updateUser = new User();
+            updateUser.setRoleId(role.getId());
+            return userService.updateById(updateUser);
         });
     }
 
@@ -108,7 +107,7 @@ public class UserController {
                 updateUser.setId(user.getId());
                 updateUser.setTenantId(record.getId());
                 updateUser.setTenantName(tenant.getName());
-                userService.updateById(user);
+                userService.updateById(updateUser);
             }
             gatewayNotifySender.cleanNotify(new KeyValue("users", token));
             TenantDto dto = new TenantDto();
