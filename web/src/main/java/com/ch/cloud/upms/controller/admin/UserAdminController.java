@@ -59,7 +59,7 @@ public class UserAdminController {
             return Result.error(PubError.EXISTS, "用户名已存在！");
         }
         record.setCreateBy(RequestUtils.getHeaderUser());
-        return ResultUtils.wrapFail(() -> userService.save(record));
+        return ResultUtils.wrapFail(() -> userService.saveWithAll(record));
     }
 
     @GetMapping({"{id:[0-9]+}"})
@@ -75,7 +75,7 @@ public class UserAdminController {
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody User record) {
         record.setUpdateBy(RequestUtils.getHeaderUser());
 //        record.setUpdateAt(DateUtils.current());
-        return ResultUtils.wrapFail(() -> userService.updateById(record));
+        return ResultUtils.wrapFail(() -> userService.updateWithAll(record));
     }
 
     //    @PostMapping({"delete"})

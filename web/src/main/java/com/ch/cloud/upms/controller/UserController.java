@@ -104,8 +104,10 @@ public class UserController {
             AssertUtils.isFalse(existsTenantIds.contains(record.getId()), PubError.NOT_AUTH, "租户" + record.getId());
             Tenant tenant = tenants.stream().filter(e -> CommonUtils.isEquals(record.getId(), e.getId())).findFirst().orElse(new Tenant());
             if (record.isSetDefault() && !CommonUtils.isEquals(record.getId(), user.getTenantId())) {
-                user.setTenantId(record.getId());
-                user.setTenantName(tenant.getName());
+                User updateUser = new User();
+                updateUser.setId(user.getId());
+                updateUser.setTenantId(record.getId());
+                updateUser.setTenantName(tenant.getName());
                 userService.updateById(user);
             }
             gatewayNotifySender.cleanNotify(new KeyValue("users", token));

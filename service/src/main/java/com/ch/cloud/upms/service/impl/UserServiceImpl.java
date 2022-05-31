@@ -111,8 +111,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return super.query().eq("status", StatusS.ENABLED).list();
     }
 
+    @Transactional
     @Override
-    public boolean save(User record) {
+    public boolean saveWithAll(User record) {
         if (CommonUtils.isEmpty(record.getPassword())) {
             record.setPassword(EncryptUtils.generate());
         }
@@ -125,7 +126,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Transactional
     @Override
-    public boolean updateById(User record) {
+    public boolean updateWithAll(User record) {
         record.setUserId(null);
         record.setUsername(null);
         //不更新密码
