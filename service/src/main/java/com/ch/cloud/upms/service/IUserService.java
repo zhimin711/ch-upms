@@ -6,6 +6,7 @@ import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,10 @@ public interface IUserService extends IService<User> {
     List<User> findByLikeUsername(String username);
 
     List<User> findAllValid();
+
+    boolean saveWithAll(User record);
+
+    boolean updateWithAll(User record);
 
     Page<User> page(User record, int pageNum, int pageSize);
 
