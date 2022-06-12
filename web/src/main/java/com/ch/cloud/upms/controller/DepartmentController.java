@@ -62,11 +62,17 @@ public class DepartmentController {
 
     @PutMapping({"/{id:[0-9]+}"})
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody Department record) {
-        record.setUpdateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> {
             getAndCheck(record);
 
             return departmentService.updateById(record);
+        });
+    }
+
+    @GetMapping({"/{id:[0-9]+}"})
+    public Result<Department> detail(@PathVariable Long id) {
+        return ResultUtils.wrapFail(() -> {
+            return departmentService.getById(id);
         });
     }
 
