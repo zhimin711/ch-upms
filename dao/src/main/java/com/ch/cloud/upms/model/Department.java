@@ -68,15 +68,19 @@ public class Department extends Model<Department> {
     private Boolean deleted;
 
     @ApiModelProperty(value = "创建者")
+    @TableField(fill = FieldFill.INSERT)
     private String createBy;
 
     @ApiModelProperty(value = "创建时间")
+    @TableField(fill = FieldFill.INSERT)
     private Date createAt;
 
     @ApiModelProperty(value = "更新者")
+    @TableField(fill = FieldFill.UPDATE)
     private String updateBy;
 
     @ApiModelProperty(value = "更新时间")
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateAt;
 
     @TableField(exist = false)
