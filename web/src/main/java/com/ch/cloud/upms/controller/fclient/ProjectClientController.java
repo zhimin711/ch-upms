@@ -16,6 +16,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.AssertUtils;
 import com.ch.utils.CommonUtils;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,7 +66,7 @@ public class ProjectClientController implements UpmsProjectClientService {
             Page<Project> page = projectService.page(new Page<>(pageNum, pageSize), Wrappers.query(new Project())
                     .eq("status", "1")
                     .like(CommonUtils.isNotEmpty(name), "name", name)
-                    .like(CommonUtils.isNotEmpty(tenantName), "tenant_name", tenantName));
+                    .like(CommonUtils.isNotEmpty(tenantName), "tenant_name", tenantName).orderByAsc(Lists.newArrayList("tenant_id", "sort", "id")));
             List<ProjectDto> list = page.getRecords().stream()
                     .map(MapperProject.INSTANCE::toClientDto).collect(Collectors.toList());
             return InvokerPage.build(page.getTotal(), list);
