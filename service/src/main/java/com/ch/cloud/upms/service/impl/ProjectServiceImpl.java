@@ -36,7 +36,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 .like(CommonUtils.isNotEmpty(record.getCode()), "code", record.getCode())
                 .like(CommonUtils.isNotEmpty(record.getName()), "name", record.getName())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
-                .orderByAsc("sort", "id").page(new Page<>(pageNum, pageSize));
+                .orderByAsc("tenant_id", "sort", "id").page(new Page<>(pageNum, pageSize));
     }
 
     @Override
