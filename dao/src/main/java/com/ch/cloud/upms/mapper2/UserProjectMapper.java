@@ -19,7 +19,8 @@ public interface UserProjectMapper {
 
     @Select("SELECT distinct t1.* from bt_project t1" +
             " INNER JOIN rt_user_project t2 ON t1.id  = t2.PROJECT_ID" +
-            " WHERE t1.tenant_id =#{tenantId} and t2.USER_ID=#{userId}")
+            " WHERE t1.tenant_id =#{tenantId} and t2.USER_ID=#{userId}" +
+            " ORDER by t1.TENANT_ID, t1.SORT ,t1.SORT ASC")
     List<Project> findProjectsByUserIdAndTenantId(String userId, Long tenantId);
 
     @Select("select distinct USER_ID from rt_user_project where PROJECT_ID=#{projectId}")
