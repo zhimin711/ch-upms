@@ -1,19 +1,17 @@
 package com.ch.cloud.upms.model;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-
-import java.util.Date;
-import java.util.List;
-
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -38,7 +36,7 @@ public class Project extends Model<Project> {
     private Long id;
 
     /**
-     * 租户ID(控制在两层)
+     * 租户ID
      */
     @NotNull
     private Long tenantId;
@@ -60,7 +58,7 @@ public class Project extends Model<Project> {
     private String code;
 
     /**
-     * 所属部门
+     * 所属部门(控制在两层)
      */
     @NotNull
     private String department;
