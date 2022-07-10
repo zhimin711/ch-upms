@@ -15,7 +15,7 @@ public class LogShardingStrategy implements PreciseShardingAlgorithm<String> {
     @Override
     public String doSharding(Collection<String> availableTargetNames, PreciseShardingValue<String> shardingValue) {
         List<String> list = Lists.newArrayList(availableTargetNames);
-        log.info("doSharding value: {}", shardingValue.getValue());
+        log.debug("doSharding value: {}", shardingValue.getValue());
         if (CommonUtils.isEmpty(shardingValue.getValue())) {
             return list.get(1);
         }
