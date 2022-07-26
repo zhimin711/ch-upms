@@ -4,7 +4,9 @@ import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ch.Separator;
 import com.ch.StatusS;
+import com.ch.cloud.upms.enums.DepartmentType;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.mapper2.UserDepartmentPositionMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
@@ -173,21 +175,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public Page<User> page(User record, int pageNum, int pageSize) {
-        if (CommonUtils.isNotEmpty(record.getDepartment())) {
-            if (CommonUtils.isNumeric(record.getDepartment())) {
-                String key = departmentService.findCascadeK(Long.valueOf(record.getDepartment()));
-                record.setDepartmentId(key);
-                record.setDepartment(SQLUtils.likeSuffix(key));
+        if (CommonUtils.isNumeric(record.getDepartment())) {
+            Department dept = departmentService.getById(Long.valueOf(record.getDepartment()));
+            if (dept != null) {
+                String key = dept.getParentId();
+                String key2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, dept.getParentId(), dept.getId().toString());
+                if (DepartmentType.isTeam(dept.getDeptType())) {
+                    record.setDepartmentId(key);
+                    record.setDepartment(key2);
+                }else {
+                    record.setDepartmentId(key2);
+                }
             }
         }
         Page<User> pager = getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
-//        return super.query()
-//                .like(CommonUtils.isNotEmpty(record.getUserId()), "user_id", record.getUserId())
-//                .like(CommonUtils.isNotEmpty(record.getUsername()), "username", record.getUsername())
-//                .like(CommonUtils.isNotEmpty(record.getRealName()), "real_name", record.getRealName())
-//                .like(CommonUtils.isNotEmpty(record.getEmail()), "email", record.getEmail())
-//                .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
-//                .orderByAsc("user_id").page(new Page<>(pageNum, pageSize));
         if (pager.getTotal() > 0) {
             pager.getRecords().forEach(r -> {
                 r.setDepartment("0");
