@@ -9,7 +9,30 @@ package com.ch.cloud.upms.enums;
  * @since 2021/11/22
  */
 public enum PermissionType {
-    CATALOG("1"), MENU("2"), MENU_HIDE("2#0"), BUTTON("3"), AUTH_INTERFACE("4"), INTERFACE("5");
+    /**
+     * 目录
+     */
+    CATALOG("1"),
+    /**
+     * 菜单
+     */
+    MENU("2"),
+    /**
+     * 隐藏菜单
+     */
+    MENU_HIDE("2#0"),
+    /**
+     * 按钮
+     */
+    BUTTON("3"),
+    /**
+     * 授权接口
+     */
+    AUTH_INTERFACE("4"),
+    /**
+     * 开放接口（区分登录与游客两种类型）
+     */
+    INTERFACE("5");
 
     private final String code;
 

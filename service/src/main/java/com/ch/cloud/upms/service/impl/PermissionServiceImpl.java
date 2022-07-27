@@ -21,6 +21,7 @@ import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -153,6 +154,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         return getBaseMapper().selectList(Wrappers.query(record));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public int updateRolePermissions(Long roleId, List<Long> permissionIds) {
         int c1 = getBaseMapper().deleteRolePermissions(roleId);
@@ -191,12 +193,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             return Lists.newArrayList();
         }
 
-        QueryChainWrapper<Permission> wrapper = super.query().eq("parent_id", pid).eq(CommonUtils.isNotEmpty(status), "status", status);
+        QueryChainWrapper<Permission> wrapper = super.query().eq("parent_id", pid)
+                .eq(CommonUtils.isNotEmpty(status), "status", status);
 
         if (CommonUtils.isEquals(Num.S1, type)) {
             wrapper.eq("type", type);
         } else if (CommonUtils.isEquals(Num.S2, type)) {
             wrapper.in("type", Lists.newArrayList(Num.S1, Num.S2));
+        } else if (CommonUtils.isEquals(Num.S9, type)) {
+            wrapper.in("type", Lists.newArrayList(Num.S1, Num.S2, Num.S3));
         } else if (!CommonUtils.isEquals(Num.S0, type)) {
             wrapper.ne("type", Num.S5);
         }
@@ -280,6 +285,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         return super.removeById(id);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public int updateRoleAuthPermissions(Long roleId, List<Long> permissionIds) {
         int c1 = getBaseMapper().deleteRoleAuthPermissions(roleId);
