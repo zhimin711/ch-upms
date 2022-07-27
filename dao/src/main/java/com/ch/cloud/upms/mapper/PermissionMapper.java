@@ -18,9 +18,21 @@ public interface PermissionMapper extends BaseMapper<Permission> {
 
     List<Permission> findByTypeAndRoleId(@Param("types") List<String> types, @Param("roleId") Long roleId);
 
+    /**
+     * delete not auth interface permission
+     *
+     * @param roleId role id
+     * @return delete row size
+     */
     int deleteRolePermissions(Long roleId);
 
     int insertRolePermissions(@Param("roleId") Long roleId, @Param("permissionIds") List<Long> permissionIds);
 
+    /**
+     * delete auth interface permission
+     *
+     * @param roleId role id
+     * @return delete row size
+     */
     int deleteRoleAuthPermissions(Long roleId);
 }
