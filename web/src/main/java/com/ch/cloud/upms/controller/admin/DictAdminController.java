@@ -9,16 +9,13 @@ import com.ch.cloud.upms.service.IDictService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
-import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.AssertUtils;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.VueRecordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * <p>
@@ -48,7 +45,7 @@ public class DictAdminController {
         record.setCreateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> {
             Dict orig = dictService.findByCode(record.getCode());
-            if (orig != null) ExceptionUtils._throw(PubError.EXISTS, "代码");
+            AssertUtils.notNull(orig, PubError.EXISTS, "代码");
             return dictService.save(record);
         });
     }

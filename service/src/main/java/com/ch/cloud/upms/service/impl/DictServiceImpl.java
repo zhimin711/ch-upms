@@ -8,6 +8,8 @@ import com.ch.cloud.upms.model.Dict;
 import com.ch.cloud.upms.service.IDictService;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +40,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
     }
 
     @Override
+    @CacheEvict(cacheNames = "dict", key = "#entity.code")
     public boolean save(Dict entity) {
         boolean flag = super.save(entity);
         if (flag && CommonUtils.isNotEmpty(entity.getChildren())) {
@@ -51,6 +54,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
     }
 
     @Override
+    @CacheEvict(cacheNames = "dict", key = "#entity.code")
     public boolean updateById(Dict entity) {
         boolean flag = super.updateById(entity);
         if (flag && CommonUtils.isNotEmpty(entity.getChildren())) {
