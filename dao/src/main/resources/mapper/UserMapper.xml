@@ -63,10 +63,10 @@
             and t.mobile = #{et.mobile}
         </if>
         <if test="et.departmentId !=null and et.departmentId != ''">
-            and t2.department_id like #{et.departmentId}
+            and t2.department_id like concat(#{et.departmentId}, '%')
         </if>
         <if test="et.department !=null and et.department != ''">
-            and t2.org_id like #{et.department}
+            and t2.org_id = #{et.department}
         </if>
     </where>
     group by t.username
