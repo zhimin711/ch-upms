@@ -185,6 +185,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                     record.setDepartment(key2);
                 }else {
                     record.setDepartmentId(key2);
+                    record.setDepartment(null);
                 }
             }
         }
@@ -192,7 +193,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (pager.getTotal() > 0) {
             pager.getRecords().forEach(r -> {
                 r.setDepartment("0");
-                if (CommonUtils.isNotEmpty(r.getDepartmentId(), record.getDepartment())
+                if (CommonUtils.isNotEmpty(r.getDepartmentId(), record.getDepartmentId())
                         && !r.getDepartmentId().startsWith(record.getDepartmentId())) {
 
                     r.setDepartment("1");

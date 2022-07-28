@@ -46,6 +46,7 @@
     FROM st_user t
     left join st_user_department_position t2 on t.id = t2.user_id
     <where>
+        t.deleted = 0
         <if test="et.userId !=null and et.userId != ''">
             and t.user_id like #{et.userId}
         </if>
