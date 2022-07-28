@@ -4,6 +4,7 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Num;
 import com.ch.Status;
+import com.ch.cloud.upms.manage.IDepartmentManage;
 import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Position;
 import com.ch.cloud.upms.model.Tenant;
@@ -39,6 +40,8 @@ public class DepartmentController {
     @Autowired
     private IDepartmentService departmentService;
     @Autowired
+    private IDepartmentManage departmentManage;
+    @Autowired
     private IPositionService positionService;
     @Autowired
     private ITenantService tenantService;
@@ -65,38 +68,31 @@ public class DepartmentController {
         return ResultUtils.wrapFail(() -> {
             getAndCheck(record);
 
-            return departmentService.updateById(record);
+            return departmentManage.update(record);
         });
     }
 
     @GetMapping({"/{id:[0-9]+}"})
     public Result<Department> detail(@PathVariable Long id) {
-        return ResultUtils.wrapFail(() -> {
-            return departmentService.getById(id);
-        });
+        return ResultUtils.wrapFail(() -> departmentManage.get(id));
     }
 
     private void getAndCheck(Department record) {
         if (CommonUtils.isEquals(record.getPid(), 0)) {
             return;
         }
-        if (CommonUtils.isEquals(record.getPid(), record.getId())) {
-            ExceptionUtils._throw(PubError.NOT_ALLOWED, "id and pid is same");
-        }
+        AssertUtils.isTrue(CommonUtils.isEquals(record.getPid(), record.getId()),PubError.NOT_ALLOWED, "id and pid is same");
         Department parent = departmentService.getById(record.getPid());
-        if (parent == null) {
-            ExceptionUtils._throw(PubError.NOT_EXISTS, record.getPid());
-        }
-
+        AssertUtils.isNull(parent,PubError.NOT_EXISTS, record.getPid());
         record.setParentName(CommonUtils.isEquals(parent.getParentId(), Num.S0) ? parent.getName() : parent.getParentName() + "," + parent.getName());
     }
 
     @DeleteMapping("/{id:[0-9]+}")
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
-            Department dept = departmentService.getById(id);
+            Department dept = departmentManage.get(id);
             AssertUtils.isTrue(CommonUtils.isEquals(dept.getPid(), 0), PubError.NOT_ALLOWED, "top department not allow delete");
-            return departmentService.removeById(id);
+            return departmentManage.remove(id);
         });
     }
 
@@ -134,10 +130,8 @@ public class DepartmentController {
     @GetMapping("/{id:[0-9]+}/tenants")
     public Result<Tenant> findTenants(@PathVariable Long id, @RequestParam(value = "s", required = false) String name) {
         return ResultUtils.wrapList(() -> {
-            Department department = departmentService.getById(id);
-            if (department == null) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS, id);
-            }
+            Department department = departmentManage.get(id);
+            AssertUtils.isNull(department,PubError.NOT_EXISTS, id);
             String prefixDeptId = CommonUtils.isEquals(department.getParentId(), Num.S0) ? department.getId() + "" : department.getParentId() + "," + department.getId();
             return tenantService.findByDepartmentIdAndNameAndStatus(prefixDeptId, name, Status.ENABLED);
         });

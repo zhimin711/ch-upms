@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.Separator;
 import com.ch.StatusS;
 import com.ch.cloud.upms.enums.DepartmentType;
+import com.ch.cloud.upms.manage.IDepartmentManage;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.mapper2.UserDepartmentPositionMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
@@ -41,6 +42,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private IRoleService roleService;
     @Resource
     private IDepartmentService departmentService;
+    @Resource
+    private IDepartmentManage departmentManage;
     @Resource
     private IPositionService positionService;
     @Resource
@@ -176,14 +179,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public Page<User> page(User record, int pageNum, int pageSize) {
         if (CommonUtils.isNumeric(record.getDepartment())) {
-            Department dept = departmentService.getById(Long.valueOf(record.getDepartment()));
+            Department dept = departmentManage.get(Long.valueOf(record.getDepartment()));
             if (dept != null) {
                 String key = dept.getParentId();
                 String key2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, dept.getParentId(), dept.getId().toString());
                 if (DepartmentType.isTeam(dept.getDeptType())) {
                     record.setDepartmentId(key);
                     record.setDepartment(key2);
-                }else {
+                } else {
                     record.setDepartmentId(key2);
                     record.setDepartment(null);
                 }
@@ -192,11 +195,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         Page<User> pager = getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
         if (pager.getTotal() > 0) {
             pager.getRecords().forEach(r -> {
-                r.setDepartment("0");
                 if (CommonUtils.isNotEmpty(r.getDepartmentId(), record.getDepartmentId())
                         && !r.getDepartmentId().startsWith(record.getDepartmentId())) {
-
+                    String[] deptIds = r.getDepartment().split("\\|");
+                    r.setDepartmentName("");
+                    for (String deptId : deptIds) {
+//                        userDepartmentPositionMapper.findDepartmentPositionByUserIdLikeDepartmentId(r.getId(), deptId);
+                        Department dept = departmentManage.get(StringUtilsV2.lastId(deptId));
+                        String pn = StringUtilsV2.linkStr(Separator.COMMA_SIGN, dept.getParentName(), dept.getName());
+                        r.setDepartmentName(StringUtilsV2.linkStr(Separator.VERTICAL_LINE, r.getDepartmentName(), pn));
+                    }
                     r.setDepartment("1");
+                } else {
+                    r.setDepartment("0");
                 }
 
             });

@@ -24,4 +24,6 @@ public interface UserDepartmentPositionMapper {
             "    FROM st_user_department_position\n" +
             "    WHERE user_id=#{userId}")
     List<DepartmentDuty> findDepartmentPositionByUserId(Long userId);
+
+    List<DepartmentDuty> findDepartmentPositionByUserIdLikeDepartmentId(Long userId, String departmentId);
 }

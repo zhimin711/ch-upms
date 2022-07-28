@@ -100,7 +100,7 @@ public class User extends Model<User> {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateBy;
 
-    @ApiModelProperty(hidden = true)
+//    @ApiModelProperty(hidden = true)
     @TableField(exist = false)
     private String               department;
     @ApiModelProperty(hidden = true)
