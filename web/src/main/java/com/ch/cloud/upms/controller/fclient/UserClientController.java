@@ -1,20 +1,32 @@
 package com.ch.cloud.upms.controller.fclient;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.ch.cloud.upms.client.UpmsUserClientService;
 import com.ch.cloud.upms.dto.LoginUserDto;
+import com.ch.cloud.upms.dto.ProjectDto;
+import com.ch.cloud.upms.dto.RoleDto;
+import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.dto.UserDto;
+import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
-import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.e.PubError;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.AssertUtils;
 import com.ch.utils.BeanUtilsV2;
+import com.ch.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,42 +40,62 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@RequestMapping("/user")
-public class UserClientController {
-
+@RequestMapping("/c/user")
+public class UserClientController implements UpmsUserClientService {
+    
     @Autowired
     private IUserService userService;
+    
+    @Autowired
+    private IUserManage userManage;
+    
     @Autowired
     private IRoleService roleService;
-
+    
+    @Override
+    @GetMapping("info")
+    public Result<UserDto> info(@RequestParam(required = false) String userId,
+            @RequestParam(required = false) String username) {
+        return ResultUtils.wrap(() -> {
+            AssertUtils.isTrue(CommonUtils.isEmpty(userId) && CommonUtils.isEmpty(username), PubError.ARGS,
+                    "userId and username");
+            if (CommonUtils.isNotEmpty(userId)) {
+                return userManage.getByUserId(userId);
+            }
+            return userManage.getByUsername(username);
+        });
+    }
+    
+    @Override
     @GetMapping("{username}/login")
-    public Result<LoginUserDto> findByUsername(@PathVariable String username) {
+    public Result<LoginUserDto> loginByUsername(@PathVariable String username) {
         return ResultUtils.wrapFail(() -> {
-            User user = userService.findByUsername(username);
+            UserDto user = userManage.getByUsername(username);
             return BeanUtilsV2.clone(user, LoginUserDto.class);
         });
     }
-
+    
+    @Override
     @GetMapping({"{username}/info"})
-    public Result<UserDto> findInfo(@PathVariable String username) {
-        return ResultUtils.wrap(() -> {
-            User user = userService.getDefaultInfo(username);
-            return BeanUtilsV2.clone(user, UserDto.class);
-        });
+    public Result<UserDto> findInfoByUsername(@PathVariable String username) {
+        return ResultUtils.wrap(() -> userManage.getByUsername(username));
     }
-
-    @PostMapping({"roles"})
-    public Result<Role> findRolesByUserId(@RequestParam Long userId) {
+    
+    @Override
+    @GetMapping({"roles"})
+    public Result<RoleDto> findRolesByUsername(@PathVariable String username) {
         return ResultUtils.wrapList(() -> {
-
-            List<Role> records = roleService.findByUserId(userId);
-            log.info("current user {} roles: {}",userId,JSONObject.toJSONString(records));
-            return records;
+            UserDto user = userManage.getByUsername(username);
+            AssertUtils.isNull(user, PubError.NOT_EXISTS, username);
+            List<Role> records = roleService.findByUserId(user.getId());
+            log.info("current user {} roles: {}", username, JSON.toJSONString(records));
+            return records.stream().map(e -> BeanUtilsV2.clone(e, RoleDto.class)).collect(Collectors.toList());
         });
     }
-
+    
+    @Override
     @GetMapping({"{username}/tenants"})
-    public Result<TenantDto> findTenants(@PathVariable String username) {
+    public Result<TenantDto> findTenantsByUsername(@PathVariable String username) {
         return ResultUtils.wrapList(() -> {
             List<Tenant> tenantList = userService.findTenantsByUsername(username);
             return tenantList.stream().map(e -> {
@@ -75,5 +107,10 @@ public class UserClientController {
             }).collect(Collectors.toList());
         });
     }
-
+    
+    @GetMapping({"{userId:[0-9]+}/projects"})
+    @Override
+    public Result<ProjectDto> findProjectsByUserId(@PathVariable String userId) {
+        return null;
+    }
 }

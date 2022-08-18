@@ -3,6 +3,7 @@ package com.ch.cloud.upms.controller;
 import com.ch.Constants;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.fclient.SsoClientService;
+import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.Tenant;
@@ -41,17 +42,19 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
-
+    
     @Autowired
     private IUserService userService;
-
+    
+    @Autowired
+    private IUserManage userManage;
+    
     @Autowired
     private SsoClientService ssoClientService;
-
+    
     @Autowired
     private GatewayNotifySender gatewayNotifySender;
-
+    
     @PostMapping("changePwd")
     public Result<Integer> changePwd(@RequestBody KeyValue keyValue) {
         return ResultUtils.wrapFail(() -> {
@@ -71,8 +74,8 @@ public class UserController {
             return userService.updatePassword(user);
         });
     }
-
-
+    
+    
     @PostMapping("changeRole")
     public Result<Boolean> changDefaultRole(@RequestBody Role role) {
         return ResultUtils.wrapFail(() -> {
@@ -90,9 +93,10 @@ public class UserController {
             return userService.updateById(updateUser);
         });
     }
-
+    
     @PostMapping("changeTenant")
-    public Result<TenantDto> changTenant(@RequestHeader(Constants.X_TOKEN) String token, @RequestBody TenantChangeVO record) {
+    public Result<TenantDto> changTenant(@RequestHeader(Constants.X_TOKEN) String token,
+            @RequestBody TenantChangeVO record) {
         return ResultUtils.wrapFail(() -> {
             String username = RequestUtils.getHeaderUser();
             User user = userService.findByUsername(username);
@@ -101,7 +105,8 @@ public class UserController {
             AssertUtils.isEmpty(tenants, PubError.NOT_EXISTS, username + "用户租户");
             List<Long> existsTenantIds = tenants.stream().map(Tenant::getId).collect(Collectors.toList());
             AssertUtils.isFalse(existsTenantIds.contains(record.getId()), PubError.NOT_AUTH, "租户" + record.getId());
-            Tenant tenant = tenants.stream().filter(e -> CommonUtils.isEquals(record.getId(), e.getId())).findFirst().orElse(new Tenant());
+            Tenant tenant = tenants.stream().filter(e -> CommonUtils.isEquals(record.getId(), e.getId())).findFirst()
+                    .orElse(new Tenant());
             if (record.isSetDefault() && !CommonUtils.isEquals(record.getId(), user.getTenantId())) {
                 User updateUser = new User();
                 updateUser.setId(user.getId());
@@ -116,7 +121,7 @@ public class UserController {
             return dto;
         });
     }
-
+    
     @GetMapping("valid")
     public Result<UserInfo> findValid(@RequestParam(value = "name", required = false) String idOrUsernameOrRealName) {
         return ResultUtils.wrapList(() -> {
@@ -155,11 +160,12 @@ public class UserController {
             }).collect(Collectors.toList());
         });
     }*/
-
+    
     @GetMapping({"tenant/{tenantId:[0-9]+}/projects"})
     public Result<VueRecord2> findProjects(@PathVariable Long tenantId) {
         return ResultUtils.wrapList(() -> {
-            List<Project> projectList = userService.findProjectsByUsernameAndTenantId(RequestUtils.getHeaderUser(), tenantId);
+            List<Project> projectList = userService.findProjectsByUsernameAndTenantId(RequestUtils.getHeaderUser(),
+                    tenantId);
             return projectList.stream().map(e -> {
                 VueRecord2 record = new VueRecord2();
                 record.setValue(e.getId() + "");

@@ -2,6 +2,7 @@ package com.ch.cloud.upms.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.fclient.SsoClientService;
+import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.service.IRoleService;
@@ -31,10 +32,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserAdminController {
-
-
+    
     @Autowired
     private IUserService   userService;
+    @Autowired
+    private IUserManage userManage;
     @Autowired
     private IRoleService   roleService;
 

@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.client;
 
 import com.ch.cloud.upms.dto.LoginUserDto;
+import com.ch.cloud.upms.dto.ProjectDto;
 import com.ch.cloud.upms.dto.RoleDto;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.dto.UserDto;
@@ -17,28 +18,31 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author 01370603
  * @since 2019/5/28
  */
-@FeignClient(name = "${feign.client.upms:ch-upms}", contextId = "userClientService", path = "user")
+@FeignClient(name = "${feign.client.upms:ch-upms}", contextId = "userClientService", path = "/c/user")
 public interface UpmsUserClientService {
-
+    
+    @GetMapping("info")
+    Result<UserDto> info(@RequestParam(required = false) String userId, @RequestParam(required = false) String username);
+    
     @GetMapping("{username}/login")
-    Result<LoginUserDto> findUserByUsername(@PathVariable String username);
-
+    Result<LoginUserDto> loginByUsername(@PathVariable String username);
+    
     @GetMapping("{username}/info")
-    Result<UserDto> findInfo2(@PathVariable String username);
-
-    @GetMapping({"{username}/role"})
-    Result<RoleDto> findRoleByUsername(@PathVariable String username);
-
+    Result<UserDto> findInfoByUsername(@PathVariable String username);
+    
+//    @GetMapping({"{username}/role"})
+//    Result<RoleDto> findRoleByUsername(@PathVariable String username);
+    
+    @GetMapping({"{username}/roles"})
+    Result<RoleDto> findRolesByUsername(@PathVariable String username);
+    
+//    @GetMapping({"{userId:[0-9]+}/roles"})
+//    Result<RoleDto> findRolesByUserId(@PathVariable Long userId);
+    
     @GetMapping({"{username}/tenants"})
-    Result<TenantDto> findTenantsByUserId(@PathVariable String username);
-
-    @PostMapping({"roles"})
-    Result<RoleDto> findRolesByUserId2(@RequestParam Long userId);
-
-    @GetMapping({"{userId:[0-9]+}/roles"})
-    Result<RoleDto> findRolesByUserId(@PathVariable Long userId);
-
+    Result<TenantDto> findTenantsByUsername(@PathVariable String username);
+    
     @GetMapping({"{userId:[0-9]+}/projects"})
-    Result<RoleDto> findProjectsByUserId(@PathVariable Long userId);
-
+    Result<ProjectDto> findProjectsByUserId(@PathVariable String userId);
+    
 }

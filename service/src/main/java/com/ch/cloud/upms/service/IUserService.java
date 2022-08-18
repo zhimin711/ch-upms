@@ -49,4 +49,6 @@ public interface IUserService extends IService<User> {
     User getDefaultInfo(String username);
 
     boolean existsRole(Long userId, Long roleId);
+    
+    User getByUserId(String userId);
 }

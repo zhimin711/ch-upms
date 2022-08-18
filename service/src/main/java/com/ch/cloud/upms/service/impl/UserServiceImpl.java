@@ -19,6 +19,8 @@ import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
 import com.ch.utils.*;
 import com.google.common.collect.Lists;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,33 +39,45 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
-
+    
     @Resource
     private IRoleService roleService;
+    
     @Resource
     private IDepartmentService departmentService;
+    
     @Resource
     private IDepartmentManage departmentManage;
+    
     @Resource
     private IPositionService positionService;
+    
     @Resource
     private ITenantService tenantService;
-
+    
     @Resource
     private UserProjectMapper userProjectMapper;
+    
     @Resource
     private UserRoleMapper userRoleMapper;
+    
     @Resource
     private UserDepartmentPositionMapper userDepartmentPositionMapper;
-
+    
     @Override
     public User findByUsername(String username) {
-        if (CommonUtils.isEmpty(username)) return null;
+        if (CommonUtils.isEmpty(username)) {
+            return null;
+        }
         User record = new User();
         record.setUsername(username);
         return super.getOne(Wrappers.query(record));
     }
-
+    
+    
+    @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
+            @CacheEvict(cacheNames = "user", key = "#record.userId"),
+            @CacheEvict(cacheNames = "user", key = "#record.username")})
     @Override
     public int updatePassword(User record) {
         if (record != null && CommonUtils.isNotEmpty(record.getId(), record.getPassword())) {
@@ -73,49 +87,57 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             r.setUpdateBy(record.getUpdateBy());
             r.setUpdateAt(DateUtils.current());
             boolean isUpdated = super.updateById(r);
-            if (isUpdated) return 1;
+            if (isUpdated) {
+                return 1;
+            }
         }
         return 0;
     }
-
+    
     @Override
     public int assignRole(Long id, List<Long> roleIds) {
         List<Role> roleList = roleService.findByUserId(id);
-
-        List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(Role::getId).collect(Collectors.toList());
-        List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED)).map(Role::getId).collect(Collectors.toList());
-
+        
+        List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), StatusS.DISABLED))
+                .map(Role::getId).collect(Collectors.toList());
+        List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED))
+                .map(Role::getId).collect(Collectors.toList());
+        
         AtomicInteger c = new AtomicInteger();
         if (!roleIds.isEmpty()) {
-            roleIds.stream().filter(r -> !uRoleIds.contains(r) && !uRoleIds2.contains(r)).forEach(r -> c.getAndAdd(getBaseMapper().insertAssignRole(id, r)));
-            uRoleIds.stream().filter(r -> !roleIds.contains(r) && !uRoleIds2.contains(r)).forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignRole(id, r)));
+            roleIds.stream().filter(r -> !uRoleIds.contains(r) && !uRoleIds2.contains(r))
+                    .forEach(r -> c.getAndAdd(getBaseMapper().insertAssignRole(id, r)));
+            uRoleIds.stream().filter(r -> !roleIds.contains(r) && !uRoleIds2.contains(r))
+                    .forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignRole(id, r)));
         } else if (!uRoleIds.isEmpty()) {
             uRoleIds.forEach(r -> c.getAndAdd(getBaseMapper().deleteAssignRole(id, r)));
         }
         return c.get();
     }
-
+    
     @Override
     public List<User> findByLikeUserId(String userId) {
-        if (CommonUtils.isEmpty(userId)) return Lists.newArrayList();
+        if (CommonUtils.isEmpty(userId)) {
+            return Lists.newArrayList();
+        }
         return super.query().like("user_id", userId).eq("status", StatusS.ENABLED).list();
     }
-
+    
     @Override
     public List<User> findByLikeRealName(String realName) {
         return super.query().like("real_name", realName).eq("status", StatusS.ENABLED).list();
     }
-
+    
     @Override
     public List<User> findByLikeUsername(String username) {
         return super.query().likeRight("username", username).eq("status", StatusS.ENABLED).list();
     }
-
+    
     @Override
     public List<User> findAllValid() {
         return super.query().eq("status", StatusS.ENABLED).list();
     }
-
+    
     @Transactional
     @Override
     public boolean saveWithAll(User record) {
@@ -128,7 +150,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         super.updateById(record);
         return c;
     }
-
+    
+    @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
+            @CacheEvict(cacheNames = "user", key = "#record.userId"),
+            @CacheEvict(cacheNames = "user", key = "#record.username")})
     @Transactional
     @Override
     public boolean updateWithAll(User record) {
@@ -139,7 +164,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         saveDepartmentPosition(record);
         return super.updateById(record);
     }
-
+    
+    @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
+            @CacheEvict(cacheNames = "user", key = "#record.userId"),
+            @CacheEvict(cacheNames = "user", key = "#record.username")})
+    @Override
+    public boolean updateById(User entity) {
+        return super.updateById(entity);
+    }
+    
     private void saveDepartmentPosition(User record) {
         if (CommonUtils.isEmpty(record.getDutyList())) {
             ExceptionUtils._throw(PubError.NON_NULL, "组织职位不能为空！");
@@ -156,7 +189,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 deptId = dept.getParentId();
                 orgId = r.getDepartment();
             }
-            userDepartmentPositionMapper.insertDepartmentPosition(record.getId(), deptId, Long.valueOf(r.getDuty()), orgId);
+            userDepartmentPositionMapper.insertDepartmentPosition(record.getId(), deptId, Long.valueOf(r.getDuty()),
+                    orgId);
         });
         if (CommonUtils.isNotEmpty(record.getDepartmentId())) {
             List<String> names = departmentService.findNames(StringUtilsV2.parseIds(record.getDepartmentId()));
@@ -175,14 +209,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
         }
     }
-
+    
     @Override
     public Page<User> page(User record, int pageNum, int pageSize) {
         if (CommonUtils.isNumeric(record.getDepartment())) {
             Department dept = departmentManage.get(Long.valueOf(record.getDepartment()));
             if (dept != null) {
                 String key = dept.getParentId();
-                String key2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, dept.getParentId(), dept.getId().toString());
+                String key2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, dept.getParentId(),
+                        dept.getId().toString());
                 if (DepartmentType.isTeam(dept.getDeptType())) {
                     record.setDepartmentId(key);
                     record.setDepartment(key2);
@@ -195,12 +230,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         Page<User> pager = getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
         if (pager.getTotal() > 0) {
             pager.getRecords().forEach(r -> {
-                if (CommonUtils.isNotEmpty(r.getDepartmentId(), record.getDepartmentId())
-                        && !r.getDepartmentId().startsWith(record.getDepartmentId())) {
+                if (CommonUtils.isNotEmpty(r.getDepartmentId(), record.getDepartmentId()) && !r.getDepartmentId()
+                        .startsWith(record.getDepartmentId())) {
                     String[] deptIds = r.getDepartment().split("\\|");
                     r.setDepartmentName("");
                     for (String deptId : deptIds) {
-//                        userDepartmentPositionMapper.findDepartmentPositionByUserIdLikeDepartmentId(r.getId(), deptId);
+                        //                        userDepartmentPositionMapper.findDepartmentPositionByUserIdLikeDepartmentId(r.getId(), deptId);
                         Department dept = departmentManage.get(StringUtilsV2.lastId(deptId));
                         String pn = StringUtilsV2.linkStr(Separator.COMMA_SIGN, dept.getParentName(), dept.getName());
                         r.setDepartmentName(StringUtilsV2.linkStr(Separator.VERTICAL_LINE, r.getDepartmentName(), pn));
@@ -209,37 +244,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 } else {
                     r.setDepartment("0");
                 }
-
+                
             });
         }
         return pager;
     }
-
+    
     @Override
     public List<DepartmentDuty> findDepartmentDuty(Long id) {
         List<DepartmentDuty> records = userDepartmentPositionMapper.findDepartmentPositionByUserId(id);
         records.forEach(e -> {
-            List<String> names = departmentService.findNames(StringUtilsV2.parseIds(CommonUtils.isEmpty(e.getOrgId()) ? e.getDepartment() : e.getOrgId()));
+            List<String> names = departmentService.findNames(
+                    StringUtilsV2.parseIds(CommonUtils.isEmpty(e.getOrgId()) ? e.getDepartment() : e.getOrgId()));
             e.setDepartmentName(String.join(",", names));
             e.setDutyName(positionService.getById(e.getDuty()).getName());
         });
         return records;
     }
-
+    
     @Override
     public List<Tenant> findTenantsByUsername(String username) {
         return getBaseMapper().findTenantsByUsername(username);
     }
-
+    
     @Override
     public List<Project> findProjectsByUsernameAndTenantId(String userId, Long tenantId) {
         return userProjectMapper.findProjectsByUserIdAndTenantId(userId, tenantId);
     }
-
+    
     @Override
     public User getDefaultInfo(String username) {
         User user = this.findByUsername(username);
-        if (user == null) return null;
+        if (user == null) {
+            return null;
+        }
         boolean hasChange = false;
         if (CommonUtils.isEmpty(user.getRoleId())) {
             List<Role> roles = roleService.findByUserId(user.getId());
@@ -261,9 +299,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return user;
     }
-
+    
     @Override
     public boolean existsRole(Long userId, Long roleId) {
         return userRoleMapper.exists(userId, roleId);
+    }
+    
+    @Override
+    public User getByUserId(String userId) {
+        if (CommonUtils.isEmpty(userId)) {
+            return null;
+        }
+        User record = new User();
+        record.setUserId(userId);
+        return super.getOne(Wrappers.query(record));
     }
 }
