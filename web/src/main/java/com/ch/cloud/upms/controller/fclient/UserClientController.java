@@ -8,9 +8,11 @@ import com.ch.cloud.upms.dto.RoleDto;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.dto.UserDto;
 import com.ch.cloud.upms.manage.IUserManage;
+import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
+import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.e.PubError;
@@ -51,6 +53,9 @@ public class UserClientController implements UpmsUserClientService {
     
     @Autowired
     private IRoleService roleService;
+    
+    @Autowired
+    private IProjectService projectService;
     
     @Override
     @GetMapping("info")
@@ -111,6 +116,13 @@ public class UserClientController implements UpmsUserClientService {
     @GetMapping({"{userId:[0-9]+}/projects"})
     @Override
     public Result<ProjectDto> findProjectsByUserId(@PathVariable String userId) {
-        return null;
+        return ResultUtils.wrap(() -> {
+            UserDto user = userManage.getByUserId(userId);
+            AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
+            List<Long> ids = userService.findProjectIdsByUserId(user.getUsername());
+            if(ids.isEmpty()) return null;
+            List<Project> projects = projectService.listByIds(ids);
+            return projects.stream().map(e -> BeanUtilsV2.clone(e, ProjectDto.class)).collect(Collectors.toList());
+        });
     }
 }

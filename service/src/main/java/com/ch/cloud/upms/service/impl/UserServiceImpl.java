@@ -271,6 +271,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public List<Project> findProjectsByUsernameAndTenantId(String userId, Long tenantId) {
         return userProjectMapper.findProjectsByUserIdAndTenantId(userId, tenantId);
     }
+    @Override
+    public List<Long> findProjectIdsByUserId(String username) {
+        return userProjectMapper.findProjectIdsByUserId(username);
+    }
     
     @Override
     public User getDefaultInfo(String username) {

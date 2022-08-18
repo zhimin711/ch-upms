@@ -45,7 +45,9 @@ public interface IUserService extends IService<User> {
     List<Tenant> findTenantsByUsername(String username);
 
     List<Project> findProjectsByUsernameAndTenantId(String username, Long tenantId);
-
+    
+    List<Long> findProjectIdsByUserId(String username);
+    
     User getDefaultInfo(String username);
 
     boolean existsRole(Long userId, Long roleId);
