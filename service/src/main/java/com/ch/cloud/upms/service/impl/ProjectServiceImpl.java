@@ -10,6 +10,7 @@ import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.enums.RoleType;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,24 +27,23 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Service
 public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> implements IProjectService {
-
+    
     @Resource
     private UserProjectMapper userProjectMapper;
-
+    
     @Override
     public Page<Project> page(Project record, int pageNum, int pageSize) {
-        return super.query()
-                .like(CommonUtils.isNotEmpty(record.getCode()), "code", record.getCode())
+        return super.query().like(CommonUtils.isNotEmpty(record.getCode()), "code", record.getCode())
                 .like(CommonUtils.isNotEmpty(record.getName()), "name", record.getName())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
                 .orderByAsc("tenant_id", "sort", "id").page(new Page<>(pageNum, pageSize));
     }
-
+    
     @Override
     public List<String> findUsers(Long id) {
         return userProjectMapper.findUserIdsByProjectId(id);
     }
-
+    
     @Override
     public int assignUsers(Long id, List<String> userIds) {
         List<String> list = findUsers(id);
@@ -56,26 +56,28 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
         return c.get();
     }
-
+    
     //    @Override
     private int assignUsers(Long id, List<String> userIds, RoleType role) {
         List<String> list = userProjectMapper.findUserIdsByProjectIdAndRole(id, role.name());
         AtomicInteger c = new AtomicInteger();
         if (CommonUtils.isNotEmpty(userIds)) {
-            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insertFull(id, r, role.name())));
-            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.deleteFull(id, r, role.name())));
+            userIds.stream().filter(r -> !list.contains(r))
+                    .forEach(r -> c.getAndAdd(userProjectMapper.insertFull(id, r, role.name())));
+            list.stream().filter(r -> !userIds.contains(r))
+                    .forEach(r -> c.getAndAdd(userProjectMapper.deleteFull(id, r, role.name())));
         } else if (!list.isEmpty()) {
             list.forEach(r -> c.getAndAdd(userProjectMapper.deleteFull(id, r, role.name())));
         }
         return c.get();
     }
-
+    
     @Override
     public boolean exists(String userId, Long projectId) {
         int c = userProjectMapper.exists(projectId, userId);
         return c > 0;
     }
-
+    
     @Override
     public Project getWithUserById(Long id) {
         Project record = super.getById(id);
@@ -87,51 +89,62 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         }
         return record;
     }
-
+    
     @Override
     public boolean save(Project entity) {
         boolean ok = super.save(entity);
-        if (!ok) return false;
+        if (!ok) {
+            return false;
+        }
         if (CommonUtils.isNotEmpty(entity.getManager())) {
-            userProjectMapper.insertFull(entity.getId(), entity.getManager(), RoleType.MRG.name());
+            userProjectMapper.insertFull(entity.getId(), entity.getManager(), RoleType.MGR.name());
         }
         if (!CommonUtils.isEmpty(entity.getDevUserIds())) {
-            entity.getDevUserIds().forEach(uid -> userProjectMapper.insertFull(entity.getId(), uid, RoleType.DEV.name()));
+            entity.getDevUserIds()
+                    .forEach(uid -> userProjectMapper.insertFull(entity.getId(), uid, RoleType.DEV.name()));
         }
         if (!CommonUtils.isEmpty(entity.getTestUserIds())) {
-            entity.getTestUserIds().forEach(uid -> userProjectMapper.insertFull(entity.getId(), uid, RoleType.TEST.name()));
+            entity.getTestUserIds()
+                    .forEach(uid -> userProjectMapper.insertFull(entity.getId(), uid, RoleType.TEST.name()));
         }
         return true;
     }
-
+    
     @Override
+    @CacheEvict(cacheNames = "project", key = "#record.id")
     public boolean updateById(Project record) {
         boolean ok = super.updateById(record);
-        if (!ok) return false;
-
+        if (!ok) {
+            return false;
+        }
+        
         if (CommonUtils.isNotEmpty(record.getManager())) {
-            userProjectMapper.deleteByProjectIdAndRole(record.getId(), RoleType.MRG.name());
-            userProjectMapper.insertFull(record.getId(), record.getManager(), RoleType.MRG.name());
+            userProjectMapper.deleteByProjectIdAndRole(record.getId(), RoleType.MGR.name());
+            userProjectMapper.insertFull(record.getId(), record.getManager(), RoleType.MGR.name());
         }
         assignUsers(record.getId(), record.getDevUserIds(), RoleType.DEV);
         assignUsers(record.getId(), record.getTestUserIds(), RoleType.TEST);
         return true;
     }
-
+    
     @Override
     public List<Project> findByTenantId(Long tenantId) {
-        if (tenantId == null) return Lists.newArrayList();
+        if (tenantId == null) {
+            return Lists.newArrayList();
+        }
         Project record = new Project();
         record.setTenantId(tenantId);
         return super.list(Wrappers.query(record));
     }
-
+    
     @Override
     public Project findByCode(String code) {
-        if (CommonUtils.isEmpty(code)) return null;
+        if (CommonUtils.isEmpty(code)) {
+            return null;
+        }
         Project param = new Project();
         param.setCode(code);
         return super.getOne(Wrappers.query(param));
     }
-
+    
 }

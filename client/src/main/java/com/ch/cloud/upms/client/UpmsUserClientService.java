@@ -2,6 +2,7 @@ package com.ch.cloud.upms.client;
 
 import com.ch.cloud.upms.dto.LoginUserDto;
 import com.ch.cloud.upms.dto.ProjectDto;
+import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.dto.RoleDto;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.dto.UserDto;
@@ -43,6 +44,6 @@ public interface UpmsUserClientService {
     Result<TenantDto> findTenantsByUsername(@PathVariable String username);
     
     @GetMapping({"{userId:[0-9]+}/projects"})
-    Result<ProjectDto> findProjectsByUserId(@PathVariable String userId);
+    Result<ProjectRoleDto> findProjectsByUserId(@PathVariable String userId);
     
 }

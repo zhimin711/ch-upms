@@ -9,5 +9,5 @@ package com.ch.cloud.upms.enums;
  * @since 2021/11/11
  */
 public enum RoleType {
-    MRG, DEV, TEST, OPS
+    MGR, DEV, TEST, OPS
 }

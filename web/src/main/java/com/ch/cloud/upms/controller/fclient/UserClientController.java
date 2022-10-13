@@ -4,9 +4,11 @@ import com.alibaba.fastjson2.JSON;
 import com.ch.cloud.upms.client.UpmsUserClientService;
 import com.ch.cloud.upms.dto.LoginUserDto;
 import com.ch.cloud.upms.dto.ProjectDto;
+import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.dto.RoleDto;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.dto.UserDto;
+import com.ch.cloud.upms.manage.IProjectManage;
 import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
@@ -22,6 +24,7 @@ import com.ch.utils.AssertUtils;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,6 +59,9 @@ public class UserClientController implements UpmsUserClientService {
     
     @Autowired
     private IProjectService projectService;
+    
+    @Autowired
+    private IProjectManage projectManage;
     
     @Override
     @GetMapping("info")
@@ -115,14 +121,19 @@ public class UserClientController implements UpmsUserClientService {
     
     @GetMapping({"{userId:[0-9]+}/projects"})
     @Override
-    public Result<ProjectDto> findProjectsByUserId(@PathVariable String userId) {
+    public Result<ProjectRoleDto> findProjectsByUserId(@PathVariable String userId) {
         return ResultUtils.wrap(() -> {
             UserDto user = userManage.getByUserId(userId);
             AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
-            List<Long> ids = userService.findProjectIdsByUserId(user.getUsername());
-            if(ids.isEmpty()) return null;
-            List<Project> projects = projectService.listByIds(ids);
-            return projects.stream().map(e -> BeanUtilsV2.clone(e, ProjectDto.class)).collect(Collectors.toList());
+            List<ProjectRoleDto> list = userService.findProjectRoleByUserId(user.getUsername());
+            if (list.isEmpty()) {
+                return null;
+            }
+            list.forEach(e -> {
+                Project p = projectManage.getById(e.getId());
+                BeanUtils.copyProperties(p, e);
+            });
+            return list;
         });
     }
 }

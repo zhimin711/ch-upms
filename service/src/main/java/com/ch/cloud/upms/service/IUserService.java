@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
@@ -47,6 +48,8 @@ public interface IUserService extends IService<User> {
     List<Project> findProjectsByUsernameAndTenantId(String username, Long tenantId);
     
     List<Long> findProjectIdsByUserId(String username);
+    
+    List<ProjectRoleDto> findProjectRoleByUserId(String username);
     
     User getDefaultInfo(String username);
 

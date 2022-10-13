@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.mapper2;
 
+import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.model.Project;
 import org.apache.ibatis.annotations.*;
 
@@ -16,6 +17,9 @@ public interface UserProjectMapper {
 
     @Select("select distinct PROJECT_ID from rt_user_project where USER_ID=#{userId}")
     List<Long> findProjectIdsByUserId(String userId);
+    
+    @Select("select PROJECT_ID, GROUP_CONCAT(ROLE) from rt_user_project where USER_ID=#{userId} group by PROJECT_ID")
+    List<ProjectRoleDto> findProjectRoleByUserId(String userId);
 
     @Select("SELECT distinct t1.* from bt_project t1" +
             " INNER JOIN rt_user_project t2 ON t1.id  = t2.PROJECT_ID" +

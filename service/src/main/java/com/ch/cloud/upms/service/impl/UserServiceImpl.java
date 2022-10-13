@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.Separator;
 import com.ch.StatusS;
+import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.enums.DepartmentType;
 import com.ch.cloud.upms.manage.IDepartmentManage;
 import com.ch.cloud.upms.mapper.UserMapper;
@@ -274,6 +275,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public List<Long> findProjectIdsByUserId(String username) {
         return userProjectMapper.findProjectIdsByUserId(username);
+    }
+    @Override
+    public List<ProjectRoleDto> findProjectRoleByUserId(String username) {
+        return userProjectMapper.findProjectRoleByUserId(username);
     }
     
     @Override
