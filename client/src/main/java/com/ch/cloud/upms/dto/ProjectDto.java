@@ -29,4 +29,5 @@ public class ProjectDto {
      * 负责人
      */
     private String manager;
+    
 }

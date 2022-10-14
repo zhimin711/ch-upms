@@ -1,8 +1,8 @@
 package com.ch.cloud.upms.utils;
 
-import com.ch.Constants;
 import com.ch.Num;
 import com.ch.Separator;
+import com.ch.StatusS;
 import com.ch.cloud.upms.enums.PermissionType;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.pojo.VueRecord2;
@@ -99,7 +99,7 @@ public class VueRecordUtils {
         vueRecord.setValue(record.getId().toString());
         PermissionType type = PermissionType.from(record.getType(), record.getHidden());
         vueRecord.setKey(record.getCode() + Separator.VERTICAL_LINE + type.name());
-        vueRecord.setDisabled(!CommonUtils.isEquals(Constants.ENABLED, record.getStatus()));
+        vueRecord.setDisabled(!CommonUtils.isEquals(StatusS.ENABLED, record.getStatus()));
         return vueRecord;
     }
 }

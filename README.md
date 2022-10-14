@@ -18,6 +18,10 @@ maven need install local jar
 mvn install:install-file -Dfile=xxx/libs/third/ueditor-1.1.2.jar -DgroupId=com.baidu -DartifactId=ueditor -Dversion=1.1.2 -Dpackaging=jar
 ```
 
+```shell
+mvn clean install -Drevision=1.0.1-SNAPSHOT
+```
+
 
 1. 初化数据库  
 使用other目录db初始化数据库

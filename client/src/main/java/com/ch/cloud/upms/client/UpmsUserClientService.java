@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * decs:通用用户权限客户端接口
  *
@@ -46,4 +48,7 @@ public interface UpmsUserClientService {
     @GetMapping({"{userId:[0-9]+}/projects"})
     Result<ProjectRoleDto> findProjectsByUserId(@PathVariable String userId);
     
+    
+    @GetMapping("{userId:[0-9]+}/project/{projectId:[0-9]+}/roles")
+    List<ProjectRoleDto> findProjectRoles(@PathVariable String userId, @PathVariable Long projectId);
 }

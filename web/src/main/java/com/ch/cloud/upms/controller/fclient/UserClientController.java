@@ -1,9 +1,9 @@
 package com.ch.cloud.upms.controller.fclient;
 
 import com.alibaba.fastjson2.JSON;
+import com.ch.cloud.boot.annotation.OriginalReturn;
 import com.ch.cloud.upms.client.UpmsUserClientService;
 import com.ch.cloud.upms.dto.LoginUserDto;
-import com.ch.cloud.upms.dto.ProjectDto;
 import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.dto.RoleDto;
 import com.ch.cloud.upms.dto.TenantDto;
@@ -13,7 +13,6 @@ import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.Tenant;
-import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
@@ -28,7 +27,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -135,5 +133,14 @@ public class UserClientController implements UpmsUserClientService {
             });
             return list;
         });
+    }
+    
+    @GetMapping("{userId:[0-9]+}/project/{projectId:[0-9]+}/roles")
+    @OriginalReturn
+    @Override
+    public List<ProjectRoleDto> findProjectRoles(@PathVariable String userId, @PathVariable Long projectId) {
+        UserDto user = userManage.getByUserId(userId);
+        AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
+        return userService.listProjectRoleByUserIdAndProjectId(user.getUsername(), projectId);
     }
 }

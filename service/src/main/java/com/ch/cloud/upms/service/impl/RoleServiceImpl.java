@@ -2,7 +2,7 @@ package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ch.Constants;
+import com.ch.StatusS;
 import com.ch.cloud.upms.mapper.RoleMapper;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.service.IRoleService;
@@ -43,7 +43,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
             List<Long> roleIds = roles.stream().map(Role::getId).collect(Collectors.toList());
             records.forEach(r -> {
                 if (roleIds.contains(r.getId())) {
-                    r.setStatus(Constants.DISABLED);
+                    r.setStatus(StatusS.DISABLED);
                 }
             });
         }

@@ -272,10 +272,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public List<Project> findProjectsByUsernameAndTenantId(String userId, Long tenantId) {
         return userProjectMapper.findProjectsByUserIdAndTenantId(userId, tenantId);
     }
+    
     @Override
     public List<Long> findProjectIdsByUserId(String username) {
         return userProjectMapper.findProjectIdsByUserId(username);
     }
+    
     @Override
     public List<ProjectRoleDto> findProjectRoleByUserId(String username) {
         return userProjectMapper.findProjectRoleByUserId(username);
@@ -322,5 +324,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User record = new User();
         record.setUserId(userId);
         return super.getOne(Wrappers.query(record));
+    }
+    
+    @Override
+    public List<ProjectRoleDto> listProjectRoleByUserIdAndProjectId(String username, Long projectId) {
+        return userProjectMapper.listByUsernameAndProjectId(username, projectId);
     }
 }

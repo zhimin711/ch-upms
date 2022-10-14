@@ -18,7 +18,7 @@ public interface UserProjectMapper {
     @Select("select distinct PROJECT_ID from rt_user_project where USER_ID=#{userId}")
     List<Long> findProjectIdsByUserId(String userId);
     
-    @Select("select PROJECT_ID, GROUP_CONCAT(ROLE) from rt_user_project where USER_ID=#{userId} group by PROJECT_ID")
+    @Select("select PROJECT_ID as ID, GROUP_CONCAT(ROLE) as ROLE from rt_user_project where USER_ID=#{userId} group by PROJECT_ID")
     List<ProjectRoleDto> findProjectRoleByUserId(String userId);
 
     @Select("SELECT distinct t1.* from bt_project t1" +
@@ -56,4 +56,7 @@ public interface UserProjectMapper {
 
     @Delete("DELETE FROM rt_user_project where PROJECT_ID = #{projectId} and role=#{role}")
     int deleteByProjectIdAndRole(Long projectId, String role);
+    
+    @Select("select PROJECT_ID, USER_ID, ROLE FROM rt_user_project where PROJECT_ID=#{projectId} and USER_ID=#{userId}")
+    List<ProjectRoleDto> listByUsernameAndProjectId(String username, Long projectId);
 }

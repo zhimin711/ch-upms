@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ProjectRoleDto extends ProjectDto{
+public class ProjectRoleDto extends ProjectDto {
     
     private String role;
 }
