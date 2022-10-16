@@ -2,6 +2,7 @@ package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.dto.ProjectRoleDto;
+import com.ch.cloud.upms.enums.RoleType;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
@@ -58,4 +59,6 @@ public interface IUserService extends IService<User> {
     User getByUserId(String userId);
     
     List<ProjectRoleDto> listProjectRoleByUserIdAndProjectId(String username, Long projectId);
+
+    Boolean existsProjectRole(String username, Long projectId, RoleType role);
 }

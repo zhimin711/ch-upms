@@ -8,6 +8,7 @@ import com.ch.Separator;
 import com.ch.StatusS;
 import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.enums.DepartmentType;
+import com.ch.cloud.upms.enums.RoleType;
 import com.ch.cloud.upms.manage.IDepartmentManage;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.mapper2.UserDepartmentPositionMapper;
@@ -40,31 +41,31 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
-    
+
     @Resource
     private IRoleService roleService;
-    
+
     @Resource
     private IDepartmentService departmentService;
-    
+
     @Resource
     private IDepartmentManage departmentManage;
-    
+
     @Resource
     private IPositionService positionService;
-    
+
     @Resource
     private ITenantService tenantService;
-    
+
     @Resource
     private UserProjectMapper userProjectMapper;
-    
+
     @Resource
     private UserRoleMapper userRoleMapper;
-    
+
     @Resource
     private UserDepartmentPositionMapper userDepartmentPositionMapper;
-    
+
     @Override
     public User findByUsername(String username) {
         if (CommonUtils.isEmpty(username)) {
@@ -74,8 +75,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         record.setUsername(username);
         return super.getOne(Wrappers.query(record));
     }
-    
-    
+
+
     @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
             @CacheEvict(cacheNames = "user", key = "#record.userId"),
             @CacheEvict(cacheNames = "user", key = "#record.username")})
@@ -94,16 +95,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return 0;
     }
-    
+
     @Override
     public int assignRole(Long id, List<Long> roleIds) {
         List<Role> roleList = roleService.findByUserId(id);
-        
+
         List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), StatusS.DISABLED))
                 .map(Role::getId).collect(Collectors.toList());
         List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED))
                 .map(Role::getId).collect(Collectors.toList());
-        
+
         AtomicInteger c = new AtomicInteger();
         if (!roleIds.isEmpty()) {
             roleIds.stream().filter(r -> !uRoleIds.contains(r) && !uRoleIds2.contains(r))
@@ -115,7 +116,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return c.get();
     }
-    
+
     @Override
     public List<User> findByLikeUserId(String userId) {
         if (CommonUtils.isEmpty(userId)) {
@@ -123,22 +124,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return super.query().like("user_id", userId).eq("status", StatusS.ENABLED).list();
     }
-    
+
     @Override
     public List<User> findByLikeRealName(String realName) {
         return super.query().like("real_name", realName).eq("status", StatusS.ENABLED).list();
     }
-    
+
     @Override
     public List<User> findByLikeUsername(String username) {
         return super.query().likeRight("username", username).eq("status", StatusS.ENABLED).list();
     }
-    
+
     @Override
     public List<User> findAllValid() {
         return super.query().eq("status", StatusS.ENABLED).list();
     }
-    
+
     @Transactional
     @Override
     public boolean saveWithAll(User record) {
@@ -151,7 +152,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         super.updateById(record);
         return c;
     }
-    
+
     @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
             @CacheEvict(cacheNames = "user", key = "#record.userId"),
             @CacheEvict(cacheNames = "user", key = "#record.username")})
@@ -165,7 +166,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         saveDepartmentPosition(record);
         return super.updateById(record);
     }
-    
+
     @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
             @CacheEvict(cacheNames = "user", key = "#record.userId"),
             @CacheEvict(cacheNames = "user", key = "#record.username")})
@@ -173,7 +174,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public boolean updateById(User entity) {
         return super.updateById(entity);
     }
-    
+
     private void saveDepartmentPosition(User record) {
         if (CommonUtils.isEmpty(record.getDutyList())) {
             ExceptionUtils._throw(PubError.NON_NULL, "组织职位不能为空！");
@@ -210,7 +211,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
         }
     }
-    
+
     @Override
     public Page<User> page(User record, int pageNum, int pageSize) {
         if (CommonUtils.isNumeric(record.getDepartment())) {
@@ -245,12 +246,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 } else {
                     r.setDepartment("0");
                 }
-                
+
             });
         }
         return pager;
     }
-    
+
     @Override
     public List<DepartmentDuty> findDepartmentDuty(Long id) {
         List<DepartmentDuty> records = userDepartmentPositionMapper.findDepartmentPositionByUserId(id);
@@ -262,27 +263,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         });
         return records;
     }
-    
+
     @Override
     public List<Tenant> findTenantsByUsername(String username) {
         return getBaseMapper().findTenantsByUsername(username);
     }
-    
+
     @Override
     public List<Project> findProjectsByUsernameAndTenantId(String userId, Long tenantId) {
         return userProjectMapper.findProjectsByUserIdAndTenantId(userId, tenantId);
     }
-    
+
     @Override
     public List<Long> findProjectIdsByUserId(String username) {
         return userProjectMapper.findProjectIdsByUserId(username);
     }
-    
+
     @Override
     public List<ProjectRoleDto> findProjectRoleByUserId(String username) {
         return userProjectMapper.findProjectRoleByUserId(username);
     }
-    
+
     @Override
     public User getDefaultInfo(String username) {
         User user = this.findByUsername(username);
@@ -310,12 +311,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return user;
     }
-    
+
     @Override
     public boolean existsRole(Long userId, Long roleId) {
         return userRoleMapper.exists(userId, roleId);
     }
-    
+
     @Override
     public User getByUserId(String userId) {
         if (CommonUtils.isEmpty(userId)) {
@@ -325,9 +326,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         record.setUserId(userId);
         return super.getOne(Wrappers.query(record));
     }
-    
+
     @Override
     public List<ProjectRoleDto> listProjectRoleByUserIdAndProjectId(String username, Long projectId) {
         return userProjectMapper.listByUsernameAndProjectId(username, projectId);
+    }
+
+    @Override
+    public Boolean existsProjectRole(String username, Long projectId, RoleType role) {
+        return userProjectMapper.countProjectRole(username, projectId, role.name()) > 0;
     }
 }

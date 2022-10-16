@@ -35,7 +35,8 @@ public interface UpmsProjectClientService {
                             @RequestParam(value = "tenant", required = false) String tenant);
 
     @GetMapping("info")
-    Result<ProjectDto> infoByIdOrCode(@RequestParam(value = "id", required = false) Long id, @RequestParam(value = "code", required = false) String code);
+    Result<ProjectDto> infoByIdOrCode(@RequestParam(value = "id", required = false) Long id,
+                                      @RequestParam(value = "code", required = false) String code);
 
     @PostMapping("info")
     Result<ProjectDto> infoByIds(@RequestBody List<Long> ids);

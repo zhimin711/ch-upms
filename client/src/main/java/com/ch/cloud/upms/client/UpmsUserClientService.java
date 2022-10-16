@@ -6,6 +6,7 @@ import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.dto.RoleDto;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.dto.UserDto;
+import com.ch.cloud.upms.enums.RoleType;
 import com.ch.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,8 +48,11 @@ public interface UpmsUserClientService {
     
     @GetMapping({"{userId:[0-9]+}/projects"})
     Result<ProjectRoleDto> findProjectsByUserId(@PathVariable String userId);
-    
-    
+
     @GetMapping("{userId:[0-9]+}/project/{projectId:[0-9]+}/roles")
     List<ProjectRoleDto> findProjectRoles(@PathVariable String userId, @PathVariable Long projectId);
+
+    @GetMapping("{userId:[0-9]+}/project-role")
+    Boolean existsProjectRole(@PathVariable String userId, @RequestParam Long projectId, @RequestParam RoleType role);
+
 }

@@ -8,6 +8,7 @@ import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.dto.RoleDto;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.dto.UserDto;
+import com.ch.cloud.upms.enums.RoleType;
 import com.ch.cloud.upms.manage.IProjectManage;
 import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Project;
@@ -45,26 +46,26 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/c/user")
 public class UserClientController implements UpmsUserClientService {
-    
+
     @Autowired
     private IUserService userService;
-    
+
     @Autowired
     private IUserManage userManage;
-    
+
     @Autowired
     private IRoleService roleService;
-    
+
     @Autowired
     private IProjectService projectService;
-    
+
     @Autowired
     private IProjectManage projectManage;
-    
+
     @Override
     @GetMapping("info")
     public Result<UserDto> info(@RequestParam(required = false) String userId,
-            @RequestParam(required = false) String username) {
+                                @RequestParam(required = false) String username) {
         return ResultUtils.wrap(() -> {
             AssertUtils.isTrue(CommonUtils.isEmpty(userId) && CommonUtils.isEmpty(username), PubError.ARGS,
                     "userId and username");
@@ -74,7 +75,7 @@ public class UserClientController implements UpmsUserClientService {
             return userManage.getByUsername(username);
         });
     }
-    
+
     @Override
     @GetMapping("{username}/login")
     public Result<LoginUserDto> loginByUsername(@PathVariable String username) {
@@ -83,13 +84,13 @@ public class UserClientController implements UpmsUserClientService {
             return BeanUtilsV2.clone(user, LoginUserDto.class);
         });
     }
-    
+
     @Override
     @GetMapping({"{username}/info"})
     public Result<UserDto> findInfoByUsername(@PathVariable String username) {
         return ResultUtils.wrap(() -> userManage.getByUsername(username));
     }
-    
+
     @Override
     @GetMapping({"roles"})
     public Result<RoleDto> findRolesByUsername(@PathVariable String username) {
@@ -101,7 +102,7 @@ public class UserClientController implements UpmsUserClientService {
             return records.stream().map(e -> BeanUtilsV2.clone(e, RoleDto.class)).collect(Collectors.toList());
         });
     }
-    
+
     @Override
     @GetMapping({"{username}/tenants"})
     public Result<TenantDto> findTenantsByUsername(@PathVariable String username) {
@@ -116,7 +117,7 @@ public class UserClientController implements UpmsUserClientService {
             }).collect(Collectors.toList());
         });
     }
-    
+
     @GetMapping({"{userId:[0-9]+}/projects"})
     @Override
     public Result<ProjectRoleDto> findProjectsByUserId(@PathVariable String userId) {
@@ -134,7 +135,7 @@ public class UserClientController implements UpmsUserClientService {
             return list;
         });
     }
-    
+
     @GetMapping("{userId:[0-9]+}/project/{projectId:[0-9]+}/roles")
     @OriginalReturn
     @Override
@@ -142,5 +143,14 @@ public class UserClientController implements UpmsUserClientService {
         UserDto user = userManage.getByUserId(userId);
         AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
         return userService.listProjectRoleByUserIdAndProjectId(user.getUsername(), projectId);
+    }
+
+    @GetMapping("{userId:[0-9]+}/project-role")
+    @OriginalReturn
+    @Override
+    public Boolean existsProjectRole(String userId, Long projectId, RoleType role) {
+        UserDto user = userManage.getByUserId(userId);
+        AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
+        return userService.existsProjectRole(user.getUsername(), projectId, role);
     }
 }
