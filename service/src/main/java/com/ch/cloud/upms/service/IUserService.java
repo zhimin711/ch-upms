@@ -61,4 +61,6 @@ public interface IUserService extends IService<User> {
     List<ProjectRoleDto> listProjectRoleByUserIdAndProjectId(String username, Long projectId);
 
     Boolean existsProjectRole(String username, Long projectId, RoleType role);
+
+    List<String> listProjectRoleByUserIdAndProjectId(String username, Long projectId, String roles);
 }

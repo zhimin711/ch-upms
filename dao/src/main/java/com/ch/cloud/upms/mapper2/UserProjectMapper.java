@@ -17,7 +17,7 @@ public interface UserProjectMapper {
 
     @Select("select distinct PROJECT_ID from rt_user_project where USER_ID=#{userId}")
     List<Long> findProjectIdsByUserId(String userId);
-    
+
     @Select("select PROJECT_ID as ID, GROUP_CONCAT(ROLE) as ROLE from rt_user_project where USER_ID=#{userId} group by PROJECT_ID")
     List<ProjectRoleDto> findProjectRoleByUserId(String userId);
 
@@ -56,7 +56,7 @@ public interface UserProjectMapper {
 
     @Delete("DELETE FROM rt_user_project where PROJECT_ID = #{projectId} and role=#{role}")
     int deleteByProjectIdAndRole(Long projectId, String role);
-    
+
     @Select("select t1.PROJECT_ID as ID, t1.ROLE, t2.CODE, t2.NAME, t2.manager, t2.tenant_name FROM rt_user_project t1" +
             " inner join bt_project t2 on t1.project_id = t2.id" +
             " where PROJECT_ID=#{projectId} and USER_ID=#{username}")
@@ -65,6 +65,10 @@ public interface UserProjectMapper {
     @Select("select count(1) FROM rt_user_project where USER_ID=#{username} and PROJECT_ID=#{projectId} and ROLE=#{role}")
     int countProjectRole(String username, Long projectId, String role);
 
-    @Select("select ROLE FROM rt_user_project where USER_ID=#{username} and PROJECT_ID=#{projectId} and FIND_IN_SET(ROLE,#{roles})")
+    @Select("<script>select ROLE FROM rt_user_project " +
+            "where USER_ID=#{username} " +
+            "and PROJECT_ID=#{projectId} " +
+            "<if test='roles !=null and roles !=\"\"'>and FIND_IN_SET(ROLE,#{roles})</if>" +
+            "</script>")
     List<String> listProjectRole(String username, Long projectId, String roles);
 }

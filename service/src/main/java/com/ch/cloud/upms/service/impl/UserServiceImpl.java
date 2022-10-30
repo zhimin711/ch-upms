@@ -336,4 +336,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Boolean existsProjectRole(String username, Long projectId, RoleType role) {
         return userProjectMapper.countProjectRole(username, projectId, role.name()) > 0;
     }
+
+    @Override
+    public List<String> listProjectRoleByUserIdAndProjectId(String username, Long projectId, String roles) {
+        return userProjectMapper.listProjectRole(username,projectId,roles);
+    }
 }

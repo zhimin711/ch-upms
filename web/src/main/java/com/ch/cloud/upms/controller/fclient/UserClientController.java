@@ -145,8 +145,9 @@ public class UserClientController implements UpmsUserClientService {
         UserDto user = userManage.getByUserId(userId);
 //        AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
         if (user == null) return Lists.newArrayList();
-        List<ProjectRoleDto> list = userService.listProjectRoleByUserIdAndProjectId(user.getUsername(), projectId);
-        return null;
+        List<String> list = userService.listProjectRoleByUserIdAndProjectId(user.getUsername(), projectId, roles);
+
+        return list.stream().map(RoleType::fromName).collect(Collectors.toList());
     }
 
     @GetMapping("{userId:[0-9]+}/project-role")
