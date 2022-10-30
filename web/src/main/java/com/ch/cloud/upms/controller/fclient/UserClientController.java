@@ -23,6 +23,7 @@ import com.ch.result.ResultUtils;
 import com.ch.utils.AssertUtils;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,7 +95,7 @@ public class UserClientController implements UpmsUserClientService {
 
     @Override
     @GetMapping({"roles"})
-    public Result<RoleDto> findRolesByUsername(@PathVariable String username) {
+    public Result<RoleDto> findRolesByUsername(@RequestParam String username) {
         return ResultUtils.wrapList(() -> {
             UserDto user = userManage.getByUsername(username);
             AssertUtils.isNull(user, PubError.NOT_EXISTS, username);
@@ -139,18 +141,20 @@ public class UserClientController implements UpmsUserClientService {
     @GetMapping("{userId:[0-9]+}/project/{projectId:[0-9]+}/roles")
     @OriginalReturn
     @Override
-    public List<ProjectRoleDto> findProjectRoles(@PathVariable String userId, @PathVariable Long projectId) {
+    public List<RoleType> listProjectRoles(@PathVariable String userId, @PathVariable Long projectId, @RequestParam(required = false) String roles) {
         UserDto user = userManage.getByUserId(userId);
-        AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
-        return userService.listProjectRoleByUserIdAndProjectId(user.getUsername(), projectId);
+//        AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
+        if (user == null) return Lists.newArrayList();
+        List<ProjectRoleDto> list = userService.listProjectRoleByUserIdAndProjectId(user.getUsername(), projectId);
+        return null;
     }
 
     @GetMapping("{userId:[0-9]+}/project-role")
     @OriginalReturn
     @Override
-    public Boolean existsProjectRole(String userId, Long projectId, RoleType role) {
+    public Boolean existsProjectRole(@PathVariable String userId, Long projectId, RoleType role) {
         UserDto user = userManage.getByUserId(userId);
-        AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
+        if (user == null) return false;
         return userService.existsProjectRole(user.getUsername(), projectId, role);
     }
 }

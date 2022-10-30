@@ -24,33 +24,33 @@ import java.util.List;
  */
 @FeignClient(name = "${feign.client.upms:ch-upms}", contextId = "userClientService", path = "/c/user")
 public interface UpmsUserClientService {
-    
+
     @GetMapping("info")
     Result<UserDto> info(@RequestParam(required = false) String userId, @RequestParam(required = false) String username);
-    
+
     @GetMapping("{username}/login")
     Result<LoginUserDto> loginByUsername(@PathVariable String username);
-    
+
     @GetMapping("{username}/info")
     Result<UserDto> findInfoByUsername(@PathVariable String username);
-    
+
 //    @GetMapping({"{username}/role"})
 //    Result<RoleDto> findRoleByUsername(@PathVariable String username);
-    
+
     @GetMapping({"{username}/roles"})
     Result<RoleDto> findRolesByUsername(@PathVariable String username);
-    
+
 //    @GetMapping({"{userId:[0-9]+}/roles"})
 //    Result<RoleDto> findRolesByUserId(@PathVariable Long userId);
-    
+
     @GetMapping({"{username}/tenants"})
     Result<TenantDto> findTenantsByUsername(@PathVariable String username);
-    
+
     @GetMapping({"{userId:[0-9]+}/projects"})
     Result<ProjectRoleDto> findProjectsByUserId(@PathVariable String userId);
 
     @GetMapping("{userId:[0-9]+}/project/{projectId:[0-9]+}/roles")
-    List<ProjectRoleDto> findProjectRoles(@PathVariable String userId, @PathVariable Long projectId);
+    List<RoleType> listProjectRoles(@PathVariable String userId, @PathVariable Long projectId, @RequestParam(required = false) String roles);
 
     @GetMapping("{userId:[0-9]+}/project-role")
     Boolean existsProjectRole(@PathVariable String userId, @RequestParam Long projectId, @RequestParam RoleType role);

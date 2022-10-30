@@ -64,4 +64,7 @@ public interface UserProjectMapper {
 
     @Select("select count(1) FROM rt_user_project where USER_ID=#{username} and PROJECT_ID=#{projectId} and ROLE=#{role}")
     int countProjectRole(String username, Long projectId, String role);
+
+    @Select("select ROLE FROM rt_user_project where USER_ID=#{username} and PROJECT_ID=#{projectId} and FIND_IN_SET(ROLE,#{roles})")
+    List<String> listProjectRole(String username, Long projectId, String roles);
 }
