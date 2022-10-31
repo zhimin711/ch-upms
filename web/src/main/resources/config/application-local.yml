@@ -26,9 +26,6 @@ spring:
               preciseAlgorithmClassName: com.ch.cloud.upms.sharding.LogShardingStrategy
               shardingColumn: auth_code
 #====================================spring config===============================================
-#spring:
-#  application:
-#    name: ch-upms
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 ##    url: jdbc:mysql://106.12.140.185:3306/dev_ch_upms
@@ -52,10 +49,20 @@ spring:
   servlet:
     multipart:
       max-file-size: 100MB
+  redis:
+    host: 192.168.150.206
+    port: 6379
+    password: admin123
+    database: 3
+  cache:
+    type: redis
+    redis:
+      key-prefix: upms_
 logging:
   config: classpath:config/logback.xml
   level:
-    com.ch: debug
+    com.ch.cloud: debug
+    com.ch.utils: info
     com.alibaba.nacos.client: warn
   file:
     path: build/logs
@@ -63,7 +70,7 @@ logging:
 
 #====================================rocketmq config===============================================
 rocketmq:
-  name-server: 192.168.0.209:9876 # 自己的RocketMQ服务地址
+  name-server: 192.168.20.244:9876 # 自己的RocketMQ服务地址
   producer:
     send-message-timeout: 300000
     group: ch-upms
@@ -87,3 +94,7 @@ path:
 
 ch:
   gateway: ch-gateway
+
+springfox:
+  documentation:
+    enabled: true

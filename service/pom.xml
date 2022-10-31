@@ -23,17 +23,12 @@
             <artifactId>ch-upms-dao</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-cloud-starter-cache</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.6</version>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-cloud-starter-service</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>

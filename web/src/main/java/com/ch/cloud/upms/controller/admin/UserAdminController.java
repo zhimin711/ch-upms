@@ -15,6 +15,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.EncryptUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,39 +32,41 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/user")
+@Tag(name = "user-admin-controller", description = "用户管理-管理端")
 public class UserAdminController {
     
     @Autowired
-    private IUserService   userService;
+    private IUserService userService;
+    
     @Autowired
     private IUserManage userManage;
+    
     @Autowired
-    private IRoleService   roleService;
-
+    private IRoleService roleService;
+    
     @Autowired
     private SsoClientService ssoClientService;
-
+    
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
-    public PageResult<User> page(User record,
-                                 @PathVariable(value = "num") int pageNum,
-                                 @PathVariable(value = "size") int pageSize) {
-
+    public PageResult<User> page(User record, @PathVariable(value = "num") int pageNum,
+            @PathVariable(value = "size") int pageSize) {
+        
         Page<User> page = userService.page(record, pageNum, pageSize);
         return PageResult.success(page.getTotal(), page.getRecords());
     }
-
+    
     @PostMapping
     public Result<Boolean> add(@RequestBody User record) {
-
+        
         User r = userService.findByUsername(record.getUsername());
-
+        
         if (r != null) {
             return Result.error(PubError.EXISTS, "用户名已存在！");
         }
         record.setCreateBy(RequestUtils.getHeaderUser());
         return ResultUtils.wrapFail(() -> userService.saveWithAll(record));
     }
-
+    
     @GetMapping({"{id:[0-9]+}"})
     public Result<User> detail(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
@@ -72,19 +75,19 @@ public class UserAdminController {
             return record;
         });
     }
-
+    
     @PutMapping({"{id:[0-9]+}"})
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody User record) {
         record.setUpdateBy(RequestUtils.getHeaderUser());
-//        record.setUpdateAt(DateUtils.current());
+        //        record.setUpdateAt(DateUtils.current());
         return ResultUtils.wrapFail(() -> userService.updateWithAll(record));
     }
-
+    
     //    @PostMapping({"delete"})
     public Result<Boolean> delete(Long id) {
         return ResultUtils.wrapFail(() -> userService.removeById(id));
     }
-
+    
     @PostMapping("{id:[0-9]+}/initPwd")
     public Result<String> initPwd(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
@@ -107,20 +110,20 @@ public class UserAdminController {
             return pwd;
         });
     }
-
+    
     @GetMapping({"roles"})
     public Result<Role> findEnableRoles() {
         return ResultUtils.wrapList(() -> roleService.findEnabled());
     }
-
+    
     @GetMapping({"{id:[0-9]+}/roles"})
     public Result<Role> findRoleForUser(@PathVariable Long id) {
         return ResultUtils.wrapList(() -> roleService.findByUserId(id));
     }
-
+    
     @PostMapping({"{id:[0-9]+}/roles"})
     public Result<Integer> saveUserRole(@PathVariable Long id, @RequestBody List<Long> roleIds) {
         return ResultUtils.wrap(() -> userService.assignRole(id, roleIds));
     }
-
+    
 }

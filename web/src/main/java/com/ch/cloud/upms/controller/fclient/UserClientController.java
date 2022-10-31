@@ -1,7 +1,6 @@
 package com.ch.cloud.upms.controller.fclient;
 
 import com.alibaba.fastjson2.JSON;
-import com.ch.cloud.boot.annotation.OriginalReturn;
 import com.ch.cloud.upms.client.UpmsUserClientService;
 import com.ch.cloud.upms.dto.LoginUserDto;
 import com.ch.cloud.upms.dto.ProjectRoleDto;
@@ -17,6 +16,7 @@ import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.cloud.web.annotation.OriginalReturn;
 import com.ch.e.PubError;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
