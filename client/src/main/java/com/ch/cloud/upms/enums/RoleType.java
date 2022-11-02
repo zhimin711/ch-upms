@@ -22,4 +22,8 @@ public enum RoleType {
         }
         return VISITOR;
     }
+    
+    public static boolean isVisitor(String role){
+        return fromName(role) == VISITOR;
+    }
 }

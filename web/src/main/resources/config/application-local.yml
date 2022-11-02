@@ -7,6 +7,9 @@ jasypt:
 
 #====================================shardingsphereconfig===============================================
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   shardingsphere:
     datasource:
       names: ds0
@@ -58,6 +61,12 @@ spring:
     type: redis
     redis:
       key-prefix: upms_
+
+
+management:
+  health:
+    db:
+      enabled: false
 logging:
   config: classpath:config/logback.xml
   level:
@@ -94,7 +103,3 @@ path:
 
 ch:
   gateway: ch-gateway
-
-springfox:
-  documentation:
-    enabled: true
