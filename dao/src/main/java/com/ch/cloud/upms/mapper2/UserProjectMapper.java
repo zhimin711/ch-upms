@@ -18,7 +18,9 @@ public interface UserProjectMapper {
     @Select("select distinct PROJECT_ID from rt_user_project where USER_ID=#{userId}")
     List<Long> findProjectIdsByUserId(String userId);
 
-    @Select("select PROJECT_ID as ID, GROUP_CONCAT(ROLE) as ROLE from rt_user_project where USER_ID=#{userId} group by PROJECT_ID")
+    @Select("select t2.ID, GROUP_CONCAT(t1.ROLE) as ROLE from rt_user_project t1"
+            + " inner join bt_project t2 on t1.PROJECT_ID = t2.ID"
+            + " where t1.USER_ID=#{userId} group by t1.PROJECT_ID order by t2.tenant_id, t2.sort")
     List<ProjectRoleDto> findProjectRoleByUserId(String userId);
 
     @Select("SELECT distinct t1.* from bt_project t1" +
