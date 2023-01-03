@@ -21,6 +21,8 @@ import com.ch.result.ResultUtils;
 import com.ch.utils.AssertUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.VueRecordUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +37,7 @@ import java.util.List;
  * @since 2020-07-02
  */
 @RestController
+@Tag(name = "department-controller", description = "部门管理")
 @RequestMapping("/department")
 public class DepartmentController {
     @Autowired
@@ -47,6 +50,7 @@ public class DepartmentController {
     private ITenantService tenantService;
 
     @GetMapping(value = {"/{num:[0-9]+}/{size:[0-9]+}"})
+    @Operation(tags = "v1.1")
     public PageResult<Department> page(Department record,
                                        @PathVariable(value = "num") int pageNum,
                                        @PathVariable(value = "size") int pageSize) {

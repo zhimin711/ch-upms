@@ -2,7 +2,9 @@ package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ch.cloud.upms.dto.ProjectUserRoleDTO;
 import com.ch.cloud.upms.model.Project;
+import com.ch.cloud.upms.vo.ProjectUsersVO;
 
 import java.util.List;
 
@@ -15,18 +17,20 @@ import java.util.List;
  * @since 2021-09-23
  */
 public interface IProjectService extends IService<Project> {
-
+    
     Page<Project> page(Project record, int pageNum, int pageSize);
-
-    List<String> findUsers(Long id);
-
+    
+    List<ProjectUserRoleDTO> findUsers(Long id);
+    
     int assignUsers(Long id, List<String> userIds);
-
+    
     boolean exists(String userId, Long projectId);
-
+    
     Project getWithUserById(Long id);
-
+    
     List<Project> findByTenantId(Long tenantId);
-
+    
     Project findByCode(String code);
+    
+    Integer batchAddUsers(ProjectUsersVO projectUsers);
 }

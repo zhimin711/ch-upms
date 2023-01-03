@@ -3,18 +3,22 @@ package com.ch.cloud.upms.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ch.cloud.upms.dto.ProjectUserRoleDTO;
 import com.ch.cloud.upms.mapper.ProjectMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.enums.RoleType;
+import com.ch.cloud.upms.vo.ProjectUsersVO;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -40,19 +44,19 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     }
     
     @Override
-    public List<String> findUsers(Long id) {
-        return userProjectMapper.findUserIdsByProjectId(id);
+    public List<ProjectUserRoleDTO> findUsers(Long id) {
+        return userProjectMapper.findUsersByProjectId(id);
     }
     
     @Override
     public int assignUsers(Long id, List<String> userIds) {
-        List<String> list = findUsers(id);
+        List<ProjectUserRoleDTO> list = findUsers(id);
         AtomicInteger c = new AtomicInteger();
         if (!userIds.isEmpty()) {
-            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insert(id, r)));
-            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
+//            userIds.stream().filter(r -> !list.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.insert(id, r)));
+//            list.stream().filter(r -> !userIds.contains(r)).forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
         } else if (!list.isEmpty()) {
-            list.forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
+//            list.forEach(r -> c.getAndAdd(userProjectMapper.delete(id, r)));
         }
         return c.get();
     }
@@ -145,6 +149,40 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         Project param = new Project();
         param.setCode(code);
         return super.getOne(Wrappers.query(param));
+    }
+    
+    @Override
+    public Integer batchAddUsers(ProjectUsersVO usersVO) {
+        usersVO.getProjectIds().forEach(id -> {
+            List<ProjectUserRoleDTO> users = userProjectMapper.findUsersByProjectId(id);
+            Set<String> devs =
+                    CommonUtils.isNotEmpty(usersVO.getDevUserIds()) ? Sets.newHashSet(usersVO.getDevUserIds())
+                            : Sets.newHashSet();
+            Set<String> tests =
+                    CommonUtils.isNotEmpty(usersVO.getTestUserIds()) ? Sets.newHashSet(usersVO.getTestUserIds())
+                            : Sets.newHashSet();
+            if (!users.isEmpty()) {
+                users.forEach(u -> {
+                    switch (RoleType.fromName(u.getRole())) {
+                        case DEV:
+                            devs.remove(u.getUserId());
+                            break;
+                        case TEST:
+                            tests.remove(u.getUserId());
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            }
+            if(!devs.isEmpty()){
+                devs.forEach(uid-> userProjectMapper.insertFull(id, uid, RoleType.DEV.name()));
+            }
+            if(!tests.isEmpty()){
+                tests.forEach(uid-> userProjectMapper.insertFull(id, uid, RoleType.TEST.name()));
+            }
+        });
+        return null;
     }
     
 }

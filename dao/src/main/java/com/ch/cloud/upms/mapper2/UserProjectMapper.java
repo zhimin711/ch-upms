@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.mapper2;
 
 import com.ch.cloud.upms.dto.ProjectRoleDto;
+import com.ch.cloud.upms.dto.ProjectUserRoleDTO;
 import com.ch.cloud.upms.model.Project;
 import org.apache.ibatis.annotations.*;
 
@@ -29,8 +30,8 @@ public interface UserProjectMapper {
             " ORDER by t1.TENANT_ID, t1.SORT ,t1.SORT ASC")
     List<Project> findProjectsByUserIdAndTenantId(String userId, Long tenantId);
 
-    @Select("select distinct USER_ID from rt_user_project where PROJECT_ID=#{projectId}")
-    List<String> findUserIdsByProjectId(Long projectId);
+    @Select("select PROJECT_ID,USER_ID,ROLE from rt_user_project where PROJECT_ID=#{projectId}")
+    List<ProjectUserRoleDTO> findUsersByProjectId(Long projectId);
 
     @Select("select distinct USER_ID from rt_user_project where PROJECT_ID=#{projectId} and ROLE=#{role}")
     List<String> findUserIdsByProjectIdAndRole(Long projectId, String role);
