@@ -133,6 +133,7 @@ public class UserManageImpl implements IUserManage {
         userService.updateById(record);
         return c;
     }
+    
     @Transactional
     @Override
     public boolean updateWithAll(User record) {
@@ -143,8 +144,6 @@ public class UserManageImpl implements IUserManage {
         saveDepartmentPosition(record);
         return userService.updateById(record);
     }
-    
-    
     
     private void saveDepartmentPosition(User record) {
         AssertUtils.isEmpty(record.getDutyList(), PubError.NON_NULL, "组织职位");
@@ -159,8 +158,7 @@ public class UserManageImpl implements IUserManage {
                 deptId = dept.getParentId();
                 orgId = r.getDepartment();
             }
-            userService.insertDepartmentPosition(record.getId(), deptId, Long.valueOf(r.getDuty()),
-                    orgId);
+            userService.insertDepartmentPosition(record.getId(), deptId, Long.valueOf(r.getDuty()), orgId);
         });
         if (CommonUtils.isNotEmpty(record.getDepartmentId())) {
             List<String> names = departmentService.findNames(StringUtilsV2.parseIds(record.getDepartmentId()));
