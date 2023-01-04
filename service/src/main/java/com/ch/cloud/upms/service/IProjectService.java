@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.cloud.upms.dto.ProjectUserRoleDTO;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.vo.ProjectUsersVO;
+import org.springframework.cache.annotation.CacheEvict;
 
 import java.util.List;
 
@@ -28,9 +29,14 @@ public interface IProjectService extends IService<Project> {
     
     Project getWithUserById(Long id);
     
+    @CacheEvict(cacheNames = "project", key = "#record.id")
+    boolean updateWithUsersById(Project record);
+    
     List<Project> findByTenantId(Long tenantId);
     
     Project findByCode(String code);
     
     Integer batchAddUsers(ProjectUsersVO projectUsers);
+    
+    List<Project> listByLikeDepartment(String department);
 }

@@ -4,22 +4,32 @@ import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ch.Separator;
 import com.ch.StatusS;
 import com.ch.cloud.upms.dto.ProjectRoleDto;
-import com.ch.cloud.upms.enums.DepartmentType;
 import com.ch.cloud.upms.enums.RoleType;
-import com.ch.cloud.upms.manage.IDepartmentManage;
 import com.ch.cloud.upms.mapper.UserMapper;
 import com.ch.cloud.upms.mapper2.UserDepartmentPositionMapper;
 import com.ch.cloud.upms.mapper2.UserProjectMapper;
 import com.ch.cloud.upms.mapper2.UserRoleMapper;
-import com.ch.cloud.upms.model.*;
+import com.ch.cloud.upms.model.Department;
+import com.ch.cloud.upms.model.Position;
+import com.ch.cloud.upms.model.Project;
+import com.ch.cloud.upms.model.Role;
+import com.ch.cloud.upms.model.Tenant;
+import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
-import com.ch.cloud.upms.service.*;
+import com.ch.cloud.upms.service.IDepartmentService;
+import com.ch.cloud.upms.service.IPositionService;
+import com.ch.cloud.upms.service.IRoleService;
+import com.ch.cloud.upms.service.ITenantService;
+import com.ch.cloud.upms.service.IUserService;
 import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
-import com.ch.utils.*;
+import com.ch.utils.AssertUtils;
+import com.ch.utils.CommonUtils;
+import com.ch.utils.DateUtils;
+import com.ch.utils.EncryptUtils;
+import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -41,31 +51,28 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
-
+    
     @Resource
     private IRoleService roleService;
-
+    
     @Resource
     private IDepartmentService departmentService;
-
-    @Resource
-    private IDepartmentManage departmentManage;
-
+    
     @Resource
     private IPositionService positionService;
-
+    
     @Resource
     private ITenantService tenantService;
-
+    
     @Resource
     private UserProjectMapper userProjectMapper;
-
+    
     @Resource
     private UserRoleMapper userRoleMapper;
-
+    
     @Resource
     private UserDepartmentPositionMapper userDepartmentPositionMapper;
-
+    
     @Override
     public User findByUsername(String username) {
         if (CommonUtils.isEmpty(username)) {
@@ -75,8 +82,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         record.setUsername(username);
         return super.getOne(Wrappers.query(record));
     }
-
-
+    
+    
     @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
             @CacheEvict(cacheNames = "user", key = "#record.userId"),
             @CacheEvict(cacheNames = "user", key = "#record.username")})
@@ -95,16 +102,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return 0;
     }
-
+    
     @Override
     public int assignRole(Long id, List<Long> roleIds) {
         List<Role> roleList = roleService.findByUserId(id);
-
+        
         List<Long> uRoleIds = roleList.stream().filter(r -> !CommonUtils.isEquals(r.getType(), StatusS.DISABLED))
                 .map(Role::getId).collect(Collectors.toList());
         List<Long> uRoleIds2 = roleList.stream().filter(r -> CommonUtils.isEquals(r.getType(), StatusS.DISABLED))
                 .map(Role::getId).collect(Collectors.toList());
-
+        
         AtomicInteger c = new AtomicInteger();
         if (!roleIds.isEmpty()) {
             roleIds.stream().filter(r -> !uRoleIds.contains(r) && !uRoleIds2.contains(r))
@@ -116,7 +123,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return c.get();
     }
-
+    
     @Override
     public List<User> findByLikeUserId(String userId) {
         if (CommonUtils.isEmpty(userId)) {
@@ -124,22 +131,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return super.query().like("user_id", userId).eq("status", StatusS.ENABLED).list();
     }
-
+    
     @Override
     public List<User> findByLikeRealName(String realName) {
         return super.query().like("real_name", realName).eq("status", StatusS.ENABLED).list();
     }
-
+    
     @Override
     public List<User> findByLikeUsername(String username) {
         return super.query().likeRight("username", username).eq("status", StatusS.ENABLED).list();
     }
-
+    
     @Override
     public List<User> findAllValid() {
         return super.query().eq("status", StatusS.ENABLED).list();
     }
-
+    
     @Transactional
     @Override
     public boolean saveWithAll(User record) {
@@ -152,7 +159,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         super.updateById(record);
         return c;
     }
-
+    
     @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
             @CacheEvict(cacheNames = "user", key = "#record.userId"),
             @CacheEvict(cacheNames = "user", key = "#record.username")})
@@ -166,24 +173,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         saveDepartmentPosition(record);
         return super.updateById(record);
     }
-
+    
     @Caching(evict = {@CacheEvict(cacheNames = "user", key = "#record.id"),
             @CacheEvict(cacheNames = "user", key = "#record.userId"),
             @CacheEvict(cacheNames = "user", key = "#record.username")})
     @Override
-    public boolean updateById(User entity) {
-        return super.updateById(entity);
+    public boolean updateById(User record) {
+        return super.updateById(record);
     }
-
+    
     private void saveDepartmentPosition(User record) {
-        if (CommonUtils.isEmpty(record.getDutyList())) {
-            ExceptionUtils._throw(PubError.NON_NULL, "组织职位不能为空！");
-        }
+        AssertUtils.isEmpty(record.getDutyList(), PubError.NON_NULL, "组织职位");
         userDepartmentPositionMapper.deleteDepartmentPositionByUserId(record.getId());
         record.getDutyList().forEach(r -> {
-            if (CommonUtils.isEmpty(r.getDepartment()) || CommonUtils.isEmpty(r.getDuty())) {
-                ExceptionUtils._throw(PubError.NON_NULL, "组织或职位不能为空！");
-            }
+            AssertUtils.isTrue(CommonUtils.isEmpty(r.getDepartment()) || CommonUtils.isEmpty(r.getDuty()),
+                    PubError.NON_NULL, "组织或职位");
             Department dept = departmentService.getById(StringUtilsV2.lastId(r.getDepartment()));
             String deptId = r.getDepartment();
             String orgId = "";
@@ -211,47 +215,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
         }
     }
-
+    
     @Override
     public Page<User> page(User record, int pageNum, int pageSize) {
-        if (CommonUtils.isNumeric(record.getDepartment())) {
-            Department dept = departmentManage.get(Long.valueOf(record.getDepartment()));
-            if (dept != null) {
-                String key = dept.getParentId();
-                String key2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, dept.getParentId(),
-                        dept.getId().toString());
-                if (DepartmentType.isTeam(dept.getDeptType())) {
-                    record.setDepartmentId(key);
-                    record.setDepartment(key2);
-                } else {
-                    record.setDepartmentId(key2);
-                    record.setDepartment(null);
-                }
-            }
-        }
-        Page<User> pager = getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
-        if (pager.getTotal() > 0) {
-            pager.getRecords().forEach(r -> {
-                if (CommonUtils.isNotEmpty(r.getDepartmentId(), record.getDepartmentId()) && !r.getDepartmentId()
-                        .startsWith(record.getDepartmentId())) {
-                    String[] deptIds = r.getDepartment().split("\\|");
-                    r.setDepartmentName("");
-                    for (String deptId : deptIds) {
-                        //                        userDepartmentPositionMapper.findDepartmentPositionByUserIdLikeDepartmentId(r.getId(), deptId);
-                        Department dept = departmentManage.get(StringUtilsV2.lastId(deptId));
-                        String pn = StringUtilsV2.linkStr(Separator.COMMA_SIGN, dept.getParentName(), dept.getName());
-                        r.setDepartmentName(StringUtilsV2.linkStr(Separator.VERTICAL_LINE, r.getDepartmentName(), pn));
-                    }
-                    r.setDepartment("1");
-                } else {
-                    r.setDepartment("0");
-                }
-
-            });
-        }
-        return pager;
+        return getBaseMapper().pageBy(new Page<>(pageNum, pageSize), record);
     }
-
+    
     @Override
     public List<DepartmentDuty> findDepartmentDuty(Long id) {
         List<DepartmentDuty> records = userDepartmentPositionMapper.findDepartmentPositionByUserId(id);
@@ -263,27 +232,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         });
         return records;
     }
-
+    
     @Override
     public List<Tenant> findTenantsByUsername(String username) {
         return getBaseMapper().findTenantsByUsername(username);
     }
-
+    
     @Override
     public List<Project> findProjectsByUsernameAndTenantId(String userId, Long tenantId) {
         return userProjectMapper.findProjectsByUserIdAndTenantId(userId, tenantId);
     }
-
+    
     @Override
     public List<Long> findProjectIdsByUserId(String username) {
         return userProjectMapper.findProjectIdsByUserId(username);
     }
-
+    
     @Override
     public List<ProjectRoleDto> findProjectRoleByUserId(String username) {
         return userProjectMapper.findProjectRoleByUserId(username);
     }
-
+    
     @Override
     public User getDefaultInfo(String username) {
         User user = this.findByUsername(username);
@@ -311,12 +280,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return user;
     }
-
+    
     @Override
     public boolean existsRole(Long userId, Long roleId) {
         return userRoleMapper.exists(userId, roleId);
     }
-
+    
     @Override
     public User getByUserId(String userId) {
         if (CommonUtils.isEmpty(userId)) {
@@ -326,19 +295,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         record.setUserId(userId);
         return super.getOne(Wrappers.query(record));
     }
-
+    
     @Override
     public List<ProjectRoleDto> listProjectRoleByUserIdAndProjectId(String username, Long projectId) {
         return userProjectMapper.listByUsernameAndProjectId(username, projectId);
     }
-
+    
     @Override
     public Boolean existsProjectRole(String username, Long projectId, RoleType role) {
         return userProjectMapper.countProjectRole(username, projectId, role.name()) > 0;
     }
-
+    
     @Override
     public List<String> listProjectRoleByUserIdAndProjectId(String username, Long projectId, String roles) {
-        return userProjectMapper.listProjectRole(username,projectId,roles);
+        return userProjectMapper.listProjectRole(username, projectId, roles);
+    }
+    
+    @Override
+    public List<User> listByDepartment(String dept) {
+        return list(Wrappers.query(new User()).likeRight("department_id", dept));
     }
 }

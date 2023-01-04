@@ -40,4 +40,11 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
                 .eq(status != Status.UNKNOWN, "status", status.getCode())
                 .orderByAsc("sort", "id").list();
     }
+    
+    @Override
+    public List<Tenant> listByLikeDepartmentId(String departmentId) {
+        return super.query()
+                .likeRight("department_id", departmentId)
+                .orderByAsc("sort", "id").list();
+    }
 }

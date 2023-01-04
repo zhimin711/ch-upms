@@ -82,7 +82,8 @@ public class Department extends Model<Department> {
     @ApiModelProperty(value = "更新时间")
     @TableField(fill = FieldFill.UPDATE)
     private Date updateAt;
-
+    
+    @ApiModelProperty(hidden = true)
     @TableField(exist = false)
     List<Department> children;
 

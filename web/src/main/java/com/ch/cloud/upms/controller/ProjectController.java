@@ -81,7 +81,7 @@ public class ProjectController {
             record.setUpdateBy(RequestUtils.getHeaderUser());
             record.setUpdateAt(DateUtils.current());
             
-            return projectService.updateById(record);
+            return projectService.updateWithUsersById(record);
         });
     }
     

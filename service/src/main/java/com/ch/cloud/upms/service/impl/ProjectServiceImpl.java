@@ -40,6 +40,8 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         return super.query().like(CommonUtils.isNotEmpty(record.getCode()), "code", record.getCode())
                 .like(CommonUtils.isNotEmpty(record.getName()), "name", record.getName())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())
+                .eq(CommonUtils.isNotEmpty(record.getTenantId()), "tenant_id", record.getTenantId())
+                .eq(CommonUtils.isNotEmpty(record.getDepartment()), "department", record.getDepartment())
                 .orderByAsc("tenant_id", "sort", "id").page(new Page<>(pageNum, pageSize));
     }
     
@@ -117,6 +119,13 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     @Override
     @CacheEvict(cacheNames = "project", key = "#record.id")
     public boolean updateById(Project record) {
+        return super.updateById(record);
+    }
+    
+    
+    @Override
+    @CacheEvict(cacheNames = "project", key = "#record.id")
+    public boolean updateWithUsersById(Project record) {
         boolean ok = super.updateById(record);
         if (!ok) {
             return false;
@@ -175,14 +184,19 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                     }
                 });
             }
-            if(!devs.isEmpty()){
-                devs.forEach(uid-> userProjectMapper.insertFull(id, uid, RoleType.DEV.name()));
+            if (!devs.isEmpty()) {
+                devs.forEach(uid -> userProjectMapper.insertFull(id, uid, RoleType.DEV.name()));
             }
-            if(!tests.isEmpty()){
-                tests.forEach(uid-> userProjectMapper.insertFull(id, uid, RoleType.TEST.name()));
+            if (!tests.isEmpty()) {
+                tests.forEach(uid -> userProjectMapper.insertFull(id, uid, RoleType.TEST.name()));
             }
         });
         return null;
+    }
+    
+    @Override
+    public List<Project> listByLikeDepartment(String department) {
+        return query().likeRight("department", department).list();
     }
     
 }

@@ -1,8 +1,12 @@
 package com.ch.cloud.upms.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ch.Separator;
+import com.ch.cloud.upms.enums.DepartmentType;
 import com.ch.cloud.upms.fclient.SsoClientService;
+import com.ch.cloud.upms.manage.IDepartmentManage;
 import com.ch.cloud.upms.manage.IUserManage;
+import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.User;
 import com.ch.cloud.upms.service.IRoleService;
@@ -13,13 +17,16 @@ import com.ch.e.PubError;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.EncryptUtils;
+import com.ch.utils.StringUtilsV2;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /*
@@ -42,6 +49,9 @@ public class UserAdminController {
     private IUserManage userManage;
     
     @Autowired
+    private IDepartmentManage departmentManage;
+    
+    @Autowired
     private IRoleService roleService;
     
     @Autowired
@@ -51,7 +61,42 @@ public class UserAdminController {
     public PageResult<User> page(User record, @PathVariable(value = "num") int pageNum,
             @PathVariable(value = "size") int pageSize) {
         
+        if (CommonUtils.isNumeric(record.getDepartment())) {
+            Department dept = departmentManage.get(Long.valueOf(record.getDepartment()));
+            if (dept != null) {
+                String key = dept.getParentId();
+                String key2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, dept.getParentId(),
+                        dept.getId().toString());
+                if (DepartmentType.isTeam(dept.getDeptType())) {
+                    record.setDepartmentId(key);
+                    record.setDepartment(key2);
+                } else {
+                    record.setDepartmentId(key2);
+                    record.setDepartment(null);
+                }
+            }
+        }
         Page<User> page = userService.page(record, pageNum, pageSize);
+        
+        if (!page.getRecords().isEmpty()) {
+            page.getRecords().forEach(r -> {
+                if (CommonUtils.isNotEmpty(r.getDepartmentId(), record.getDepartmentId()) && !r.getDepartmentId()
+                        .startsWith(record.getDepartmentId())) {
+                    String[] deptIds = r.getDepartment().split("\\|");
+                    r.setDepartmentName("");
+                    for (String deptId : deptIds) {
+                        //                        userDepartmentPositionMapper.findDepartmentPositionByUserIdLikeDepartmentId(r.getId(), deptId);
+                        Department dept = departmentManage.get(StringUtilsV2.lastId(deptId));
+                        String pn = StringUtilsV2.linkStr(Separator.COMMA_SIGN, dept.getParentName(), dept.getName());
+                        r.setDepartmentName(StringUtilsV2.linkStr(Separator.VERTICAL_LINE, r.getDepartmentName(), pn));
+                    }
+                    r.setDepartment("1");
+                } else {
+                    r.setDepartment("0");
+                }
+                
+            });
+        }
         return PageResult.success(page.getTotal(), page.getRecords());
     }
     

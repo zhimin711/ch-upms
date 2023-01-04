@@ -20,4 +20,6 @@ public interface ITenantService extends IService<Tenant> {
     Page<Tenant> page(Tenant record, int pageNum, int pageSize);
 
     List<Tenant> findByDepartmentIdAndNameAndStatus(String prefixDeptId, String name, Status enabled);
+    
+    List<Tenant> listByLikeDepartmentId(String departmentId);
 }

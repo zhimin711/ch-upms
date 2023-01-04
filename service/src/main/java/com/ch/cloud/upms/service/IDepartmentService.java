@@ -20,7 +20,9 @@ public interface IDepartmentService extends IService<Department> {
 
     Page<Department> findTreePage(Department record, int pageNum, int pageSize);
 
-    String findCascadeK(Long id);
+    String findCascadeId(Long id);
 
     List<String> findNames(List<Long> ids);
+    
+    String findCascadeName(List<Long> ids);
 }
