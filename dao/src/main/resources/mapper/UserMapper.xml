@@ -34,12 +34,6 @@
         REMARK, CREATE_AT, CREATE_BY, UPDATE_AT, UPDATE_BY
     </sql>
 
-    <insert id="insertAssignRole">
-    INSERT INTO st_user_role (USER_ID,ROLE_ID) VALUES (#{userId},#{roleId})
-  </insert>
-    <delete id="deleteAssignRole">
-    DELETE FROM st_user_role WHERE USER_ID=#{userId} AND ROLE_ID=#{roleId} and ROLE_ID != 1
-  </delete>
 
     <select id="pageBy" parameterType="com.ch.cloud.upms.model.User" resultType="com.ch.cloud.upms.model.User">
     select t.*, group_concat(t2.department_id order by t2.department_id asc separator '|') as department

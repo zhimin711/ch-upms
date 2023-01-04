@@ -20,10 +20,6 @@ import java.util.List;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-    int insertAssignRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
-
-    int deleteAssignRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
-
     Page<User> pageBy(IPage<User> page, @Param(Constants.ENTITY) User user);
 
     List<Tenant> findTenantsByUsername(String username);

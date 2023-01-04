@@ -1,6 +1,10 @@
 package com.ch.cloud.upms.manage;
 
 import com.ch.cloud.upms.dto.UserDto;
+import com.ch.cloud.upms.model.User;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +21,12 @@ public interface IUserManage {
     UserDto getByUserId(String userId);
     
     UserDto getByUsername(String username);
+    
+    int assignRole(Long id, List<Long> roleIds);
+    
+    @Transactional
+    boolean saveWithAll(User record);
+    
+    @Transactional
+    boolean updateWithAll(User record);
 }

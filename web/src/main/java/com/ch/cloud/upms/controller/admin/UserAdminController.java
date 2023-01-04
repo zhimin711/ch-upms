@@ -9,6 +9,9 @@ import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Role;
 import com.ch.cloud.upms.model.User;
+import com.ch.cloud.upms.pojo.DepartmentDuty;
+import com.ch.cloud.upms.service.IDepartmentService;
+import com.ch.cloud.upms.service.IPositionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.cloud.upms.utils.RequestUtils;
@@ -53,6 +56,12 @@ public class UserAdminController {
     
     @Autowired
     private IRoleService roleService;
+    
+    @Autowired
+    private IDepartmentService departmentService;
+    
+    @Autowired
+    private IPositionService positionService;
     
     @Autowired
     private SsoClientService ssoClientService;
@@ -109,14 +118,22 @@ public class UserAdminController {
             return Result.error(PubError.EXISTS, "用户名已存在！");
         }
         record.setCreateBy(RequestUtils.getHeaderUser());
-        return ResultUtils.wrapFail(() -> userService.saveWithAll(record));
+        return ResultUtils.wrapFail(() -> userManage.saveWithAll(record));
     }
     
     @GetMapping({"{id:[0-9]+}"})
     public Result<User> detail(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
             User record = userService.getById(id);
-            record.setDutyList(userService.findDepartmentDuty(id));
+    
+            List<DepartmentDuty> records = userService.findDepartmentDuty(id);
+            records.forEach(e -> {
+                List<String> names = departmentService.findNames(
+                        StringUtilsV2.parseIds(CommonUtils.isEmpty(e.getOrgId()) ? e.getDepartment() : e.getOrgId()));
+                e.setDepartmentName(String.join(",", names));
+                e.setDutyName(positionService.getById(e.getDuty()).getName());
+            });
+            record.setDutyList(records);
             return record;
         });
     }
@@ -125,7 +142,7 @@ public class UserAdminController {
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody User record) {
         record.setUpdateBy(RequestUtils.getHeaderUser());
         //        record.setUpdateAt(DateUtils.current());
-        return ResultUtils.wrapFail(() -> userService.updateWithAll(record));
+        return ResultUtils.wrapFail(() -> userManage.updateWithAll(record));
     }
     
     //    @PostMapping({"delete"})
@@ -168,7 +185,7 @@ public class UserAdminController {
     
     @PostMapping({"{id:[0-9]+}/roles"})
     public Result<Integer> saveUserRole(@PathVariable Long id, @RequestBody List<Long> roleIds) {
-        return ResultUtils.wrap(() -> userService.assignRole(id, roleIds));
+        return ResultUtils.wrap(() -> userManage.assignRole(id, roleIds));
     }
     
 }
