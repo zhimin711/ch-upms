@@ -1,14 +1,13 @@
 package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.enums.RoleType;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.cloud.upms.pojo.DepartmentDuty;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -64,5 +63,6 @@ public interface IUserService extends IService<User> {
 
     List<String> listProjectRoleByUserIdAndProjectId(String username, Long projectId, String roles);
     
-    List<User> listByDepartment(String dept);
+    List<User> listByLikeDepartmentId(String departmentId);
+    
 }

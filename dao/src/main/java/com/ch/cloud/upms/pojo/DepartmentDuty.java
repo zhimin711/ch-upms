@@ -12,23 +12,26 @@ import java.io.Serializable;
  */
 @Data
 public class DepartmentDuty implements Serializable {
-
+    
     /**
      * 账号
      */
     private String userId;
+    
     /**
      * 部门
      */
     private String department;
+    
     /**
      * 职位
      */
     private String duty;
-
+    
     private String orgId;
-
+    
     private String departmentName;
+    
     private String dutyName;
-
+    
 }

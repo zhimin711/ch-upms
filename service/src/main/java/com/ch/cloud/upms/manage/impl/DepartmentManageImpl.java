@@ -6,10 +6,13 @@ import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.model.User;
+import com.ch.cloud.upms.pojo.DepartmentDuty;
+import com.ch.cloud.upms.service.IDepartmentDutyService;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.StringUtilsV2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,9 @@ public class DepartmentManageImpl implements IDepartmentManage {
     
     @Autowired
     private IProjectService projectService;
+    
+    @Autowired
+    private IDepartmentDutyService departmentDutyService;
     
     @Override
     @Cacheable
@@ -124,7 +130,7 @@ public class DepartmentManageImpl implements IDepartmentManage {
     }
     
     private void updateDepartmentUser(boolean isChangeParent, String deptFullName, String dept0, String dept2) {
-        List<User> list = userService.listByDepartment(dept0);
+        List<User> list = userService.listByLikeDepartmentId(dept0);
         if (list.isEmpty()) {
             return;
         }
@@ -142,6 +148,27 @@ public class DepartmentManageImpl implements IDepartmentManage {
                 e.setDepartmentId(dept1);
             }
             userService.updateById(e);
+        });
+        if (!isChangeParent) {
+            return;
+        }
+        List<DepartmentDuty> list2 = departmentDutyService.listByLikeDepartmentId(dept0);
+        if (CommonUtils.isEmpty(list2)) {
+            return;
+        }
+        list2.forEach(e -> {
+            DepartmentDuty duty = BeanUtilsV2.clone(e);
+            if (CommonUtils.isEquals(e.getDepartment(), dept0)) {
+                e.setDepartment(dept2);
+            } else {
+                String dept1 = e.getDepartment().replaceFirst(dept0, dept2);
+                e.setDepartment(dept1);
+            }
+            if (CommonUtils.isNotEmpty(e.getOrgId())) {
+                String orgId = e.getOrgId().replaceFirst(dept0, dept2);
+                e.setOrgId(orgId);
+            }
+            departmentDutyService.update(e, duty);
         });
     }
     

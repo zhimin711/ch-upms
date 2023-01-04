@@ -312,7 +312,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
     
     @Override
-    public List<User> listByDepartment(String dept) {
+    public List<User> listByLikeDepartmentId(String dept) {
         return list(Wrappers.query(new User()).likeRight("department_id", dept));
     }
 }
