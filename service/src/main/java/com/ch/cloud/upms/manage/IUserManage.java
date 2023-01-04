@@ -24,9 +24,7 @@ public interface IUserManage {
     
     int assignRole(Long id, List<Long> roleIds);
     
-    @Transactional
     boolean saveWithAll(User record);
     
-    @Transactional
     boolean updateWithAll(User record);
 }

@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
  * @since 2022/8/18
  */
 @Service
-@Cacheable(cacheNames = "user")
 public class UserManageImpl implements IUserManage {
     
     @Autowired
@@ -56,12 +55,14 @@ public class UserManageImpl implements IUserManage {
     @Autowired
     private ITenantService tenantService;
     
+    @Cacheable(cacheNames = "user", key = "#id")
     @Override
     public UserDto getById(Long id) {
         User user = userService.getById(id);
         return BeanUtilsV2.clone(user, UserDto.class);
     }
     
+    @Cacheable(cacheNames = "user", key = "#userId")
     @Override
     public UserDto getByUserId(String userId) {
         User user = userService.getByUserId(userId);
@@ -69,10 +70,9 @@ public class UserManageImpl implements IUserManage {
     }
     
     
-    //    @Cacheable
+    @Cacheable(cacheNames = "user", key = "#username")
     @Override
     public UserDto getByUsername(String username) {
-        
         User user = userService.findByUsername(username);
         if (user == null) {
             return null;
