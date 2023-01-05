@@ -4,6 +4,7 @@ package com.ch.cloud.upms.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Separator;
+import com.ch.StatusS;
 import com.ch.cloud.upms.model.Department;
 import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.service.IDepartmentService;
@@ -114,7 +115,9 @@ public class TenantController {
     @GetMapping({"available"})
     public Result<VueRecord> findAvailable() {
         return ResultUtils.wrapList(() -> {
-            List<Tenant> list = tenantService.list();
+            Tenant param = new Tenant();
+            param.setStatus(StatusS.ENABLED);
+            List<Tenant> list = tenantService.list(Wrappers.query(param));
             return VueRecordUtils.covertIdTree(list);
         });
     }
