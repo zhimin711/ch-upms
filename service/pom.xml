@@ -31,6 +31,10 @@
             <artifactId>ch-cloud-starter-service</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-sso-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>1.5.2.Final</version>

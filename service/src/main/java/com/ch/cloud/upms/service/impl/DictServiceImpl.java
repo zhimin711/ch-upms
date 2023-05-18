@@ -81,7 +81,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements ID
                 super.saveBatch(addChildren);
             }
             if (CommonUtils.isNotEmpty(children)) {
-                List<Long> delIds = children.stream().filter(r -> !updateIds.contains(r.getId())).map(Dict::getId).collect(Collectors.toList());
+                List<Long> delIds = children.stream().map(Dict::getId).filter(id -> !updateIds.contains(id)).collect(Collectors.toList());
                 super.removeByIds(delIds);
             }
         } else {

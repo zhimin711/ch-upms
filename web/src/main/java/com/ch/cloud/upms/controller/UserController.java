@@ -1,8 +1,8 @@
 package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
+import com.ch.cloud.sso.client.SsoPasswordClient;
 import com.ch.cloud.upms.dto.TenantDto;
-import com.ch.cloud.upms.fclient.SsoClientService;
 import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Project;
 import com.ch.cloud.upms.model.Role;
@@ -50,7 +50,7 @@ public class UserController {
     private IUserManage userManage;
     
     @Autowired
-    private SsoClientService ssoClientService;
+    private SsoPasswordClient ssoPasswordClient;
     
     @Autowired
     private GatewayNotifySender gatewayNotifySender;
@@ -63,11 +63,11 @@ public class UserController {
             if (user == null) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
             }
-            Result<Boolean> res = ssoClientService.matchEncrypt(keyValue.getKey(), user.getPassword());
+            Result<Boolean> res = ssoPasswordClient.matchEncrypt(keyValue.getKey(), user.getPassword());
             if (!res.isSuccess() || !res.get()) {
                 ExceptionUtils._throw(PubError.USERNAME_OR_PASSWORD, "原密码错误，请输入正确密码!");
             }
-            Result<String> res1 = ssoClientService.encrypt(keyValue.getValue());
+            Result<String> res1 = ssoPasswordClient.encrypt(keyValue.getValue());
             user.setPassword(res1.get());
             user.setUpdateBy(username);
             user.setUpdateAt(DateUtils.current());

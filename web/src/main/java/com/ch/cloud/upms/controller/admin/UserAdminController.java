@@ -2,8 +2,8 @@ package com.ch.cloud.upms.controller.admin;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Separator;
+import com.ch.cloud.sso.client.SsoPasswordClient;
 import com.ch.cloud.upms.enums.DepartmentType;
-import com.ch.cloud.upms.fclient.SsoClientService;
 import com.ch.cloud.upms.manage.IDepartmentManage;
 import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Department;
@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /*
@@ -64,7 +63,7 @@ public class UserAdminController {
     private IPositionService positionService;
     
     @Autowired
-    private SsoClientService ssoClientService;
+    private SsoPasswordClient ssoPasswordClient;
     
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<User> page(User record, @PathVariable(value = "num") int pageNum,
@@ -158,7 +157,7 @@ public class UserAdminController {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
             }
             String pwd = EncryptUtils.generate(8);
-            Result<String> res = ssoClientService.encrypt(pwd);
+            Result<String> res = ssoPasswordClient.encrypt(pwd);
             if (!res.isSuccess()) {
                 ExceptionUtils._throw(PubError.UPDATE, "加密错误，请稍后重试!");
             }

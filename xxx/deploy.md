@@ -1,4 +1,10 @@
 
+
+### 打包client模块
+```shell
+mvn -U -pl client -am clean install -Dmaven.test.skip -Drevision=1.1.0-SNAPSHOT
+```
+
 #### 上传文件
 ```shell script
 scp -r src/main/docker/Dockerfile zhimin@192.168.1.100:/home/zhimin/docker/ch-upms

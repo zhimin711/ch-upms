@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableEncryptableProperties
-@EnableFeignClients
+@EnableFeignClients("com.ch.cloud.sso.client")
 public class App extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
