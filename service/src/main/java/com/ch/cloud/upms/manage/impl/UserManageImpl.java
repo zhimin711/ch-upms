@@ -125,7 +125,7 @@ public class UserManageImpl implements IUserManage {
     @Override
     public boolean saveWithAll(User record) {
         if (CommonUtils.isEmpty(record.getPassword())) {
-            record.setPassword(EncryptUtils.generate());
+            record.setPassword(RandomUtil.randomString(6));
         }
         record.setUserId(RandomUtil.randomNumbers(10));
         boolean c = userService.save(record);

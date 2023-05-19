@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.controller.admin;
 
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Separator;
 import com.ch.cloud.sso.client.SsoPasswordClient;
@@ -124,7 +125,7 @@ public class UserAdminController {
     public Result<User> detail(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
             User record = userService.getById(id);
-    
+            
             List<DepartmentDuty> records = userService.findDepartmentDuty(id);
             records.forEach(e -> {
                 List<String> names = departmentService.findNames(
@@ -156,7 +157,7 @@ public class UserAdminController {
             if (user == null) {
                 ExceptionUtils._throw(PubError.NOT_EXISTS);
             }
-            String pwd = EncryptUtils.generate(8);
+            String pwd = RandomUtil.randomString(6);
             Result<String> res = ssoPasswordClient.encrypt(pwd);
             if (!res.isSuccess()) {
                 ExceptionUtils._throw(PubError.UPDATE, "加密错误，请稍后重试!");

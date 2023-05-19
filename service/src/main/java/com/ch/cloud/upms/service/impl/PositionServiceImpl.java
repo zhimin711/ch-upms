@@ -5,8 +5,8 @@ import com.ch.cloud.upms.model.Position;
 import com.ch.cloud.upms.mapper.PositionMapper;
 import com.ch.cloud.upms.service.IPositionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ch.tools.sql.utils.SQLUtils;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.SQLUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
