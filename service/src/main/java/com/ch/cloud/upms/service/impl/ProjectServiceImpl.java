@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -160,6 +161,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         return super.getOne(Wrappers.query(param));
     }
     
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Integer batchAddUsers(ProjectUsersVO usersVO) {
         usersVO.getProjectIds().forEach(id -> {
@@ -191,7 +193,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 tests.forEach(uid -> userProjectMapper.insertFull(id, uid, RoleType.TEST.name()));
             }
         });
-        return null;
+        return 1;
     }
     
     @Override
