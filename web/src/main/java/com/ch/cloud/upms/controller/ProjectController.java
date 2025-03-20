@@ -11,11 +11,11 @@ import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.cloud.upms.vo.ProjectUsersVO;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.AssertUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.StringUtilsV2;
@@ -109,8 +109,8 @@ public class ProjectController {
     
     @PostMapping({"users"})
     public Result<Integer> batchAddUsers(@RequestBody ProjectUsersVO projectUsers) {
-        AssertUtils.isEmpty(projectUsers.getProjectIds(), PubError.NON_NULL, "projectIds");
-        AssertUtils.isTrue(
+        Assert.notEmpty(projectUsers.getProjectIds(), PubError.NON_NULL, "projectIds");
+        Assert.isFalse(
                 CommonUtils.isEmpty(projectUsers.getDevUserIds()) || CommonUtils.isEmpty(projectUsers.getTestUserIds()),
                 PubError.NON_NULL, "devUserIds or testUserIds");
         return ResultUtils.wrap(() -> projectService.batchAddUsers(projectUsers));
