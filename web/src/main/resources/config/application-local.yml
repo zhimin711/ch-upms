@@ -11,16 +11,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   shardingsphere:
-    mode:
-      type: Standalone
-      repository:
-        type: JDBC
-        props:
-          path: ./config/shardingsphere
-          datasource-class-name: com.zaxxer.hikari.HikariDataSource
-          jdbc-url: jdbc:mysql://192.168.150.254:3306/ch_wiki?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-          username: zhimin
-          password: 123456
     props:
       # 禁用执行SQL用于获取表元数据
       sql-show: true
