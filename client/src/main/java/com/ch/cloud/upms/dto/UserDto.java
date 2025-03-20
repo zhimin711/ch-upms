@@ -1,7 +1,6 @@
 package com.ch.cloud.upms.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,46 +12,36 @@ import java.io.Serializable;
  * @since 2019/5/28
  */
 @Data
-@ApiModel("用户信息")
+@Schema(description = "用户信息")
 public class UserDto implements Serializable {
 
-    @ApiModelProperty(hidden = true)
-    private Long   id;
-    /**
-     *
-     */
+    @Schema(hidden = true)
+    private Long id;
+
+    @Schema(description = "用户ID")
     private String userId;
-    /**
-     * 用户名
-     */
-    @ApiModelProperty(name = "username", value = "登录名", required = true)
+
+    @Schema(description = "登录名")
     private String username;
-    /**
-     *
-     */
+
+    @Schema(description = "真实姓名")
     private String realName;
-    /**
-     *
-     */
+
+    @Schema(description = "头像")
     private String avatar;
-    /**
-     *
-     */
-    private Long   roleId;
-    /**
-     *
-     */
-    private Long   departmentId;
-    /**
-     *
-     */
+
+    @Schema(description = "角色ID")
+    private Long roleId;
+
+    @Schema(description = "部门ID")
+    private Long departmentId;
+
+    @Schema(description = "部门名称")
     private String departmentName;
-    /**
-     *
-     */
-    private Long   tenantId;
-    /**
-     *
-     */
+
+    @Schema(description = "租户ID")
+    private Long tenantId;
+
+    @Schema(description = "租户名称")
     private String tenantName;
 }

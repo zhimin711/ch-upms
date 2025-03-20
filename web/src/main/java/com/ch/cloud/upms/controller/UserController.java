@@ -1,7 +1,6 @@
 package com.ch.cloud.upms.controller;
 
 import com.ch.Constants;
-import com.ch.cloud.sso.client.SsoPasswordClient;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.manage.IUserManage;
 import com.ch.cloud.upms.model.Project;
@@ -13,7 +12,7 @@ import com.ch.cloud.upms.pojo.UserInfo;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.cloud.upms.vo.TenantChangeVO;
-import com.ch.e.ExceptionUtils;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.pojo.KeyValue;
 import com.ch.pojo.VueRecord2;
@@ -26,6 +25,7 @@ import com.ch.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,9 +48,8 @@ public class UserController {
     
     @Autowired
     private IUserManage userManage;
-    
-    @Autowired
-    private SsoPasswordClient ssoPasswordClient;
+
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     
     @Autowired
     private GatewayNotifySender gatewayNotifySender;
@@ -60,15 +59,10 @@ public class UserController {
         return ResultUtils.wrapFail(() -> {
             String username = RequestUtils.getHeaderUser();
             User user = userService.findByUsername(username);
-            if (user == null) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS);
-            }
-            Result<Boolean> res = ssoPasswordClient.matchEncrypt(keyValue.getKey(), user.getPassword());
-            if (!res.isSuccess() || !res.get()) {
-                ExceptionUtils._throw(PubError.USERNAME_OR_PASSWORD, "原密码错误，请输入正确密码!");
-            }
-            Result<String> res1 = ssoPasswordClient.encrypt(keyValue.getValue());
-            user.setPassword(res1.get());
+            Assert.notNull(user, PubError.NOT_EXISTS, "用户: " + username);
+            boolean ok = encoder.matches(keyValue.getKey(), user.getPassword());
+            Assert.isTrue(ok, PubError.USERNAME_OR_PASSWORD, "原密码错误，请输入正确密码!");
+            user.setPassword(encoder.encode(keyValue.getValue()));
             user.setUpdateBy(username);
             user.setUpdateAt(DateUtils.current());
             return userService.updatePassword(user);
@@ -81,13 +75,9 @@ public class UserController {
         return ResultUtils.wrapFail(() -> {
             String username = RequestUtils.getHeaderUser();
             User user = userService.findByUsername(username);
-            if (user == null) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS, "用户不存在: " + username);
-            }
+            Assert.notNull(user, PubError.NOT_EXISTS, "用户: " + username);
             boolean exists = userService.existsRole(user.getId(), role.getId());
-            if (!exists) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS, role.getId());
-            }
+            Assert.isTrue(exists, PubError.NOT_EXISTS, "角色: " + role.getId());
             User updateUser = new User();
             updateUser.setRoleId(role.getId());
             return userService.updateById(updateUser);
@@ -119,6 +109,8 @@ public class UserController {
             dto.setId(tenant.getId());
             dto.setName(tenant.getName());
             return dto;
+
+
         });
     }
     

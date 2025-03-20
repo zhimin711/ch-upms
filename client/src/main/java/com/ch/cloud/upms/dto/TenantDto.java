@@ -1,6 +1,6 @@
 package com.ch.cloud.upms.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -12,22 +12,23 @@ import lombok.Data;
  * @since 2021/10/16
  */
 @Data
+@Schema(description = "租户信息")
 public class TenantDto {
 
     /**
      * 租户Id
      */
-    @ApiModelProperty("ID")
+    @Schema(description = "ID")
     private Long   id;
     /**
      * 租户名称
      */
-    @ApiModelProperty("名称")
+    @Schema(description = "名称")
     private String name;
     /**
      * 租户部门
      */
-    @ApiModelProperty("部门")
+    @Schema(description = "部门")
     private String deptId;
 
 }

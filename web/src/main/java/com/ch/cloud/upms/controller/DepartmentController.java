@@ -12,7 +12,6 @@ import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IPositionService;
 import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.utils.RequestUtils;
-import com.ch.e.ExceptionUtils;
 import com.ch.e.PubError;
 import com.ch.pojo.VueRecord;
 import com.ch.result.PageResult;

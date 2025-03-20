@@ -10,7 +10,7 @@ import com.ch.cloud.upms.model.Tenant;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.utils.RequestUtils;
-import com.ch.e.ExceptionUtils;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.pojo.VueRecord;
 import com.ch.result.InvokerPage;
@@ -21,7 +21,8 @@ import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.StringUtilsV2;
 import com.ch.utils.VueRecordUtils;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,14 +38,15 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/tenant")
+@Tag(name = "业务-租户管理", description = "业务-租户管理相关接口")
 public class TenantController {
 
     @Autowired
-    private ITenantService     tenantService;
+    private ITenantService tenantService;
     @Autowired
     private IDepartmentService departmentService;
 
-    @ApiOperation(value = "分页查询", notes = "分页查询业务-租户")
+    @Operation(summary = "分页查询", description = "分页查询业务-租户")
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Tenant> page(Tenant record,
                                    @PathVariable(value = "num") int pageNum,
@@ -55,15 +57,13 @@ public class TenantController {
         });
     }
 
-    @ApiOperation(value = "添加", notes = "添加业务-租户")
+    @Operation(summary = "添加", description = "添加业务-租户")
     @PostMapping
     public Result<Boolean> add(@RequestBody Tenant record) {
         return ResultUtils.wrapFail(() -> {
             if (CommonUtils.isEmpty(record.getSort())) record.setSort(0);
             if (CommonUtils.isEmpty(record.getStatus())) record.setStatus("1");
-            if (CommonUtils.isEmpty(record.getDepartmentId())) {
-                ExceptionUtils._throw(PubError.NON_NULL, "部门不允许为空！");
-            }
+            Assert.notEmpty(record.getName(), PubError.NON_NULL, "租户名称！");
             checkSaveOrUpdate(record);
             record.setCreateBy(RequestUtils.getHeaderUser());
             record.setCreateAt(DateUtils.current());
@@ -74,9 +74,9 @@ public class TenantController {
 
     private void checkSaveOrUpdate(Tenant record) {
         Tenant r = tenantService.getOne(Wrappers.lambdaQuery(record).eq(Tenant::getDepartmentId, record.getDepartmentId()));
-        if (r != null && !CommonUtils.isEquals(record.getId(), r.getId())) {
-            ExceptionUtils._throw(PubError.EXISTS, "部门已存在！");
-        }
+        Assert.isFalse(r != null && !CommonUtils.isEquals(record.getId(),
+                r.getId()), PubError.EXISTS, "部门");
+
         List<Long> deptIds = StringUtilsV2.parseIds(record.getDepartmentId());
         List<String> names = departmentService.findNames(deptIds);
         record.setDepartmentName(String.join(Separator.OBLIQUE_LINE, names));
@@ -89,7 +89,7 @@ public class TenantController {
         }
     }
 
-    @ApiOperation(value = "修改", notes = "修改业务-租户")
+    @Operation(summary = "修改", description = "修改业务-租户")
     @PutMapping({"{id:[0-9]+}"})
     public Result<Boolean> edit(@RequestBody Tenant record) {
         return ResultUtils.wrapFail(() -> {
@@ -105,13 +105,14 @@ public class TenantController {
         return ResultUtils.wrapFail(() -> tenantService.getById(id));
     }
 
-    @ApiOperation(value = "删除", notes = "删除业务-租户")
+    @Operation(summary = "删除", description = "删除业务-租户")
     @DeleteMapping({"{id:[0-9]+}"})
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> tenantService.removeById(id));
     }
 
 
+    @Operation(summary = "查询可用租户", description = "查询可用租户列表")
     @GetMapping({"available"})
     public Result<VueRecord> findAvailable() {
         return ResultUtils.wrapList(() -> {

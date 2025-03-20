@@ -1,17 +1,11 @@
 package com.ch.cloud.upms.controller;
 
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Status;
 import com.ch.cloud.upms.manage.IDictManage;
 import com.ch.cloud.upms.model.Dict;
 import com.ch.cloud.upms.service.IDictService;
-import com.ch.cloud.upms.utils.RequestUtils;
-import com.ch.e.ExceptionUtils;
-import com.ch.e.PubError;
 import com.ch.pojo.VueRecord;
-import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
@@ -19,7 +13,6 @@ import com.ch.utils.VueRecordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**

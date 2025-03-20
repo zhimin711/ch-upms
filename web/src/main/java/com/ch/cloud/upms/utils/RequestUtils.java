@@ -1,8 +1,8 @@
 package com.ch.cloud.upms.utils;
 
 import com.ch.Constants;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
-import com.ch.e.ExceptionUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -21,7 +21,7 @@ public class RequestUtils {
 
     public static HttpServletRequest get() {
         RequestAttributes reqAttr = RequestContextHolder.getRequestAttributes();
-        if (reqAttr == null) throw ExceptionUtils.create(PubError.NOT_EXISTS, "http request not found!");
+        Assert.notNull(reqAttr, PubError.NOT_EXISTS, "request attributes not found!");
         return ((ServletRequestAttributes) reqAttr).getRequest();
     }
 

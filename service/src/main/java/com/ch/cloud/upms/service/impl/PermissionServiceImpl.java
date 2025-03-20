@@ -13,10 +13,10 @@ import com.ch.Status;
 import com.ch.cloud.upms.mapper.PermissionMapper;
 import com.ch.cloud.upms.model.Permission;
 import com.ch.cloud.upms.service.IPermissionService;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
-import com.ch.e.ExceptionUtils;
 import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -279,9 +279,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     public boolean delete(Long id) {
         if (id == null) return false;
         List<Permission> records = this.findByPid(id + "");
-        if (!records.isEmpty()) {
-            ExceptionUtils._throw(PubError.NOT_ALLOWED, "存在下级权限，不允许删除！");
-        }
+        Assert.isTrue(records.isEmpty(), PubError.NOT_ALLOWED, "存在下级权限 ","删除！");
+
         return super.removeById(id);
     }
 

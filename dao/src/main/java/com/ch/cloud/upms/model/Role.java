@@ -8,8 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 
 import java.util.Date;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -24,46 +23,44 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName("st_role")
-@ApiModel(value="Role对象", description="后台角色表")
+@Schema(description = "后台角色表")
 public class Role extends Model<Role> {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键ID")
+    @Schema(description = "主键ID")
     @TableId(value = "ID", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "名称")
+    @Schema(description = "名称")
     private String name;
 
-    @ApiModelProperty(value = "代码")
+    @Schema(description = "代码")
     private String code;
 
-    @ApiModelProperty(value = "类型: 1.系统 2.自定义)")
+    @Schema(description = "类型: 1.系统 2.自定义)")
     private String type;
 
-    @ApiModelProperty(value = "描述")
+    @Schema(description = "描述")
     private String description;
 
-    @ApiModelProperty(value = "状态: 0.禁用 1.启动")
+    @Schema(description = "状态: 0.禁用 1.启动")
     private String status;
 
-    @ApiModelProperty(value = "删除标志（0代表存在 1代表删除）")
+    @Schema(description = "删除标志（0代表存在 1代表删除）")
 //    @TableField(fill = FieldFill.INSERT)
     @TableLogic
     private Boolean deleted;
 
-    @ApiModelProperty(value = "创建人")
+    @Schema(description = "创建人")
     private String createBy;
 
-    @ApiModelProperty(value = "创建时间")
+    @Schema(description = "创建时间")
     private Date createAt;
 
-    @ApiModelProperty(value = "更新人")
+    @Schema(description = "更新人")
     private String updateBy;
 
-    @ApiModelProperty(value = "更新时间")
+    @Schema(description = "更新时间")
     private Date updateAt;
-
-
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -26,6 +27,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("bt_project")
+@Schema(description = "业务-项目表")
 public class Project extends Model<Project> {
     
     private static final long serialVersionUID = 1L;
@@ -33,6 +35,7 @@ public class Project extends Model<Project> {
     /**
      * 主键
      */
+    @Schema(description = "主键")
     @TableId(value = "ID", type = IdType.AUTO)
     @OrderBy(sort = 3, asc = true)
     private Long id;
@@ -40,6 +43,7 @@ public class Project extends Model<Project> {
     /**
      * 租户ID
      */
+    @Schema(description = "租户ID")
     @NotNull
     @OrderBy(sort = 1, asc = true)
     private Long tenantId;
@@ -47,74 +51,88 @@ public class Project extends Model<Project> {
     /**
      * 租户名称
      */
+    @Schema(description = "租户名称")
     private String tenantName;
     
     /**
      * 名称
      */
+    @Schema(description = "名称")
     private String name;
     
     /**
      * 代码
      */
+    @Schema(description = "代码")
     @NotNull
     private String code;
     
     /**
      * 所属部门(控制在两层)
      */
+    @Schema(description = "所属部门(控制在两层)")
     @NotNull
     private String department;
     
     /**
      * 部门名称
      */
+    @Schema(description = "部门名称")
     private String departmentName;
     
     /**
      * 负责人
      */
+    @Schema(description = "负责人")
     private String manager;
     
     /**
      * 排序
      */
+    @Schema(description = "排序")
     @OrderBy(sort = 2, asc = true)
     private Integer sort;
     
     /**
      * 描述
      */
+    @Schema(description = "描述")
     private String description;
     
     /**
      * 状态：0.失效 1.生效
      */
+    @Schema(description = "状态：0.失效 1.生效")
     private String status;
     
     /**
      * 逻辑删除：0.否 1.是
      */
+    @Schema(description = "逻辑删除：0.否 1.是")
     private Boolean deleted;
     
     /**
      * 创建时间
      */
+    @Schema(description = "创建时间")
     private Date createAt;
     
     /**
      * 创建人
      */
+    @Schema(description = "创建人")
     private String createBy;
     
     /**
      * 更新时间
      */
+    @Schema(description = "更新时间")
     private Date updateAt;
     
     /**
      * 更新人
      */
+    @Schema(description = "更新人")
     private String updateBy;
     
     @TableField(exist = false)

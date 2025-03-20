@@ -11,23 +11,55 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   shardingsphere:
+    mode:
+      type: Standalone
+      repository:
+        type: JDBC
+        props:
+          path: ./config/shardingsphere
+          datasource-class-name: com.zaxxer.hikari.HikariDataSource
+          jdbc-url: jdbc:mysql://192.168.150.254:3306/ch_wiki?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+          username: zhimin
+          password: 123456
+    props:
+      # 禁用执行SQL用于获取表元数据
+      sql-show: true
+      # 禁用执行SQL用于获取数据库元数据
+    #      check-table-metadata-enabled: false
     datasource:
       names: ds0
       ds0:
-        type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://192.168.0.200:3306/ch_upms?characterEncoding=UTF-8&serverTimezone=GMT
-        username: admin
-        password: 123456
-    sharding:
-      tables:
-        lt_op_record:
-          actualDataNodes: ds0.lt_op_record_$->{0..1}
-          logicTable: lt_op_record
-          tableStrategy:
-            standard:
-              preciseAlgorithmClassName: com.ch.cloud.upms.sharding.LogShardingStrategy
-              shardingColumn: auth_code
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:mysql://192.168.1.86:3306/ch_wiki_dev?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+        username: zhimin
+        password: Zhimin@12345
+    rules:
+      sharding:
+        sharding-algorithms:
+          auto-date-algorithm:
+            type: AUTO_INTERVAL
+            props:
+              datetime-lower: '2024-11-01 00:00:00'
+              datetime-upper: '2024-12-31 23:59:59'
+              sharding-seconds: 86400
+          date-month-algorithm:
+            type: INTERVAL
+            props:
+              datetime-pattern: yyyy-MM-dd
+              datetime-lower: '2024-11-01'
+              datetime-upper: '2099-12-31'
+              sharding-suffix-pattern: yyyyMM
+              datetime-interval-amount: 1
+              datetime-interval-unit: MONTHS
+        tables:
+          lt_op_record:
+            actualDataNodes: ds0.lt_op_record_$->{0..1}
+            logicTable: lt_op_record
+            table-strategy:
+              standard:
+                sharding-column: AUTH_CODE
+                sharding-algorithm-name: date-month-algorithm
 #====================================spring config===============================================
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
@@ -103,3 +135,10 @@ path:
 
 ch:
   gateway: ch-gateway
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

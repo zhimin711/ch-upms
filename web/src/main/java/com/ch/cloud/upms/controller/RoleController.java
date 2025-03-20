@@ -10,7 +10,7 @@ import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.utils.RequestUtils;
-import com.ch.e.ExceptionUtils;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.pojo.KeyValue;
 import com.ch.result.InvokerPage;
@@ -41,9 +41,9 @@ public class RoleController {
 
 
     @Autowired
-    private IRoleService        roleService;
+    private IRoleService roleService;
     @Autowired
-    private IPermissionService  permissionService;
+    private IPermissionService permissionService;
     @Autowired
     private GatewayNotifySender gatewayNotifySender;
 
@@ -60,17 +60,13 @@ public class RoleController {
     @PostMapping
     public Result<Boolean> add(@RequestBody Role record) {
         return ResultUtils.wrapFail(() -> {
-            if (CommonUtils.isEmpty(record.getCode())) {
-                ExceptionUtils._throw(PubError.EXISTS, "角色代码不能为空！");
-            }
+            Assert.notEmpty(record.getCode(), PubError.NON_NULL, "角色代码");
             String code = record.getCode().trim().toUpperCase();
             Role r = roleService.findByCode(code);
-            if (r != null) {
-                ExceptionUtils._throw(PubError.EXISTS, "角色代码已存在！");
-            }
-            if (CommonUtils.isEquals(Num.S0, record.getType())) {
-                ExceptionUtils._throw(PubError.NOT_ALLOWED, "角色类型错误！");
-            }
+            Assert.isNull(r, PubError.EXISTS, "角色代码");
+            Assert.isFalse(CommonUtils.isEquals(Num.S0, record.getType()),
+                    PubError.INVALID, "角色类型");
+
             record.setCode(code);
             record.setCreateBy(RequestUtils.getHeaderUser());
             return roleService.save(record);
@@ -80,13 +76,10 @@ public class RoleController {
     @PutMapping("{id:[0-9]+}")
     public Result<Boolean> edit(@PathVariable Long id, @RequestBody Role record) {
         return ResultUtils.wrapFail(() -> {
-            if (CommonUtils.isEquals(Num.S0, record.getType())) {
-                ExceptionUtils._throw(PubError.ARGS, "角色类型错误！");
-            }
+            Assert.isFalse(CommonUtils.isEquals(Num.S0, record.getType()),
+                    PubError.INVALID, "角色类型");
             Role orig = roleService.getById(id);
-            if (CommonUtils.isEquals(StatusS.DISABLED, orig.getType())) {
-                ExceptionUtils._throw(PubError.NOT_ALLOWED, "该角色类型不允许修改！");
-            }
+            Assert.isFalse(CommonUtils.isEquals(Num.S0, orig.getType()), PubError.NOT_ALLOWED, "该角色类型");
             record.setCode(orig.getCode());
             record.setCreateAt(orig.getCreateAt());
             record.setCreateBy(orig.getCreateBy());
@@ -107,9 +100,8 @@ public class RoleController {
         return ResultUtils.wrapList(() -> {
             Long rid = roleId;
             Role role = roleService.getById(roleId);
-            if (role == null) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS);
-            } else if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
+            Assert.notNull(role, PubError.NOT_EXISTS, "角色: " + roleId);
+            if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
             }
             return permissionService.findByTypeAndRoleId(Lists.newArrayList("1", "2", "4"), rid);
@@ -123,11 +115,10 @@ public class RoleController {
             Role role = roleService.getById(roleId);
             String typesStr2 = CommonUtils.isEmpty(typesStr) ? "3,4" : typesStr;
 
-            if (role == null) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS);
-            } else if (CommonUtils.isEquals(StatusS.DISABLED, role.getStatus())) {
-                ExceptionUtils._throw(PubError.INVALID, "角色：" + roleId);
-            } else if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
+            Assert.notNull(role, PubError.NOT_EXISTS, "角色: " + roleId);
+            Assert.isFalse(CommonUtils.isEquals(StatusS.DISABLED, role.getStatus()),
+                    PubError.INVALID, "禁用角色：" + roleId);
+            if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
             }
             List<String> types = StringUtilsV2.splitStrAndDeDuplication(Separator.COMMA_SIGN, typesStr2);

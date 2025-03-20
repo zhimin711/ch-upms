@@ -1,13 +1,12 @@
 package com.ch.cloud.upms.controller;
 
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.cloud.upms.model.OPRecord;
 import com.ch.cloud.upms.service.IOPRecordService;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.ResultUtils;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/op/record")
-@Api(value = "操作日志", tags = "操作日志")
+@Tag(name = "操作日志", description = "操作日志")
 public class OPRecordController {
     
     @Resource
@@ -40,4 +39,3 @@ public class OPRecordController {
         });
     }
 }
-

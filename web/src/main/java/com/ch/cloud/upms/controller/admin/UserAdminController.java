@@ -3,7 +3,6 @@ package com.ch.cloud.upms.controller.admin;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Separator;
-import com.ch.cloud.sso.client.SsoPasswordClient;
 import com.ch.cloud.upms.enums.DepartmentType;
 import com.ch.cloud.upms.manage.IDepartmentManage;
 import com.ch.cloud.upms.manage.IUserManage;
@@ -16,7 +15,7 @@ import com.ch.cloud.upms.service.IPositionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.cloud.upms.utils.RequestUtils;
-import com.ch.e.ExceptionUtils;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
@@ -28,6 +27,7 @@ import com.ch.utils.StringUtilsV2;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,10 +62,9 @@ public class UserAdminController {
     
     @Autowired
     private IPositionService positionService;
-    
-    @Autowired
-    private SsoPasswordClient ssoPasswordClient;
-    
+
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<User> page(User record, @PathVariable(value = "num") int pageNum,
             @PathVariable(value = "size") int pageSize) {
@@ -154,21 +153,14 @@ public class UserAdminController {
     public Result<String> initPwd(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> {
             User user = userService.getById(id);
-            if (user == null) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS);
-            }
+            Assert.notNull(user, PubError.NOT_EXISTS, "用户: " + id);
             String pwd = RandomUtil.randomString(6);
-            Result<String> res = ssoPasswordClient.encrypt(pwd);
-            if (!res.isSuccess()) {
-                ExceptionUtils._throw(PubError.UPDATE, "加密错误，请稍后重试!");
-            }
-            user.setPassword(res.get());
+
+            user.setPassword(encoder.encode(pwd));
             user.setUpdateBy(RequestUtils.getHeaderUser());
             user.setUpdateAt(DateUtils.current());
             int c = userService.updatePassword(user);
-            if (c <= 0) {
-                ExceptionUtils._throw(PubError.UPDATE, "更新密码失败!");
-            }
+            Assert.isTrue(c > 0, PubError.UPDATE, "更新密码失败!");
             return pwd;
         });
     }

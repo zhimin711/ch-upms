@@ -6,9 +6,9 @@ import com.baidu.ueditor.define.BaseState;
 import com.baidu.ueditor.define.FileType;
 import com.baidu.ueditor.define.State;
 import com.baidu.ueditor.upload.StorageManager;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.utils.CommonUtils;
-import com.ch.e.ExceptionUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -76,9 +76,7 @@ public class UEBinaryUploader {
                 md5 = DigestUtils.md5Hex(fileStream.openStream());
                 is = fileStream.openStream();
             }
-            if (originFileName == null) {
-                throw ExceptionUtils.create(PubError.INVALID);
-            }
+            Assert.notNull(originFileName, PubError.NON_NULL, "上传文件流");
 
             String savePath = (String) conf.get("savePath");
 

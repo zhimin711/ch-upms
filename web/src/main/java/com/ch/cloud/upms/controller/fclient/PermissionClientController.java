@@ -11,7 +11,8 @@ import com.ch.cloud.upms.service.IRoleService;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.BeanUtilsV2;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/permission")
 //@Slf4j
-@Api("系统权限管理")
+@Tag(name = "系统权限管理", description = "系统权限管理相关接口")
 public class PermissionClientController implements UpmsPermissionClientService {
 
     @Autowired
@@ -35,6 +36,7 @@ public class PermissionClientController implements UpmsPermissionClientService {
     @Autowired
     IPermissionService permissionService;
 
+    @Operation(summary = "获取隐藏权限", description = "获取隐藏的权限列表")
     @GetMapping({"hidden"})
     public Result<PermissionDto> hidden() {
         return ResultUtils.wrapList(() -> {
@@ -47,6 +49,7 @@ public class PermissionClientController implements UpmsPermissionClientService {
         });
     }
 
+    @Operation(summary = "获取白名单权限", description = "获取白名单的权限列表")
     @GetMapping({"whitelist"})
     public Result<PermissionDto> whitelist() {
         return ResultUtils.wrapList(() -> {
@@ -60,6 +63,7 @@ public class PermissionClientController implements UpmsPermissionClientService {
         });
     }
 
+    @Operation(summary = "获取Cookie权限", description = "获取Cookie权限列表")
     @GetMapping({"cookie"})
     public Result<PermissionDto> cookie() {
         return ResultUtils.wrapList(() -> {

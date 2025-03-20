@@ -23,7 +23,7 @@ public class GatewayNotifySender {
 
     public static final String MQ_GATEWAY_CLEAN_TOPIC = "gateway-clean";
 
-    @Autowired
+    @Autowired(required = false)
     private RocketMQTemplate rocketMQTemplate;
 
     public void cleanNotify(KeyValue keyValue) {

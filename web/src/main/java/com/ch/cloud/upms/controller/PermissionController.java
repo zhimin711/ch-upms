@@ -9,7 +9,7 @@ import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.cloud.upms.utils.VueRecordUtils;
-import com.ch.e.ExceptionUtils;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.pojo.KeyValue;
 import com.ch.pojo.VueRecord2;
@@ -21,8 +21,9 @@ import com.ch.utils.DateUtils;
 import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,17 +39,21 @@ import java.util.Set;
 @RestController
 @RequestMapping("/permission")
 //@Slf4j
-@Api("系统权限管理")
+@Tag(name = "系统权限管理", description = "系统权限管理相关接口")
 public class PermissionController {
 
     @Autowired
-    IRoleService       roleService;
+    IRoleService roleService;
     @Autowired
     IPermissionService permissionService;
 
     @Autowired
     private GatewayNotifySender gatewayNotifySender;
 
+    @Operation(summary = "分页查询权限", description = "根据条件分页查询权限列表")
+    @Parameter(name = "record", description = "权限查询条件", required = false)
+    @Parameter(name = "pageNum", description = "页码", required = true)
+    @Parameter(name = "pageSize", description = "每页大小", required = true)
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
     public PageResult<Permission> page(Permission record,
                                        @PathVariable(value = "num") int pageNum,
@@ -91,19 +96,18 @@ public class PermissionController {
         });
     }
 
+    @Operation(summary = "添加权限", description = "添加新的权限")
+    @Parameter(name = "record", description = "权限信息", required = true)
     @PostMapping
     public Result<Boolean> add(@RequestBody Permission record) {
         return ResultUtils.wrapFail(() -> {
-            if (CommonUtils.isEmpty(record.getCode()) || CommonUtils.isEmpty(record.getName())) {
-                ExceptionUtils._throw(PubError.NON_NULL, "权限代码或名称不能为空");
-            }
+            Assert.notEmpty(record.getCode(), PubError.NON_NULL, "权限代码");
+            Assert.notEmpty(record.getName(), PubError.NON_NULL, "权限名称");
             if (CommonUtils.isEquals("3", record.getType()) || CommonUtils.isEquals("5", record.getType())) {
                 record.setCode(record.getCode().toUpperCase());
             }
             Permission r = permissionService.findByCode(record.getCode());
-            if (r != null) {
-                ExceptionUtils._throw(PubError.EXISTS, "权限代码已存在！");
-            }
+            Assert.isNull(r, PubError.EXISTS, "权限代码");
             if (CommonUtils.isEmpty(record.getParentId())) {
                 record.setParentId("0");
             } else {
@@ -117,6 +121,9 @@ public class PermissionController {
         });
     }
 
+    @Operation(summary = "更新权限", description = "更新指定ID的权限")
+    @Parameter(name = "id", description = "权限ID", required = true)
+    @Parameter(name = "record", description = "权限信息", required = true)
     @PutMapping({"{id:[0-9]+}"})
     public Result<Integer> edit(@PathVariable Long id, @RequestBody Permission record) {
         return ResultUtils.wrapFail(() -> {
@@ -137,12 +144,8 @@ public class PermissionController {
             record.setUpdateAt(DateUtils.current());
             Permission r = permissionService.findByCode(record.getCode());
             Permission orig = permissionService.getById(id);
-            if (orig == null) {
-                throw ExceptionUtils.create(PubError.NOT_EXISTS, "权限不存在！");
-            }
-            if (r != null && !CommonUtils.isEquals(id, r.getId())) {
-                ExceptionUtils._throw(PubError.NOT_EXISTS, "权限代码已存在！");
-            }
+            Assert.notNull(r, PubError.NOT_EXISTS, "权限代码");
+            Assert.isTrue(CommonUtils.isEquals(id, r.getId()), PubError.EXISTS, "权限代码", record.getCode());
             record.setChildren(null);
             if (!CommonUtils.isEquals(record.getParentId(), orig.getParentId()) && Lists.newArrayList(Num.S1, Num.S2).contains(orig.getType())) {
                 String pid = id + "";
@@ -150,9 +153,8 @@ public class PermissionController {
                     pid = orig.getParentId() + "," + id;
                 }
                 List<Permission> children = permissionService.findByPid(pid);
-                if (CommonUtils.isEquals(Num.S1, orig.getType()) && !children.isEmpty()) {
-                    ExceptionUtils._throw(PubError.NOT_EXISTS, "权限目录存在子菜单不允许调整上级！");
-                }
+                Assert.isFalse(CommonUtils.isEquals(Num.S1, orig.getType())
+                        && !children.isEmpty(), PubError.NOT_ALLOWED, "权限目录存在子菜单","调整上级！");
                 record.setChildren(children);
             }
             int c = permissionService.updateWithNull(record);
@@ -174,12 +176,16 @@ public class PermissionController {
         });
     }
 
+    @Operation(summary = "删除权限", description = "删除指定ID的权限")
+    @Parameter(name = "id", description = "权限ID", required = true)
     @DeleteMapping({"{id:[0-9]+}"})
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> permissionService.delete(id));
     }
 
 
+    @Operation(summary = "获取子权限", description = "获取指定ID的子权限列表")
+    @Parameter(name = "record", description = "权限查询条件", required = false)
     @GetMapping({"{id:[0-9]+}/children"})
     public Result<Permission> getChildren(Permission record) {
         return ResultUtils.wrapList(() -> {
@@ -195,7 +201,8 @@ public class PermissionController {
     }
 
 
-    @ApiOperation(value = "获取权限树", notes = "0.全部 1.目录 2.菜单 3.按钮、链接 4.可以授权接口 9.可授权权限")
+    @Operation(summary = "获取权限树", description = "获取权限树结构")
+    @Parameter(name = "type", description = "权限类型", required = true)
     @GetMapping({"tree/{type:[0-9]+}"})
     public Result<VueRecord2> tree(@PathVariable String type) {
         return ResultUtils.wrapList(() -> {
