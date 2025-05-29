@@ -1,6 +1,6 @@
 package com.ch.cloud.upms.manage;
 
-import com.ch.cloud.upms.model.Department;
+import com.ch.cloud.upms.user.model.Department;
 
 /**
  * <p>

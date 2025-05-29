@@ -21,6 +21,11 @@ mvn install:install-file -Dfile=xxx/libs/third/ueditor-1.1.2.jar -DgroupId=com.b
 ```shell
 mvn clean install -Drevision=1.0.1-SNAPSHOT
 ```
+### 打包client模块
+```shell
+mvn -U -pl client -am clean install -Dmaven.test.skip -Drevision=1.1.1-SNAPSHOT
+```
+
 
 
 1. 初化数据库  

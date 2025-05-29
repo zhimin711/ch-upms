@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.service;
 
 import com.ch.Status;
-import com.ch.cloud.upms.model.Dict;
+import com.ch.cloud.upms.base.model.Dict;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

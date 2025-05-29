@@ -1,6 +1,6 @@
 package com.ch.cloud.upms.manage;
 
-import com.ch.cloud.upms.model.Project;
+import com.ch.cloud.upms.user.model.Project;
 
 /**
  * <p>

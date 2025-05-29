@@ -2,11 +2,11 @@ package com.ch.cloud.upms.manage.impl;
 
 import com.ch.Separator;
 import com.ch.cloud.upms.manage.IDepartmentManage;
-import com.ch.cloud.upms.model.Department;
-import com.ch.cloud.upms.model.Project;
-import com.ch.cloud.upms.model.Tenant;
-import com.ch.cloud.upms.model.User;
-import com.ch.cloud.upms.pojo.DepartmentDuty;
+import com.ch.cloud.upms.user.model.Department;
+import com.ch.cloud.upms.user.model.Project;
+import com.ch.cloud.upms.user.model.Tenant;
+import com.ch.cloud.upms.user.model.User;
+import com.ch.cloud.upms.user.pojo.DepartmentDuty;
 import com.ch.cloud.upms.service.IDepartmentDutyService;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IProjectService;

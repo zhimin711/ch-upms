@@ -3,12 +3,11 @@ package com.ch.cloud.upms.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.Num;
 import com.ch.Status;
-import com.ch.cloud.upms.mapper.DictMapper;
-import com.ch.cloud.upms.model.Dict;
+import com.ch.cloud.upms.base.mapper.DictMapper;
+import com.ch.cloud.upms.base.model.Dict;
 import com.ch.cloud.upms.service.IDictService;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 

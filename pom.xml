@@ -7,7 +7,6 @@
         <artifactId>ch-cloud</artifactId>
         <version>2.0.1-SNAPSHOT</version>
     </parent>
-    <groupId>com.ch.cloud</groupId>
     <artifactId>ch-upms</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
@@ -29,7 +28,8 @@
         <file_encoding>UTF-8</file_encoding>
         <flatten-maven-plugin.version>1.1.0</flatten-maven-plugin.version>
         
-        <ch.cloud.version>2.0.1-SNAPSHOT</ch.cloud.version>
+<!--        <ch.cloud.version>2.0.1-SNAPSHOT</ch.cloud.version>-->
+        <ch.cloud.version>2.0.2.1-SNAPSHOT</ch.cloud.version>
         <ch.version>2.0.1-SNAPSHOT</ch.version>
         <ch.sso.version>1.0.0-SNAPSHOT</ch.sso.version>
         

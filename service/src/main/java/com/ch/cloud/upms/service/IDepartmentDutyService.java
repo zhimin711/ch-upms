@@ -1,6 +1,6 @@
 package com.ch.cloud.upms.service;
 
-import com.ch.cloud.upms.pojo.DepartmentDuty;
+import com.ch.cloud.upms.user.pojo.DepartmentDuty;
 
 import java.util.List;
 

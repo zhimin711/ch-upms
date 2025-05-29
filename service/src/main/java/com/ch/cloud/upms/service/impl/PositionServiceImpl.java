@@ -1,8 +1,8 @@
 package com.ch.cloud.upms.service.impl;
 
 import com.ch.Status;
-import com.ch.cloud.upms.model.Position;
-import com.ch.cloud.upms.mapper.PositionMapper;
+import com.ch.cloud.upms.user.model.Position;
+import com.ch.cloud.upms.user.mapper.PositionMapper;
 import com.ch.cloud.upms.service.IPositionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.tools.sql.utils.SQLUtils;

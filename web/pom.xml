@@ -18,7 +18,12 @@
         <maven.test.skip>true</maven.test.skip>
     </properties>
     <dependencies>
-
+        
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.6.15</version> <!-- 兼容 Spring Boot 2.6.x -->
+        </dependency>
         <dependency>
             <groupId>com.ch.cloud</groupId>
             <artifactId>ch-upms-service</artifactId>
@@ -26,6 +31,11 @@
         <dependency>
             <groupId>com.ch.cloud</groupId>
             <artifactId>ch-cloud-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.33</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -56,10 +66,6 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-typehandlers-jsr310</artifactId>
             <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
         </dependency>
         <!--
         <dependency>

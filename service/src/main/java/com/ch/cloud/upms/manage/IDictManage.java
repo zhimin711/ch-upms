@@ -1,6 +1,6 @@
 package com.ch.cloud.upms.manage;
 
-import com.ch.cloud.upms.model.Dict;
+import com.ch.cloud.upms.base.model.Dict;
 
 /**
  * <p>

@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.mapstrut;
 
 import com.ch.cloud.upms.dto.ProjectDto;
-import com.ch.cloud.upms.model.Project;
+import com.ch.cloud.upms.user.model.Project;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

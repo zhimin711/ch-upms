@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.mapstrut;
 
 import com.ch.cloud.upms.dto.PermissionDto;
-import com.ch.cloud.upms.model.Permission;
+import com.ch.cloud.upms.user.model.Permission;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

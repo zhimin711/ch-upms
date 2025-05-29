@@ -2,7 +2,7 @@ package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ch.cloud.upms.model.OPRecord;
+import com.ch.cloud.upms.log.model.OPRecord;
 
 /**
  * <p>

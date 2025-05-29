@@ -2,8 +2,8 @@ package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ch.cloud.upms.mapper.OPRecordMapper;
-import com.ch.cloud.upms.model.OPRecord;
+import com.ch.cloud.upms.log.mapper.OPRecordMapper;
+import com.ch.cloud.upms.log.model.OPRecord;
 import com.ch.cloud.upms.service.IOPRecordService;
 import com.ch.utils.CommonUtils;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OPRecordServiceImpl extends ServiceImpl<OPRecordMapper, OPRecord> implements IOPRecordService {
-
+    
     @Override
     public Page<OPRecord> page(OPRecord record, int pageNum, int pageSize) {
-        return super.query().select("id", "url", "method", "auth_code", "status", "operator", "request_ip", "request_time", "response_time", "error_message")
+        return super.query()
+                .select("id", "url", "method", "auth_code", "status", "operator", "request_ip", "request_time",
+                        "response_time", "error_message")
                 .likeRight(CommonUtils.isNotEmpty(record.getAuthCode()), "auth_code", record.getAuthCode())
                 .likeRight(CommonUtils.isNotEmpty(record.getUrl()), "url", record.getUrl())
                 .eq(CommonUtils.isNotEmpty(record.getStatus()), "status", record.getStatus())

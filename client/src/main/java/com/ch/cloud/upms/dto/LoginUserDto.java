@@ -1,7 +1,6 @@
 package com.ch.cloud.upms.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,17 +12,17 @@ import java.io.Serializable;
  * @since 2019/5/28
  */
 @Data
-@ApiModel("用户信息")
+@Schema(description = "用户信息")
 public class LoginUserDto implements Serializable {
 
     /**
      * 用户名
      */
-    @ApiModelProperty(name = "username", value = "登录名", required = true)
+    @Schema(name = "username", description = "登录名")
     private String username;
     /**
      * 密码
      */
-    @ApiModelProperty(name = "password", value = "密码", required = true, position = 1)
+    @Schema(name = "password", description = "密码")
     private String password;
 }

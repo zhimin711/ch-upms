@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ch.cloud.upms.model.Role;
+import com.ch.cloud.upms.user.model.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

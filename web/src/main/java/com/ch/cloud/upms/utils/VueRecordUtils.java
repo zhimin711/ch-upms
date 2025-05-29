@@ -4,7 +4,7 @@ import com.ch.Num;
 import com.ch.Separator;
 import com.ch.StatusS;
 import com.ch.cloud.upms.enums.PermissionType;
-import com.ch.cloud.upms.model.Permission;
+import com.ch.cloud.upms.user.model.Permission;
 import com.ch.pojo.VueRecord2;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.StringUtilsV2;

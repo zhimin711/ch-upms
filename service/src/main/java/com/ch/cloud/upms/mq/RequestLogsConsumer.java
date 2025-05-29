@@ -3,8 +3,8 @@ package com.ch.cloud.upms.mq;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ch.Separator;
-import com.ch.cloud.upms.model.OPRecord;
-import com.ch.cloud.upms.model.Permission;
+import com.ch.cloud.upms.log.model.OPRecord;
+import com.ch.cloud.upms.user.model.Permission;
 import com.ch.cloud.upms.service.IOPRecordService;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.utils.CommonUtils;
@@ -131,16 +131,16 @@ public class RequestLogsConsumer implements RocketMQListener<String> {
         if (!request.containsKey("headers")) return "N/A";
         JSONObject headers = request.getJSONObject("headers");
         String ip = headers.getString("X-Forwarded-For");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = headers.getString("X-Original-Forwarded-For");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = headers.getString("Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = headers.getString("WL-Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = headers.getString("X-Real-IP");
         }
         /*if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {

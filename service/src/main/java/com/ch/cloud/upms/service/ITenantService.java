@@ -3,7 +3,7 @@ package com.ch.cloud.upms.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.Status;
-import com.ch.cloud.upms.model.Tenant;
+import com.ch.cloud.upms.user.model.Tenant;
 
 import java.util.List;
 

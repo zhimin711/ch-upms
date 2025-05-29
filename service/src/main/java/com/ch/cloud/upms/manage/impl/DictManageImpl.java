@@ -2,7 +2,7 @@ package com.ch.cloud.upms.manage.impl;
 
 import com.ch.Status;
 import com.ch.cloud.upms.manage.IDictManage;
-import com.ch.cloud.upms.model.Dict;
+import com.ch.cloud.upms.base.model.Dict;
 import com.ch.cloud.upms.service.IDictService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;

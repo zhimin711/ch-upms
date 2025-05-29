@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.manage.impl;
 
 import com.ch.cloud.upms.manage.IProjectManage;
-import com.ch.cloud.upms.model.Project;
+import com.ch.cloud.upms.user.model.Project;
 import com.ch.cloud.upms.service.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;

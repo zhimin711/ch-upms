@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.service;
 
 import com.ch.Status;
-import com.ch.cloud.upms.model.Position;
+import com.ch.cloud.upms.user.model.Position;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

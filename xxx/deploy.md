@@ -9,12 +9,17 @@ mvn -U -pl client -am clean install -Dmaven.test.skip -Drevision=1.1.0-SNAPSHOT
 ```shell script
 scp -r src/main/docker/Dockerfile zhimin@192.168.1.100:/home/zhimin/docker/ch-upms
 # window 
-scp -r build/libs/ch-upms-1.0.0-SNAPSHOT.jar zhimin@192.168.0.109:/home/zhimin/docker/ch-upms
+scp -r web/target/ch-upms-1.0.1-SNAPSHOT.jar root@192.168.150.252:/root/ch/upms
 ```
 ####   打包docker镜像  
 基于src/main/docker/Dockerfile打包
 ```shell script
 docker build -t ch-upms:v1 /home/zhimin/docker/ch-upms
+
+
+docker build -t ch-upms:v1 .
+docker tag ch-upms:v1 registry.cn-hangzhou.aliyuncs.com/ch-cloud/ch-upms:2.0.1
+docker push registry.cn-hangzhou.aliyuncs.com/ch-cloud/ch-upms:2.0.1
 ```
 
 #### 启动

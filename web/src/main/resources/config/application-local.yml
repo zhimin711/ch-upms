@@ -7,27 +7,47 @@ jasypt:
 
 #====================================shardingsphereconfig===============================================
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   shardingsphere:
+    # 参数配置，显示sql
+    props:
+      sql:
+        show: true
     datasource:
-      names: ds0
-      ds0:
-        type: com.zaxxer.hikari.HikariDataSource
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://192.168.0.200:3306/ch_upms?characterEncoding=UTF-8&serverTimezone=GMT
+      names: upms
+      upms:
+        url: jdbc:mysql://192.168.150.254:3306/ch_upms?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
         username: admin
         password: 123456
-    sharding:
-      tables:
-        lt_op_record:
-          actualDataNodes: ds0.lt_op_record_$->{0..1}
-          logicTable: lt_op_record
-          tableStrategy:
-            standard:
-              preciseAlgorithmClassName: com.ch.cloud.upms.sharding.LogShardingStrategy
-              shardingColumn: auth_code
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.zaxxer.hikari.HikariDataSource
+        hikari:
+          minimum-idle: 5
+          maximum-pool-size: 15
+          auto-commit: true
+          idle-timeout: 30000
+          max-lifetime: 1800000
+          connection-timeout: 30000
+          connection-test-query: SELECT 1
+    rules:
+      sharding:
+        sharding-algorithms:
+          timestamp-date-month-algorithm:
+            type: TIMESTAMP_DATE_MONTH_ALGORITHM
+        tables:
+          lt_op_record:
+            actual-data-nodes: upms.lt_op_record_$->{202401..209909},upms.lt_op_record_$->{202410..209912}
+            logic-table: lt_op_record
+            table-strategy:
+              standard:
+                sharding-column: REQUEST_TIME
+                sharding-algorithm-name: timestamp-date-month-algorithm
 #====================================spring config===============================================
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
@@ -53,7 +73,7 @@ spring:
     multipart:
       max-file-size: 100MB
   redis:
-    host: 192.168.150.206
+    host: 192.168.150.254
     port: 6379
     password: admin123
     database: 3
@@ -74,7 +94,7 @@ logging:
     com.ch.utils: info
     com.alibaba.nacos.client: warn
   file:
-    path: build/logs
+    path: web/target/build/logs
 
 
 #====================================rocketmq config===============================================
@@ -103,3 +123,12 @@ path:
 
 ch:
   gateway: ch-gateway
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  #    path: /swagger-ui/index.html  # 默认路径，可自定义
+  api-docs:
+    path: /v3/api-docs      # OpenAPI JSON 端点
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

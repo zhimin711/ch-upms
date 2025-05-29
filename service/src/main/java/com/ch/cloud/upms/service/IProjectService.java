@@ -3,8 +3,8 @@ package com.ch.cloud.upms.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.cloud.upms.dto.ProjectUserRoleDTO;
-import com.ch.cloud.upms.model.Project;
-import com.ch.cloud.upms.vo.ProjectUsersVO;
+import com.ch.cloud.upms.user.model.Project;
+import com.ch.cloud.upms.user.vo.ProjectUsersVO;
 import org.springframework.cache.annotation.CacheEvict;
 
 import java.util.List;

@@ -20,7 +20,8 @@
 
         <dependency>
             <groupId>com.ch.cloud</groupId>
-            <artifactId>ch-cloud-common</artifactId>
+            <artifactId>ch-cloud-starter-common</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.enums.RoleType;
-import com.ch.cloud.upms.model.Project;
-import com.ch.cloud.upms.model.Tenant;
-import com.ch.cloud.upms.model.User;
-import com.ch.cloud.upms.pojo.DepartmentDuty;
+import com.ch.cloud.upms.user.model.Project;
+import com.ch.cloud.upms.user.model.Tenant;
+import com.ch.cloud.upms.user.model.User;
+import com.ch.cloud.upms.user.pojo.DepartmentDuty;
 
 import java.util.List;
 

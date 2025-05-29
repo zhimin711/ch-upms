@@ -17,5 +17,7 @@ public class ProjectUserRoleDTO {
     
     private String userId;
     
+    private String realName;
+    
     private String role;
 }

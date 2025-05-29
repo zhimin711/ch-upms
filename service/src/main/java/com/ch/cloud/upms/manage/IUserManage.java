@@ -1,8 +1,7 @@
 package com.ch.cloud.upms.manage;
 
 import com.ch.cloud.upms.dto.UserDto;
-import com.ch.cloud.upms.model.User;
-import org.springframework.transaction.annotation.Transactional;
+import com.ch.cloud.upms.user.model.User;
 
 import java.util.List;
 

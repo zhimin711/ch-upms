@@ -1,7 +1,7 @@
 package com.ch.cloud.upms.service.impl;
 
-import com.ch.cloud.upms.mapper2.UserDepartmentPositionMapper;
-import com.ch.cloud.upms.pojo.DepartmentDuty;
+import com.ch.cloud.upms.user.mapper2.UserDepartmentPositionMapper;
+import com.ch.cloud.upms.user.pojo.DepartmentDuty;
 import com.ch.cloud.upms.service.IDepartmentDutyService;
 import org.springframework.stereotype.Service;
 

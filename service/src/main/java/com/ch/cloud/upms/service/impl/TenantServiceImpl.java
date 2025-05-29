@@ -2,8 +2,8 @@ package com.ch.cloud.upms.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Status;
-import com.ch.cloud.upms.model.Tenant;
-import com.ch.cloud.upms.mapper.TenantMapper;
+import com.ch.cloud.upms.user.model.Tenant;
+import com.ch.cloud.upms.user.mapper.TenantMapper;
 import com.ch.cloud.upms.service.ITenantService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch.utils.CommonUtils;
