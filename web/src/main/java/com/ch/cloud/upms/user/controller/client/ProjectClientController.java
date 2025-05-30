@@ -1,4 +1,4 @@
-package com.ch.cloud.upms.user.controller.fclient;
+package com.ch.cloud.upms.user.controller.client;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

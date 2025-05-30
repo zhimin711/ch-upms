@@ -198,7 +198,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
     
     @Override
     public List<Project> listByLikeDepartment(String department) {
-        return query().likeRight("department", department).list();
+        return lambdaQuery().likeRight(Project::getDepartment, department).list();
     }
     
 }

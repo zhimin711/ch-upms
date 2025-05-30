@@ -4,24 +4,31 @@ package com.ch.cloud.upms.user.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Separator;
 import com.ch.cloud.upms.dto.ProjectUserRoleDTO;
-import com.ch.cloud.upms.user.model.Project;
-import com.ch.cloud.upms.user.model.Tenant;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.ITenantService;
-import com.ch.cloud.upms.utils.RequestUtils;
+import com.ch.cloud.upms.user.model.Project;
+import com.ch.cloud.upms.user.model.Tenant;
 import com.ch.cloud.upms.user.vo.ProjectUsersVO;
+import com.ch.cloud.upms.utils.RequestUtils;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.AssertUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.utils.StringUtilsV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -109,10 +116,10 @@ public class ProjectController {
     
     @PostMapping({"users"})
     public Result<Integer> batchAddUsers(@RequestBody ProjectUsersVO projectUsers) {
-        AssertUtils.isEmpty(projectUsers.getProjectIds(), PubError.NON_NULL, "projectIds");
-        AssertUtils.isTrue(
-                CommonUtils.isEmpty(projectUsers.getDevUserIds()) || CommonUtils.isEmpty(projectUsers.getTestUserIds()),
-                PubError.NON_NULL, "devUserIds or testUserIds");
+        Assert.notEmpty(projectUsers.getProjectIds(), PubError.NON_NULL, "projectIds");
+        Assert.isFalse(
+                CommonUtils.isEmpty(projectUsers.getDevUserIds()) && CommonUtils.isEmpty(projectUsers.getTestUserIds()),
+                PubError.NON_NULL, "devUserIds or testUserIds must be not empty");
         return ResultUtils.wrap(() -> projectService.batchAddUsers(projectUsers));
     }
     

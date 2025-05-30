@@ -31,7 +31,7 @@ public interface UserProjectMapper {
     List<Project> findProjectsByUserIdAndTenantId(String userId, Long tenantId);
 
     @Select("select t1.PROJECT_ID,t1.USER_ID,t1.ROLE,t2.real_name from rt_user_project t1"
-            + " inner join bt_user t2 on t2.username = t1.user_id"
+            + " inner join st_user t2 on t2.username = t1.user_id"
             + " where t1.PROJECT_ID=#{projectId}")
     List<ProjectUserRoleDTO> findUsersByProjectId(Long projectId);
 

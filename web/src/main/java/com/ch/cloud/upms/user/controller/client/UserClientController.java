@@ -1,4 +1,4 @@
-package com.ch.cloud.upms.user.controller.fclient;
+package com.ch.cloud.upms.user.controller.client;
 
 import com.alibaba.fastjson2.JSON;
 import com.ch.cloud.upms.client.UpmsUserClient;
@@ -18,10 +18,10 @@ import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.cloud.web.annotation.OriginalReturn;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.AssertUtils;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
@@ -69,7 +69,7 @@ public class UserClientController implements UpmsUserClient {
     public Result<UserDto> info(@RequestParam(required = false) String userId,
             @RequestParam(required = false) String username) {
         return ResultUtils.wrap(() -> {
-            AssertUtils.isTrue(CommonUtils.isEmpty(userId) && CommonUtils.isEmpty(username), PubError.ARGS,
+            Assert.isFalse(CommonUtils.isEmpty(userId) && CommonUtils.isEmpty(username), PubError.ARGS,
                     "userId and username");
             if (CommonUtils.isNotEmpty(userId)) {
                 return userManage.getByUserId(userId);
@@ -99,7 +99,7 @@ public class UserClientController implements UpmsUserClient {
     public Result<RoleDto> findRolesByUsername(@RequestParam String username) {
         return ResultUtils.wrapList(() -> {
             UserDto user = userManage.getByUsername(username);
-            AssertUtils.isNull(user, PubError.NOT_EXISTS, username);
+            Assert.notNull(user, PubError.NOT_EXISTS, username);
             List<Role> records = roleService.findByUserId(user.getId());
             log.info("current user {} roles: {}", username, JSON.toJSONString(records));
             return records.stream().map(e -> BeanUtilsV2.clone(e, RoleDto.class)).collect(Collectors.toList());
@@ -126,7 +126,7 @@ public class UserClientController implements UpmsUserClient {
     public Result<ProjectRoleDto> findProjectsByUserId(@PathVariable String userId) {
         return ResultUtils.wrap(() -> {
             UserDto user = userManage.getByUserId(userId);
-            AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
+            Assert.notNull(user, PubError.NOT_EXISTS, userId);
             List<ProjectRoleDto> list = userService.findProjectRoleByUserId(user.getUsername());
             if (list.isEmpty()) {
                 return null;

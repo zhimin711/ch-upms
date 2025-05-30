@@ -1,4 +1,4 @@
-package com.ch.cloud.upms.user.controller.fclient;
+package com.ch.cloud.upms.user.controller.client;
 
 import com.ch.Num;
 import com.ch.StatusS;
@@ -48,7 +48,7 @@ public class PermissionClientController implements UpmsPermissionClient {
         });
     }
 
-    @Operation(summary = "获取白名单权限", description = "获取所有白名单权限列表")
+    @Operation(summary = "获取白名单权限列表", description = "获取所有白名单权限列表")
     @GetMapping({"whitelist"})
     public Result<PermissionDto> whitelist() {
         return ResultUtils.wrapList(() -> {
@@ -62,7 +62,7 @@ public class PermissionClientController implements UpmsPermissionClient {
         });
     }
 
-    @Operation(summary = "获取Cookie权限", description = "获取所有启用Cookie的权限列表")
+    @Operation(summary = "获取Cookie可访问权限列表", description = "获取所有启用Cookie的权限列表")
     @GetMapping({"cookie"})
     public Result<PermissionDto> cookie() {
         return ResultUtils.wrapList(() -> {
