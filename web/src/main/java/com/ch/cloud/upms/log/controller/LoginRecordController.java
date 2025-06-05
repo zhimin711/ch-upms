@@ -8,6 +8,7 @@ import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.DateUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,16 +27,15 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/login/record")
 public class LoginRecordController {
-
+    
     @Resource
     IOPRecordService opRecordService;
-
+    
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
-    public PageResult<OPRecord> page(LogQueryDTO record,
-                                     @PathVariable(value = "num") int pageNum,
-                                     @PathVariable(value = "size") int pageSize) {
+    public PageResult<OPRecord> page(LogQueryDTO record, @PathVariable(value = "num") int pageNum,
+            @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
-            if (!record.getAuthCode().startsWith("LOGIN_")) {
+            if (CommonUtils.isEmpty(record.getAuthCode()) || !record.getAuthCode().startsWith("LOGIN_")) {
                 record.setAuthCode("LOGIN_");
             }
             Page<OPRecord> page = opRecordService.lambdaQuery()
@@ -44,11 +44,10 @@ public class LoginRecordController {
                             OPRecord::getRequestTime, OPRecord::getResponseTime, OPRecord::getErrorMessage)
                     .likeRight(OPRecord::getAuthCode, record.getAuthCode())
                     .likeRight(CommonUtils.isNotEmpty(record.getUrl()), OPRecord::getUrl, record.getUrl())
-                    .between(OPRecord::getRequestTime,record.getStartTime().getTime(), record.getEndTime().getTime())
-                    .page(new Page<>(pageNum, pageSize))
-                    ;
+                    .between(OPRecord::getRequestTime, record.getStartTime().getTime(),
+                            DateUtils.endDayTime(record.getEndTime()).getTime()).page(new Page<>(pageNum, pageSize));
             return new InvokerPage.Page<>(page.getTotal(), page.getRecords());
         });
     }
-
+    
 }

@@ -8,6 +8,7 @@ import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
+import com.ch.utils.DateUtils;
 import io.swagger.v3.oas.annotations.Operation; // 新增: 引入 OpenAPI 3.0 的 @Operation 注解
 import io.swagger.v3.oas.annotations.tags.Tag; // 新增: 引入 OpenAPI 3.0 的 @Tag 注解
 import org.springframework.validation.annotation.Validated;
@@ -46,7 +47,7 @@ public class OPRecordController {
                     .notLikeRight(OPRecord::getAuthCode, "LOGIN_")
                     .likeRight(CommonUtils.isNotEmpty(record.getAuthCode()), OPRecord::getAuthCode, record.getAuthCode())
                     .likeRight(CommonUtils.isNotEmpty(record.getUrl()), OPRecord::getUrl, record.getUrl())
-                    .between(OPRecord::getRequestTime,record.getStartTime().getTime(), record.getEndTime().getTime())
+                    .between(OPRecord::getRequestTime,record.getStartTime().getTime(), DateUtils.endDayTime(record.getEndTime()).getTime())
                     .page(new Page<>(pageNum, pageSize))
             ;
             return new InvokerPage.Page<>(page.getTotal(), page.getRecords());

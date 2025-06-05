@@ -2,6 +2,7 @@ package com.ch.cloud.upms.sharding;
 
 import com.ch.e.Assert;
 import com.ch.e.PubError;
+import com.ch.rules.Week;
 import com.ch.utils.DateUtils;
 import com.google.common.collect.Range;
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
@@ -67,7 +68,7 @@ public class LongDateMonthShardingStrategy implements StandardShardingAlgorithm<
             // 区间查询,只支持最多查询两个表
             Date start = DateUtils.parseTimestamp(range.lowerEndpoint());
             Date end = DateUtils.parseTimestamp(range.upperEndpoint());
-            List<Date> dates = DateUtils.workDate(start, end);
+            List<Date> dates = DateUtils.workDate(start, end, Week.ALL);
             Assert.isFalse(dates.size() > 180, PubError.OUT_OF_LIMIT, "时间区间查询最多支持180天");
             dates.forEach(e -> {
                 String tableSuffix = DateUtils.format(e, DateUtils.Pattern.DATE_MONTH_SHORT);
