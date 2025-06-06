@@ -17,8 +17,11 @@ spring:
   shardingsphere:
     # 参数配置，显示sql
     props:
-      sql:
-        show: true
+      sql-show: true # 显示执行的 SQL
+      sql-logging-level: DEBUG # 设置日志级别为 DEBUG
+      sql-logging-format: SQL # 设置日志格式为 SQL 语句格式
+      sql-federation-enabled: false
+      check-table-metadata-enabled: false #关闭元数据检查,可加快启动速度，但要确保表结构一致
     datasource:
       names: upms
       upms:
@@ -42,7 +45,7 @@ spring:
             type: TIMESTAMP_DATE_MONTH_ALGORITHM
         tables:
           lt_op_record:
-            actual-data-nodes: upms.lt_op_record_$->{202401..209909},upms.lt_op_record_$->{202410..209912}
+            actual-data-nodes: upms.lt_op_record_20$->{24..99}0$->{1..9},upms.lt_op_record_20$->{24..99}0$->{10..12}
             logic-table: lt_op_record
             table-strategy:
               standard:
