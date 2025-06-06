@@ -45,7 +45,8 @@ public class LoginRecordController {
                     .likeRight(OPRecord::getAuthCode, record.getAuthCode())
                     .likeRight(CommonUtils.isNotEmpty(record.getUrl()), OPRecord::getUrl, record.getUrl())
                     .between(OPRecord::getRequestTime, record.getStartTime().getTime(),
-                            DateUtils.endDayTime(record.getEndTime()).getTime()).page(new Page<>(pageNum, pageSize));
+                            DateUtils.endDayTime(record.getEndTime()).getTime())
+                    .orderByDesc(OPRecord::getRequestTime, OPRecord::getId).page(new Page<>(pageNum, pageSize));
             return new InvokerPage.Page<>(page.getTotal(), page.getRecords());
         });
     }

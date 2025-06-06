@@ -48,6 +48,7 @@ public class OPRecordController {
                     .likeRight(CommonUtils.isNotEmpty(record.getAuthCode()), OPRecord::getAuthCode, record.getAuthCode())
                     .likeRight(CommonUtils.isNotEmpty(record.getUrl()), OPRecord::getUrl, record.getUrl())
                     .between(OPRecord::getRequestTime,record.getStartTime().getTime(), DateUtils.endDayTime(record.getEndTime()).getTime())
+                    .orderByDesc(OPRecord::getRequestTime, OPRecord::getId)
                     .page(new Page<>(pageNum, pageSize))
             ;
             return new InvokerPage.Page<>(page.getTotal(), page.getRecords());

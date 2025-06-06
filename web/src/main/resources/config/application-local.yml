@@ -45,7 +45,7 @@ spring:
             type: TIMESTAMP_DATE_MONTH_ALGORITHM
         tables:
           lt_op_record:
-            actual-data-nodes: upms.lt_op_record_20$->{24..99}0$->{1..9},upms.lt_op_record_20$->{24..99}0$->{10..12}
+            actual-data-nodes: upms.lt_op_record_20$->{24..99}0$->{1..9},upms.lt_op_record_20$->{24..99}$->{10..12}
             logic-table: lt_op_record
             table-strategy:
               standard:
