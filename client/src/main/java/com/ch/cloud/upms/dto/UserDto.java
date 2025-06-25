@@ -26,7 +26,7 @@ public class UserDto implements Serializable {
     /**
      * 用户名
      */
-    @Schema(name = "username", description = "登录名", required = true)
+    @Schema(name = "username", description = "登录名", requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;
     
     /**

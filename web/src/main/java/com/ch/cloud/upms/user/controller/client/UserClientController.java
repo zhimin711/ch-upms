@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.user.controller.client;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson2.JSON;
 import com.ch.cloud.upms.client.UpmsUserClient;
 import com.ch.cloud.upms.dto.LoginUserDto;
@@ -10,13 +11,14 @@ import com.ch.cloud.upms.dto.UserDto;
 import com.ch.cloud.upms.enums.RoleType;
 import com.ch.cloud.upms.manage.IProjectManage;
 import com.ch.cloud.upms.manage.IUserManage;
+import com.ch.cloud.upms.user.manager.UserQueryManager;
 import com.ch.cloud.upms.user.model.Project;
 import com.ch.cloud.upms.user.model.Role;
 import com.ch.cloud.upms.user.model.Tenant;
 import com.ch.cloud.upms.user.model.User;
-import com.ch.cloud.upms.service.IProjectService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.cloud.upms.user.pojo.UserInfo;
 import com.ch.cloud.web.annotation.OriginalReturn;
 import com.ch.e.Assert;
 import com.ch.e.PubError;
@@ -56,10 +58,10 @@ public class UserClientController implements UpmsUserClient {
     private IUserManage userManage;
     
     @Autowired
-    private IRoleService roleService;
+    private UserQueryManager userQueryManager;
     
     @Autowired
-    private IProjectService projectService;
+    private IRoleService roleService;
     
     @Autowired
     private IProjectManage projectManage;
@@ -145,7 +147,7 @@ public class UserClientController implements UpmsUserClient {
     public List<RoleType> listProjectRoles(@PathVariable String userId, @PathVariable Long projectId,
             @RequestParam(required = false) String roles) {
         UserDto user = userManage.getByUserId(userId);
-//        AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
+        //        AssertUtils.isNull(user, PubError.NOT_EXISTS, userId);
         if (user == null) {
             return Lists.newArrayList();
         }
@@ -163,5 +165,14 @@ public class UserClientController implements UpmsUserClient {
             return false;
         }
         return userService.existsProjectRole(user.getUsername(), projectId, role);
+    }
+    
+    @GetMapping({"list-available"})
+    @Override
+    public Result<UserDto> listAvailable(String keywork) {
+        return ResultUtils.wrap(() -> {
+            List<UserInfo> allValid = userQueryManager.findAllValid(keywork);
+            return BeanUtil.copyToList(allValid, UserDto.class);
+        });
     }
 }

@@ -80,22 +80,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (CommonUtils.isEmpty(userId)) {
             return Lists.newArrayList();
         }
-        return super.query().like("user_id", userId).eq("status", StatusS.ENABLED).list();
+        return lambdaQuery().likeRight(User::getUserId, userId).eq(User::getStatus, StatusS.ENABLED)
+                .list(Page.of(1, 100));
     }
     
     @Override
     public List<User> findByLikeRealName(String realName) {
-        return super.query().like("real_name", realName).eq("status", StatusS.ENABLED).list();
+        return lambdaQuery().likeRight(User::getRealName, realName).eq(User::getStatus, StatusS.ENABLED)
+                .list(Page.of(1, 100));
     }
     
     @Override
     public List<User> findByLikeUsername(String username) {
-        return super.query().likeRight("username", username).eq("status", StatusS.ENABLED).list();
+        return lambdaQuery().likeRight(User::getUsername, username).eq(User::getStatus, StatusS.ENABLED)
+                .list(Page.of(1, 100));
     }
     
     @Override
     public List<User> findAllValid() {
-        return super.query().eq("status", StatusS.ENABLED).list();
+        return lambdaQuery().eq(User::getStatus, StatusS.ENABLED).list(Page.of(1, 100));
     }
     
     

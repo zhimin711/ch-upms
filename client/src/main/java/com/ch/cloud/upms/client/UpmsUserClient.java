@@ -52,5 +52,10 @@ public interface UpmsUserClient {
 
     @GetMapping("{userId:[0-9]+}/project-role")
     Boolean existsProjectRole(@PathVariable String userId, @RequestParam Long projectId, @RequestParam RoleType role);
-
+    
+    /**
+     * 查询所有有效用户
+     */
+    @GetMapping("list-available")
+    Result<UserDto> listAvailable(@RequestParam(value = "keywork", required = false) String keywork);
 }

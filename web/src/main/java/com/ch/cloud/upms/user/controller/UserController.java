@@ -3,30 +3,35 @@ package com.ch.cloud.upms.user.controller;
 import com.ch.Constants;
 import com.ch.cloud.sso.client.SsoPasswordClient;
 import com.ch.cloud.upms.dto.TenantDto;
-import com.ch.cloud.upms.manage.IUserManage;
+import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
+import com.ch.cloud.upms.service.IUserService;
+import com.ch.cloud.upms.user.manager.UserQueryManager;
 import com.ch.cloud.upms.user.model.Project;
 import com.ch.cloud.upms.user.model.Role;
 import com.ch.cloud.upms.user.model.Tenant;
 import com.ch.cloud.upms.user.model.User;
-import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
 import com.ch.cloud.upms.user.pojo.UserInfo;
-import com.ch.cloud.upms.service.IUserService;
-import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.cloud.upms.user.vo.TenantChangeVO;
+import com.ch.cloud.upms.utils.RequestUtils;
+import com.ch.e.Assert;
 import com.ch.e.ExUtils;
 import com.ch.e.PubError;
 import com.ch.pojo.KeyValue;
 import com.ch.pojo.VueRecord2;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.AssertUtils;
-import com.ch.utils.CharUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +52,7 @@ public class UserController {
     private IUserService userService;
     
     @Autowired
-    private IUserManage userManage;
+    private UserQueryManager userQueryManager;
     
     @Autowired
     private SsoPasswordClient ssoPasswordClient;
@@ -100,11 +105,11 @@ public class UserController {
         return ResultUtils.wrapFail(() -> {
             String username = RequestUtils.getHeaderUser();
             User user = userService.findByUsername(username);
-            AssertUtils.isNull(user, PubError.NOT_EXISTS, "用户不存在: " + username);
+            Assert.notNull(user, PubError.NOT_EXISTS, "用户不存在: " + username);
             List<Tenant> tenants = userService.findTenantsByUsername(username);
-            AssertUtils.isEmpty(tenants, PubError.NOT_EXISTS, username + "用户租户");
+            Assert.notEmpty(tenants, PubError.NOT_EXISTS, username + "用户租户");
             List<Long> existsTenantIds = tenants.stream().map(Tenant::getId).collect(Collectors.toList());
-            AssertUtils.isFalse(existsTenantIds.contains(record.getId()), PubError.NOT_AUTH, "租户" + record.getId());
+            Assert.isTrue(existsTenantIds.contains(record.getId()), PubError.NOT_AUTH, "租户" + record.getId());
             Tenant tenant = tenants.stream().filter(e -> CommonUtils.isEquals(record.getId(), e.getId())).findFirst()
                     .orElse(new Tenant());
             if (record.isSetDefault() && !CommonUtils.isEquals(record.getId(), user.getTenantId())) {
@@ -124,23 +129,7 @@ public class UserController {
     
     @GetMapping("valid")
     public Result<UserInfo> findValid(@RequestParam(value = "name", required = false) String idOrUsernameOrRealName) {
-        return ResultUtils.wrapList(() -> {
-            List<User> users;
-            if (CommonUtils.isEmpty(idOrUsernameOrRealName)) {
-                users = userService.findAllValid();
-            } else if (CommonUtils.isNumeric(idOrUsernameOrRealName)) {
-                users = userService.findByLikeUserId(idOrUsernameOrRealName);
-            } else if (CharUtils.containsChinese(idOrUsernameOrRealName)) {
-                users = userService.findByLikeRealName(idOrUsernameOrRealName);
-            } else {
-                users = userService.findByLikeUsername(idOrUsernameOrRealName);
-            }
-            return users.stream().map(r -> {
-                UserInfo info = new UserInfo();
-                BeanUtils.copyProperties(r, info);
-                return info;
-            }).collect(Collectors.toList());
-        });
+        return ResultUtils.wrapList(() -> userQueryManager.findAllValid(idOrUsernameOrRealName));
     }
 /*
     @GetMapping({"tenants"})
