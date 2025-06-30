@@ -25,5 +25,5 @@ public interface AuthCodeManager {
     
     List<AuthCodeUsageRecordVO> usageRecords(String code);
     
-    AuthCodeVO generate(AuthCodeGenerateDTO dto, Long creatorId);
+    AuthCodeVO generate(AuthCodeGenerateDTO dto);
 }

@@ -55,9 +55,11 @@ public class AuthCodeManagerImpl implements AuthCodeManager {
         if (authCode.getContent() != null && !authCode.getContent().contains(dto.getResourceId())) {
             return false;
         }
-        // 记录使用
-        authCode.setUsedCount(authCode.getUsedCount() == null ? 1 : authCode.getUsedCount() + 1);
-        authCodeService.updateById(authCode);
+        if(authCode.getMaxUses()!=null){
+            // 记录使用
+            authCode.setUsedCount(authCode.getUsedCount() == null ? 1 : authCode.getUsedCount() + 1);
+            authCodeService.updateById(authCode);
+        }
         AuthCodeUsageRecord record = new AuthCodeUsageRecord();
         record.setCode(dto.getCode());
         record.setUserId(null); // 可根据实际登录用户设置
@@ -91,11 +93,11 @@ public class AuthCodeManagerImpl implements AuthCodeManager {
     }
     
     @Override
-    public AuthCodeVO generate(AuthCodeGenerateDTO dto, Long creatorId) {
+    public AuthCodeVO generate(AuthCodeGenerateDTO dto) {
         AuthCode authCode = new AuthCode();
         // 生成唯一授权码
         authCode.setCode(UUID.randomUUID().toString().replace("-", ""));
-        authCode.setCreatorId(creatorId);
+        authCode.setCreateBy(dto.getAuthUser());
         authCode.setContent(dto.getContent());
         authCode.setExpireTime(dto.getExpireTime());
         authCode.setMaxUses(dto.getMaxUses() == null ? 1 : dto.getMaxUses());

@@ -1,27 +1,33 @@
-package com.ch.cloud.upms.user.controller;
+package com.ch.cloud.upms.user.controller.client;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.ch.cloud.upms.base.model.AuthCode;
+import com.ch.cloud.upms.client.UpmsAuthCodeClient;
 import com.ch.cloud.upms.dto.AuthCodeGenerateDTO;
+import com.ch.cloud.upms.dto.AuthCodePermissionDTO;
 import com.ch.cloud.upms.dto.AuthCodeVO;
 import com.ch.cloud.upms.dto.AuthCodeValidateDTO;
 import com.ch.cloud.upms.dto.AuthCodeRevokeDTO;
 import com.ch.cloud.upms.dto.AuthCodeUsageRecordVO;
+import com.ch.cloud.upms.dto.PermissionDto;
 import com.ch.cloud.upms.service.IAuthCodeService;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.user.manager.AuthCodeManager;
 import com.ch.cloud.upms.user.model.Permission;
 import com.ch.e.Assert;
 import com.ch.e.PubError;
+import com.ch.result.Result;
+import com.ch.result.ResultUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/base/auth-code")
-public class AuthCodeController {
+@RequestMapping("/fc/auth")
+public class AuthCodeClientController implements UpmsAuthCodeClient {
     
     @Autowired
     private AuthCodeManager authCodeManager;
@@ -34,22 +40,25 @@ public class AuthCodeController {
     
     // 示例：生成授权码接口
     @PostMapping("/generate")
-    public AuthCodeVO generate(@RequestBody AuthCodeGenerateDTO dto) {
-        // 实际项目中 creatorId 应从登录用户获取
-        Long creatorId = 1L;
-        return authCodeManager.generate(dto, creatorId);
+    public Result<AuthCodeVO> generate(@RequestBody AuthCodeGenerateDTO dto) {
+        return ResultUtils.wrapFail(()-> authCodeManager.generate(dto));
     }
     
     // 示例：查询授权码详情
     @GetMapping("/{code}")
-    public AuthCodeVO getByCode(@PathVariable String code) {
-        AuthCode one = authCodeService.lambdaQuery().eq(AuthCode::getCode, code).one();
-        Assert.notNull(one, PubError.NOT_EXISTS, "授权码");
-        JSONObject content = JSON.parseObject(one.getContent());
-        List<String> permissionCodes = content.getList("permissions", String.class);
-        List<Permission> permissions = permissionService.lambdaQuery().in(Permission::getCode, permissionCodes).list();
+    public Result<AuthCodePermissionDTO> getPermission(@PathVariable String code) {
         
-        return null;
+        return ResultUtils.wrap(()-> {
+            AuthCode one = authCodeService.lambdaQuery().eq(AuthCode::getCode, code).one();
+            Assert.notNull(one, PubError.NOT_EXISTS, "授权码");
+            JSONObject content = JSON.parseObject(one.getContent());
+            List<String> permissionCodes = content.getList("permissions", String.class);
+            List<Permission> permissions = permissionService.lambdaQuery().in(Permission::getCode, permissionCodes).list();
+            List<PermissionDto> permissionList = BeanUtil.copyToList(permissions, PermissionDto.class);
+            AuthCodePermissionDTO dto = BeanUtil.copyProperties(one, AuthCodePermissionDTO.class);
+            dto.setPermissions(permissionList);
+            return dto;
+        });
     }
     
     @PostMapping("/validate")

@@ -7,6 +7,12 @@ import java.util.Date;
 @Data
 public class AuthCodeGenerateDTO {
     
+    
+    /**
+     * 授权人
+     */
+    private String authUser;
+    
     /**
      * 授权内容（JSON字符串或对象）
      */

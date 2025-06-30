@@ -21,11 +21,6 @@ public class AuthCode implements Serializable {
     private String code;
     
     /**
-     * 创建人ID
-     */
-    private Long creatorId;
-    
-    /**
      * 授权内容（JSON字符串）
      */
     private String content;
@@ -50,6 +45,11 @@ public class AuthCode implements Serializable {
      */
     private Integer status;
     
+    
+    /**
+     * 创建人
+     */
+    private String createBy;
     /**
      * 创建时间
      */

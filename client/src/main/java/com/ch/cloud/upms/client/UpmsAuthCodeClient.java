@@ -1,6 +1,7 @@
 package com.ch.cloud.upms.client;
 
 import com.ch.cloud.upms.dto.AuthCodeGenerateDTO;
+import com.ch.cloud.upms.dto.AuthCodePermissionDTO;
 import com.ch.cloud.upms.dto.AuthCodeVO;
 import com.ch.cloud.upms.dto.ProjectDto;
 import com.ch.result.Result;
@@ -16,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @since 2025/6/28
  */
 
-@FeignClient(name = "${feign.client.upms:ch-upms}", url = "${feign.client.upmsUrl:}", path = "tenant", contextId = "upmsAuthCodeClient")
+@FeignClient(name = "${feign.client.upms:ch-upms}", url = "${feign.client.upmsUrl:}", path = "/fc/auth", contextId = "upmsAuthCodeClient")
 public interface UpmsAuthCodeClient {
     
     @GetMapping({"generate"})
     Result<AuthCodeVO> generate(@RequestBody AuthCodeGenerateDTO dto);
     
     @GetMapping({"{code}"})
-    Result<AuthCodeVO> get(@PathVariable String code);
+    Result<AuthCodePermissionDTO> getPermission(@PathVariable String code);
 }
