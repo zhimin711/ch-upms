@@ -4,6 +4,9 @@ import lombok.Data;
 
 @Data
 public class AuthCodeRevokeDTO {
-    /** 授权码 */
+    
+    /**
+     * 授权码
+     */
     private String code;
 } 
