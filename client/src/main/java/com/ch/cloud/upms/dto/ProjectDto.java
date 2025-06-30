@@ -1,5 +1,6 @@
 package com.ch.cloud.upms.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -9,17 +10,16 @@ import lombok.Data;
  * @since 2022/4/28
  */
 @Data
+@Schema(description = "项目DTO")
 public class ProjectDto {
 
-
-    private Long   id;
+    @Schema(description = "项目ID")
+    private Long id;
     /**
      * 代码
      */
     private String code;
-    /**
-     * 名称
-     */
+    @Schema(description = "项目名称")
     private String name;
     /**
      * 租户名称
@@ -29,5 +29,6 @@ public class ProjectDto {
      * 负责人
      */
     private String manager;
-    
+    @Schema(description = "项目描述")
+    private String description;
 }

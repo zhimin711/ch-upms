@@ -1,10 +1,12 @@
 package com.ch.cloud.upms.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@Schema(description = "授权码生成请求DTO")
 public class AuthCodeGenerateDTO {
     
     
@@ -13,18 +15,12 @@ public class AuthCodeGenerateDTO {
      */
     private String authUser;
     
-    /**
-     * 授权内容（JSON字符串或对象）
-     */
+    @Schema(description = "授权内容（JSON字符串或对象）", example = "{\"resourceType\":\"article\",\"resourceIds\":[\"123\"],\"actions\":[\"read\"]}")
     private String content;
     
-    /**
-     * 过期时间
-     */
+    @Schema(description = "过期时间", example = "2024-12-31T23:59:59")
     private Date expireTime;
     
-    /**
-     * 最大使用次数
-     */
+    @Schema(description = "最大使用次数", example = "10")
     private Integer maxUses;
 } 

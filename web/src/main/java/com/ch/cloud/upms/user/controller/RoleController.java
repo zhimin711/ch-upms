@@ -10,6 +10,7 @@ import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.utils.RequestUtils;
+import com.ch.e.Assert;
 import com.ch.e.ExUtils;
 import com.ch.e.PubError;
 import com.ch.pojo.KeyValue;
@@ -123,11 +124,10 @@ public class RoleController {
             Role role = roleService.getById(roleId);
             String typesStr2 = CommonUtils.isEmpty(typesStr) ? "3,4" : typesStr;
 
-            if (role == null) {
-                ExUtils.throwError(PubError.NOT_EXISTS);
-            } else if (CommonUtils.isEquals(StatusS.DISABLED, role.getStatus())) {
-                ExUtils.throwError(PubError.INVALID, "角色：" + roleId);
-            } else if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
+            Assert.notNull(role, PubError.NOT_EXISTS, "角色: " + roleId);
+            Assert.isFalse(CommonUtils.isEquals(StatusS.DISABLED, role.getStatus()),
+                    PubError.INVALID, "禁用角色：" + roleId);
+            if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
             }
             List<String> types = StringUtilsV2.splitStrAndDeDuplication(Separator.COMMA_SIGN, typesStr2);
