@@ -29,7 +29,7 @@ public class Permission extends Model<Permission> {
     @TableId(value = "ID", type = IdType.AUTO)
     private Long id;
 
-    @Schema(description = "类型(1.目录 2.菜单页 3.按钮 4. 5.)")
+    @Schema(description = "类型(1.目录 2.菜单 3.按钮 4.授权 5.开放)")
     private String type;
 
     @Schema(description = "名称")
