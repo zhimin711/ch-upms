@@ -35,8 +35,8 @@ public interface UpmsUserClient {
 //    @GetMapping({"{username}/role"})
 //    Result<RoleDto> findRoleByUsername(@PathVariable String username);
 
-    @GetMapping({"{username}/roles"})
-    Result<RoleDto> findRolesByUsername(@PathVariable String username);
+    @GetMapping({"roles"})
+    Result<RoleDto> findRolesByUsername(@RequestParam String username);
 
 //    @GetMapping({"{userId:[0-9]+}/roles"})
 //    Result<RoleDto> findRolesByUserId(@PathVariable Long userId);
