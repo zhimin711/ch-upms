@@ -29,12 +29,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/permission")
 @Tag(name = "系统权限管理", description = "系统权限管理相关接口")
 public class PermissionClientController implements UpmsPermissionClient {
-
+    
     @Autowired
-    IRoleService       roleService;
+    IRoleService roleService;
+    
     @Autowired
     IPermissionService permissionService;
-
+    
     @Operation(summary = "获取隐藏权限", description = "获取所有隐藏的权限列表")
     @GetMapping({"hidden"})
     public Result<PermissionDto> hidden() {
@@ -47,7 +48,7 @@ public class PermissionClientController implements UpmsPermissionClient {
             return list.stream().map(MapperPermission.INSTANCE::toClientDto).collect(Collectors.toList());
         });
     }
-
+    
     @Operation(summary = "获取白名单权限列表", description = "获取所有白名单权限列表")
     @GetMapping({"whitelist"})
     public Result<PermissionDto> whitelist() {
@@ -57,18 +58,32 @@ public class PermissionClientController implements UpmsPermissionClient {
             record.setHidden(false);
             record.setStatus(StatusS.ENABLED);
             List<Permission> list = permissionService.find(record);
-
+            
             return list.stream().map(MapperPermission.INSTANCE::toClientDto).collect(Collectors.toList());
         });
     }
-
+    
     @Operation(summary = "获取Cookie可访问权限列表", description = "获取所有启用Cookie的权限列表")
     @GetMapping({"cookie"})
     public Result<PermissionDto> cookie() {
         return ResultUtils.wrapList(() -> {
             Permission record = new Permission();
-//            record.setType(Num.S5);
+            //            record.setType(Num.S5);
             record.setEnableCookie(true);
+            record.setStatus(StatusS.ENABLED);
+            List<Permission> list = permissionService.find(record);
+            return list.stream().map(MapperPermission.INSTANCE::toClientDto).collect(Collectors.toList());
+        });
+    }
+    
+    @Operation(summary = "获取授权码权限列表", description = "获取所有授权码权限列表")
+    @GetMapping({"auth-code"})
+    @Override
+    public Result<PermissionDto> authCode() {
+        return ResultUtils.wrapList(() -> {
+            Permission record = new Permission();
+            record.setType(Num.S4);
+            record.setHidden(false);
             record.setStatus(StatusS.ENABLED);
             List<Permission> list = permissionService.find(record);
             return list.stream().map(MapperPermission.INSTANCE::toClientDto).collect(Collectors.toList());

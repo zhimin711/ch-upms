@@ -22,4 +22,7 @@ public interface UpmsPermissionClient {
 
     @GetMapping({"cookie"})
     Result<PermissionDto> cookie();
+    
+    @GetMapping({"auth-code"})
+    Result<PermissionDto> authCode();
 }

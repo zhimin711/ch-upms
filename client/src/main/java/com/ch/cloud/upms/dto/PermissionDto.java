@@ -75,6 +75,6 @@ public class PermissionDto implements Serializable {
     /**
      * 是否显示
      */
-    @Schema(description = "是否显示")
-    private String isShow;
+    @Schema(description = "是否隐藏")
+    private Boolean hidden;
 }
