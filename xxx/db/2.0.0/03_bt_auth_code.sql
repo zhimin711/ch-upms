@@ -1,12 +1,12 @@
-CREATE TABLE auth_code (
+CREATE TABLE bt_auth_code (
   id           BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
   code         VARCHAR(64) NOT NULL UNIQUE COMMENT '授权码',
-  creator_id   BIGINT      NOT NULL COMMENT '创建人ID',
   content      TEXT        NOT NULL COMMENT '授权内容(JSON)',
   expire_time  DATETIME    NOT NULL COMMENT '过期时间',
   max_uses     INT         DEFAULT 1 COMMENT '最大使用次数',
   used_count   INT         DEFAULT 0 COMMENT '已使用次数',
   status       TINYINT     DEFAULT 1 COMMENT '状态 1有效 0失效 2撤销',
+  create_by    VARCHAR(32)      NOT NULL COMMENT '创建人ID',
   create_time  DATETIME    NOT NULL COMMENT '创建时间',
   update_time  DATETIME    NOT NULL COMMENT '更新时间'
 ) COMMENT='通用授权码表';

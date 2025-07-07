@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@TableName("auth_code")
+@TableName("bt_auth_code")
 public class AuthCode implements Serializable {
     
     @TableId(type = IdType.AUTO)

@@ -53,6 +53,7 @@ public class AuthCodeClientController implements UpmsAuthCodeClient {
             Assert.notNull(one, PubError.NOT_EXISTS, "授权码");
             JSONObject content = JSON.parseObject(one.getContent());
             List<String> permissionCodes = content.getList("permissions", String.class);
+            Assert.notEmpty(permissionCodes, PubError.NOT_AUTH, "授权码未配置权限",code);
             List<Permission> permissions = permissionService.lambdaQuery().in(Permission::getCode, permissionCodes).list();
             List<PermissionDto> permissionList = BeanUtil.copyToList(permissions, PermissionDto.class);
             AuthCodePermissionDTO dto = BeanUtil.copyProperties(one, AuthCodePermissionDTO.class);
