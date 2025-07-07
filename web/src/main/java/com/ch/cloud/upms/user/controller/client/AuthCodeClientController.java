@@ -7,6 +7,7 @@ import com.ch.cloud.upms.base.model.AuthCode;
 import com.ch.cloud.upms.client.UpmsAuthCodeClient;
 import com.ch.cloud.upms.dto.AuthCodeGenerateDTO;
 import com.ch.cloud.upms.dto.AuthCodePermissionDTO;
+import com.ch.cloud.upms.dto.AuthCodeResourceDTO;
 import com.ch.cloud.upms.dto.AuthCodeVO;
 import com.ch.cloud.upms.dto.AuthCodeValidateDTO;
 import com.ch.cloud.upms.dto.AuthCodeRevokeDTO;
@@ -59,6 +60,17 @@ public class AuthCodeClientController implements UpmsAuthCodeClient {
             AuthCodePermissionDTO dto = BeanUtil.copyProperties(one, AuthCodePermissionDTO.class);
             dto.setPermissions(permissionList);
             return dto;
+        });
+    }
+    
+    // 示例：查询授权码详情
+    @GetMapping("/{code}/content")
+    @Override
+    public Result<AuthCodeResourceDTO> getContent(@PathVariable String code) {
+        return ResultUtils.wrap(()-> {
+            AuthCode one = authCodeService.lambdaQuery().eq(AuthCode::getCode, code).one();
+            Assert.notNull(one, PubError.NOT_EXISTS, "授权码");
+            return BeanUtil.copyProperties(one, AuthCodeResourceDTO.class);
         });
     }
     

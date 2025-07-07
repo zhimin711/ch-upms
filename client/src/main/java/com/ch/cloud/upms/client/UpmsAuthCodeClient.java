@@ -2,6 +2,7 @@ package com.ch.cloud.upms.client;
 
 import com.ch.cloud.upms.dto.AuthCodeGenerateDTO;
 import com.ch.cloud.upms.dto.AuthCodePermissionDTO;
+import com.ch.cloud.upms.dto.AuthCodeResourceDTO;
 import com.ch.cloud.upms.dto.AuthCodeVO;
 import com.ch.cloud.upms.dto.ProjectDto;
 import com.ch.result.Result;
@@ -25,4 +26,7 @@ public interface UpmsAuthCodeClient {
     
     @GetMapping({"{code}"})
     Result<AuthCodePermissionDTO> getPermission(@PathVariable String code);
+    
+    @GetMapping({"{code}/content"})
+    Result<AuthCodeResourceDTO> getContent(@PathVariable String code);
 }
