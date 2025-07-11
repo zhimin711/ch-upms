@@ -3,10 +3,10 @@ package com.ch.cloud.upms.user.controller;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch.Num;
-import com.ch.cloud.upms.user.model.Permission;
 import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
+import com.ch.cloud.upms.user.model.Permission;
 import com.ch.cloud.upms.utils.RequestUtils;
 import com.ch.cloud.upms.utils.VueRecordUtils;
 import com.ch.e.ExUtils;
@@ -23,9 +23,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Set;
@@ -182,8 +188,7 @@ public class PermissionController {
     public Result<Boolean> delete(@PathVariable Long id) {
         return ResultUtils.wrapFail(() -> permissionService.delete(id));
     }
-
-
+    
     @Operation(summary = "获取子权限", description = "根据父ID获取子权限列表")
     @GetMapping({"{id:[0-9]+}/children"})
     public Result<Permission> getChildren(Permission record) {

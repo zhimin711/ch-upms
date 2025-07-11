@@ -80,7 +80,7 @@ public class PermissionClientController implements UpmsPermissionClient {
     @GetMapping({"auth-code"})
     @Override
     public Result<PermissionDto> authCode() {
-        return ResultUtils.wrapList(() -> {
+        return ResultUtils.wrap(() -> {
             Permission record = new Permission();
             record.setType(Num.S4);
             record.setHidden(false);
