@@ -17,7 +17,7 @@ import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.springframework.stereotype.Service;
@@ -83,7 +83,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private void findChildrenTree(List<Permission> records) {
         if (records == null || records.isEmpty()) return;
         records.forEach(r -> {
-            String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString());
+            String pid2 = StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString());
             List<Permission> subList = super.query().likeRight("parent_id", pid2).list();
             if (subList.isEmpty()) return;
             Map<String, List<Permission>> subMap = assembleTree(subList);
@@ -97,7 +97,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if (!CommonUtils.isNotEmpty(permission.getParentId(), permission.getId())) {
             return Lists.newArrayList();
         }
-        String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, permission.getParentId(), permission.getId().toString());
+        String pid2 = StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, permission.getParentId(), permission.getId().toString());
         return super.query().eq("parent_id", pid2)
                 .like(CommonUtils.isNotEmpty(permission.getStatus()), "status", permission.getStatus())
                 .like(CommonUtils.isNotEmpty(permission.getCode()), "code", permission.getCode())
@@ -136,7 +136,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if (list.isEmpty()) return null;
         Set<Long> pidSet = Sets.newHashSet();
         list.forEach(e -> {
-            List<Long> ids = StringUtilsV2.parseIds(e.getParentId());
+            List<Long> ids = StrUtil.parseIds(e.getParentId());
             pidSet.addAll(ids);
         });
         List<Permission> list2 = super.query().in("id", pidSet).eq("status", Status.ENABLED.getCode()).list();
@@ -172,7 +172,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     public String findNameByParseLastId(String parentId) {
         if (CommonUtils.isEmpty(parentId)) return null;
-        String idStr = StringUtilsV2.lastStr(parentId, Separator.COMMA_SIGN);
+        String idStr = StrUtil.lastStr(parentId, Separator.COMMA_SIGN);
         if (!CommonUtils.isNumeric(idStr)) {
             return null;
         }
@@ -209,7 +209,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<Permission> children = wrapper.list();
         if (CommonUtils.isEmpty(children)) return Lists.newArrayList();
         children.forEach(r -> {
-            String pid1 = StringUtilsV2.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
+            String pid1 = StrUtil.linkStr(",", "0".equals(r.getParentId()) ? "" : r.getParentId(), r.getId().toString());
             if (Lists.newArrayList(Num.S1, Num.S2).contains(r.getType())
                     && (CommonUtils.isEquals(Num.S0, type) || CommonUtils.isEquals(Num.S9, type)
                     || (CommonUtils.isEquals(Num.S3, type) && CommonUtils.isEquals(Num.S1, r.getType())))) {
@@ -234,7 +234,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private Map<String, List<Permission>> assembleTree(List<Permission> subList) {
         Map<String, List<Permission>> subMap = subList.stream().collect(Collectors.groupingBy(Permission::getParentId));
         subMap.forEach((k, v) -> v.forEach(r -> {
-            r.setChildren(subMap.get(StringUtilsV2.linkStr(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString())));
+            r.setChildren(subMap.get(StrUtil.linkStr(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString())));
             if (r.getChildren() != null) r.getChildren().sort(Comparator.comparing(Permission::getSort));
         }));
         return subMap;

@@ -14,7 +14,7 @@ import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -68,13 +68,13 @@ public class DepartmentManageImpl implements IDepartmentManage {
         }
         boolean isChangeParent = !CommonUtils.isEquals(orig.getParentId(), record.getParentId());
         if (!CommonUtils.isEquals(orig.getName(), record.getName()) || isChangeParent) {
-            List<Long> ids = StringUtilsV2.parseIds(record.getParentId());
+            List<Long> ids = StrUtil.parseIds(record.getParentId());
             ids.add(record.getId());
             String deptFullName = departmentService.findCascadeName(ids);
             
-            String dept0 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, orig.getParentId(),
+            String dept0 = StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, orig.getParentId(),
                     orig.getId().toString());
-            String dept2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, record.getParentId(),
+            String dept2 = StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, record.getParentId(),
                     record.getId().toString());
             
             updateDepartmentUser(isChangeParent, deptFullName, dept0, dept2);
@@ -99,7 +99,7 @@ public class DepartmentManageImpl implements IDepartmentManage {
                 }
             } else {
                 String dept1 = e.getDepartment().replaceFirst(dept0, dept2);
-                String fullName1 = departmentService.findCascadeName(StringUtilsV2.parseIds(dept1));
+                String fullName1 = departmentService.findCascadeName(StrUtil.parseIds(dept1));
                 e.setDepartmentName(fullName1);
                 e.setDepartment(dept1);
             }
@@ -121,7 +121,7 @@ public class DepartmentManageImpl implements IDepartmentManage {
                 }
             } else {
                 String dept1 = e.getDepartmentId().replaceFirst(dept0, dept2);
-                String fullName1 = departmentService.findCascadeName(StringUtilsV2.parseIds(dept1));
+                String fullName1 = departmentService.findCascadeName(StrUtil.parseIds(dept1));
                 e.setDepartmentName(fullName1);
                 e.setDepartmentId(dept1);
             }
@@ -143,7 +143,7 @@ public class DepartmentManageImpl implements IDepartmentManage {
                 }
             } else {
                 String dept1 = e.getDepartmentId().replaceFirst(dept0, dept2);
-                String fullName1 = departmentService.findCascadeName(StringUtilsV2.parseIds(dept1));
+                String fullName1 = departmentService.findCascadeName(StrUtil.parseIds(dept1));
                 e.setDepartmentName(fullName1);
                 e.setDepartmentId(dept1);
             }

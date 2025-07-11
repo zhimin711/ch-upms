@@ -24,7 +24,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class UserAdminController {
             Department dept = departmentManage.get(Long.valueOf(record.getDepartment()));
             if (dept != null) {
                 String key = dept.getParentId();
-                String key2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, dept.getParentId(),
+                String key2 = StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, dept.getParentId(),
                         dept.getId().toString());
                 if (DepartmentType.isTeam(dept.getDeptType())) {
                     record.setDepartmentId(key);
@@ -95,9 +95,9 @@ public class UserAdminController {
                     r.setDepartmentName("");
                     for (String deptId : deptIds) {
                         //                        userDepartmentPositionMapper.findDepartmentPositionByUserIdLikeDepartmentId(r.getId(), deptId);
-                        Department dept = departmentManage.get(StringUtilsV2.lastId(deptId));
-                        String pn = StringUtilsV2.linkStr(Separator.COMMA_SIGN, dept.getParentName(), dept.getName());
-                        r.setDepartmentName(StringUtilsV2.linkStr(Separator.VERTICAL_LINE, r.getDepartmentName(), pn));
+                        Department dept = departmentManage.get(StrUtil.lastId(deptId));
+                        String pn = StrUtil.linkStr(Separator.COMMA_SIGN, dept.getParentName(), dept.getName());
+                        r.setDepartmentName(StrUtil.linkStr(Separator.VERTICAL_LINE, r.getDepartmentName(), pn));
                     }
                     r.setDepartment("1");
                 } else {
@@ -129,7 +129,7 @@ public class UserAdminController {
             List<DepartmentDuty> records = userService.findDepartmentDuty(id);
             records.forEach(e -> {
                 List<String> names = departmentService.findNames(
-                        StringUtilsV2.parseIds(CommonUtils.isEmpty(e.getOrgId()) ? e.getDepartment() : e.getOrgId()));
+                        StrUtil.parseIds(CommonUtils.isEmpty(e.getOrgId()) ? e.getDepartment() : e.getOrgId()));
                 e.setDepartmentName(String.join(",", names));
                 e.setDutyName(positionService.getById(e.getDuty()).getName());
             });

@@ -18,7 +18,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import com.ch.utils.VueRecordUtils;
 import io.swagger.v3.oas.annotations.Operation; // 新增: 引入 OpenAPI 3.0 的 @Operation 注解
 import io.swagger.v3.oas.annotations.tags.Tag; // 新增: 引入 OpenAPI 3.0 的 @Tag 注解
@@ -78,7 +78,7 @@ public class TenantController {
         if (r != null && !CommonUtils.isEquals(record.getId(), r.getId())) {
             ExUtils.throwError(PubError.EXISTS, "部门已存在！");
         }
-        List<Long> deptIds = StringUtilsV2.parseIds(record.getDepartmentId());
+        List<Long> deptIds = StrUtil.parseIds(record.getDepartmentId());
         List<String> names = departmentService.findNames(deptIds);
         record.setDepartmentName(String.join(Separator.OBLIQUE_LINE, names));
         if (CommonUtils.isEmpty(record.getName())) {

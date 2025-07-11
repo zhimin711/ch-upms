@@ -18,7 +18,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -74,7 +74,7 @@ public class ProjectController {
     }
     
     private void checkSaveOrUpdate(Project record) {
-        List<Long> deptIds = StringUtilsV2.parseIds(record.getDepartment());
+        List<Long> deptIds = StrUtil.parseIds(record.getDepartment());
         List<String> names = departmentService.findNames(deptIds);
         record.setDepartmentName(String.join(Separator.OBLIQUE_LINE, names));
         Tenant tenant = tenantService.getById(record.getTenantId());

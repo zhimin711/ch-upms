@@ -18,7 +18,7 @@ import com.ch.e.PubError;
 import com.ch.utils.AssertUtils;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -150,7 +150,7 @@ public class UserManageImpl implements IUserManage {
         record.getDutyList().forEach(r -> {
             AssertUtils.isTrue(CommonUtils.isEmpty(r.getDepartment()) || CommonUtils.isEmpty(r.getDuty()),
                     PubError.NON_NULL, "组织或职位");
-            Department dept = departmentService.getById(StringUtilsV2.lastId(r.getDepartment()));
+            Department dept = departmentService.getById(StrUtil.lastId(r.getDepartment()));
             String deptId = r.getDepartment();
             String orgId = "";
             if (dept != null && dept.getDeptType() != null && dept.getDeptType().equals(3)) {
@@ -160,7 +160,7 @@ public class UserManageImpl implements IUserManage {
             userService.insertDepartmentPosition(record.getId(), deptId, Long.valueOf(r.getDuty()), orgId);
         });
         if (CommonUtils.isNotEmpty(record.getDepartmentId())) {
-            List<String> names = departmentService.findNames(StringUtilsV2.parseIds(record.getDepartmentId()));
+            List<String> names = departmentService.findNames(StrUtil.parseIds(record.getDepartmentId()));
             record.setDepartmentName(String.join(",", names));
         }
         if (CommonUtils.isNotEmpty(record.getPositionId())) {

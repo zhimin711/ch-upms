@@ -7,7 +7,7 @@ import com.ch.cloud.upms.enums.PermissionType;
 import com.ch.cloud.upms.user.model.Permission;
 import com.ch.pojo.VueRecord2;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class VueRecordUtils {
     private static List<VueRecord2> convertAuthInterfaceTree(List<Permission> records) {
         Map<String, List<Permission>> map = records.stream().collect(Collectors.groupingBy(Permission::getParentId));
         map.forEach((k, v) -> v.forEach(e -> {
-            List<Permission> list = map.get(StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, k, e.getId().toString()));
+            List<Permission> list = map.get(StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, k, e.getId().toString()));
             if (CommonUtils.isNotEmpty(list)) {
                 e.setChildren(list);
             }

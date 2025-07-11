@@ -9,7 +9,7 @@ import com.ch.cloud.upms.user.mapper.DepartmentMapper;
 import com.ch.cloud.upms.user.model.Department;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.utils.CommonUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +43,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
             return list;
         }
         list.forEach(r -> {
-            String pid2 = StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString());
+            String pid2 = StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString());
             List<Department> subList = super.query().likeRight("parent_id", pid2)
                     .le(deptType != null && deptType > 0, "date_type", deptType).list();
             if (subList.isEmpty()) {
@@ -70,7 +70,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
                 .orderByAsc("sort", "parent_id", "id").page(new Page<>(pageNum, pageSize));
         if (page.getTotal() > 0) {
             page.getRecords().forEach(r -> r.setChildren(findChildrenByPid(
-                    StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString()))));
+                    StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString()))));
         }
         return page;
     }
@@ -81,7 +81,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         if (leaf == null) {
             return null;
         }
-        return StringUtilsV2.linkStrIgnoreZero(Separator.COMMA_SIGN, leaf.getParentId(), leaf.getId().toString());
+        return StrUtil.linkStrIgnoreZero(Separator.COMMA_SIGN, leaf.getParentId(), leaf.getId().toString());
     }
     
     @Override
@@ -107,7 +107,7 @@ public class DepartmentServiceImpl extends ServiceImpl<DepartmentMapper, Departm
         Map<String, List<Department>> subMap = subList.stream().collect(Collectors.groupingBy(Department::getParentId));
         subMap.forEach((k, v) -> v.forEach(r -> {
             r.setChildren(
-                    subMap.get(StringUtilsV2.linkStr(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString())));
+                    subMap.get(StrUtil.linkStr(Separator.COMMA_SIGN, r.getParentId(), r.getId().toString())));
             if (r.getChildren() != null) {
                 r.getChildren().sort(Comparator.comparing(Department::getSort));
             }

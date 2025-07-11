@@ -10,6 +10,7 @@ import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
 import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.utils.RequestUtils;
+import com.ch.core.utils.StrUtil;
 import com.ch.e.Assert;
 import com.ch.e.ExUtils;
 import com.ch.e.PubError;
@@ -20,7 +21,6 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.utils.StringUtilsV2;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,7 +130,7 @@ public class RoleController {
             if (CommonUtils.isEquals("SUPER_ADMIN", role.getCode())) {
                 rid = 0L;
             }
-            List<String> types = StringUtilsV2.splitStrAndDeDuplication(Separator.COMMA_SIGN, typesStr2);
+            List<String> types = StrUtil.splitStrAndDeDuplication(Separator.COMMA_SIGN, typesStr2);
             if (types.isEmpty()) {
                 types.add("3");
             }

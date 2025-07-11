@@ -4,7 +4,6 @@ import com.ch.cloud.upms.dto.AuthCodeGenerateDTO;
 import com.ch.cloud.upms.dto.AuthCodePermissionDTO;
 import com.ch.cloud.upms.dto.AuthCodeResourceDTO;
 import com.ch.cloud.upms.dto.AuthCodeVO;
-import com.ch.cloud.upms.dto.ProjectDto;
 import com.ch.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

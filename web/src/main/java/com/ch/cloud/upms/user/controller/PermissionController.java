@@ -18,7 +18,7 @@ import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
-import com.ch.utils.StringUtilsV2;
+import com.ch.core.utils.StrUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,7 +71,7 @@ public class PermissionController {
                     if (CommonUtils.isEquals(e.getParentId(), "0")) {
                         ids.add(e.getId());
                     } else {
-                        List<Long> ids2 = StringUtilsV2.parseIds(e.getParentId());
+                        List<Long> ids2 = StrUtil.parseIds(e.getParentId());
                         ids.add(ids2.get(0));
                     }
                 });
