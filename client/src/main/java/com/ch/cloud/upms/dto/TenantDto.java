@@ -28,12 +28,7 @@ public class TenantDto {
     /**
      * 租户部门
      */
-    @Schema(description = "租户编码")
-    private String code;
-    /**
-     * 租户描述
-     */
-    @Schema(description = "租户描述")
-    private String description;
+    @Schema(description = "租户所属部门")
+    private String deptId;
 
 }
