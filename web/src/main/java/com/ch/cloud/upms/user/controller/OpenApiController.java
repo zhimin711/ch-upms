@@ -7,6 +7,7 @@ import com.ch.cloud.upms.service.IPermissionService;
 import com.ch.cloud.upms.user.model.Permission;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.utils.CommonUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +55,8 @@ public class OpenApiController {
                     permissionDto.setMethod(path.getMethod().toUpperCase());
                     permissionDto.setUrl(path.getPath());
                     permissionService.lambdaQuery().eq(Permission::getUrl, path.getPath())
-                            .eq(Permission::getMethod, path.getMethod()).oneOpt().ifPresent(permission -> {
-                                permissionDto.setParentId(permission.getParentId());
-                            });
+                            .eq(Permission::getMethod, path.getMethod()).list().stream().findFirst()
+                            .ifPresent(permission -> permissionDto.setParentId(CommonUtils.or(permission.getParentName(),permission.getParentId())));
                     return permissionDto;
                 }).collect(Collectors.toList());
             }
