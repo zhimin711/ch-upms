@@ -3,6 +3,8 @@ package com.ch.cloud.upms.user.controller;
 import com.ch.cloud.api.client.ApiGroupClient;
 import com.ch.cloud.api.pojo.GroupPath;
 import com.ch.cloud.upms.dto.PermissionDto;
+import com.ch.cloud.upms.service.IPermissionService;
+import com.ch.cloud.upms.user.model.Permission;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +31,9 @@ public class OpenApiController {
     @Autowired
     private ApiGroupClient apiGroupClient;
 
+    @Autowired
+    IPermissionService permissionService;
+
     @Operation(summary = "获取项目模块分组", description = "获取项目模块")
     @GetMapping({"modules"})
     public Result<GroupPath> modules(@RequestParam Long projectId) {
@@ -48,6 +53,10 @@ public class OpenApiController {
                     permissionDto.setName(path.getName());
                     permissionDto.setMethod(path.getMethod().toUpperCase());
                     permissionDto.setUrl(path.getPath());
+                    permissionService.lambdaQuery().eq(Permission::getUrl, path.getPath())
+                            .eq(Permission::getMethod, path.getMethod()).oneOpt().ifPresent(permission -> {
+                                permissionDto.setParentId(permission.getParentId());
+                            });
                     return permissionDto;
                 }).collect(Collectors.toList());
             }
