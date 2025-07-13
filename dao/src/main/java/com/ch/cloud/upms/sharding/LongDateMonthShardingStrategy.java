@@ -1,8 +1,8 @@
 package com.ch.cloud.upms.sharding;
 
+import com.ch.core.data.rule.Week;
 import com.ch.e.Assert;
 import com.ch.e.PubError;
-import com.ch.rules.Week;
 import com.ch.utils.DateUtils;
 import com.google.common.collect.Range;
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;

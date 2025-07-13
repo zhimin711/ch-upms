@@ -36,14 +36,15 @@ public class OpenApiController {
     }
 
     @Operation(summary = "获取开放接口列表", description = "获取开放列表")
-    @GetMapping({"interfaces"})
+    @GetMapping({"paths"})
     public Result<PermissionDto> interfaces(@RequestParam Long moduleId) {
         return ResultUtils.wrap(() -> {
             Result<GroupPath> result = apiGroupClient.paths(moduleId);
             if (result.isSuccess()) {
                 return result.getRows().stream().map(path -> {
                     PermissionDto permissionDto = new PermissionDto();
-                    permissionDto.setCode(path.getId() + "");
+                    permissionDto.setId(path.getId());
+                    permissionDto.setCode(path.getKey());
                     permissionDto.setName(path.getName());
                     permissionDto.setMethod(path.getMethod().toUpperCase());
                     permissionDto.setUrl(path.getPath());

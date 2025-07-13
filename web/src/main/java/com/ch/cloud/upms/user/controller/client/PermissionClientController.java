@@ -83,7 +83,7 @@ public class PermissionClientController implements UpmsPermissionClient {
         return ResultUtils.wrap(() -> {
             Permission record = new Permission();
             record.setType(Num.S4);
-            record.setHidden(false);
+            record.setHidden(true);
             record.setStatus(StatusS.ENABLED);
             List<Permission> list = permissionService.find(record);
             return list.stream().map(MapperPermission.INSTANCE::toClientDto).collect(Collectors.toList());

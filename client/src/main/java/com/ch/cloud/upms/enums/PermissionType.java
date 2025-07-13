@@ -35,7 +35,7 @@ public enum PermissionType {
     /**
      * 授权码接口
      */
-    AUTH_CODE_INTERFACE("4#0"),
+    AUTH_CODE_INTERFACE("4#1"),
     /**
      * 开放接口（区分登录与游客两种类型）
      */
@@ -65,7 +65,7 @@ public enum PermissionType {
         }
         if (t == MENU && hidden != null && hidden) {
             t = PermissionType.MENU_HIDE;
-        }else if (t == AUTH_INTERFACE && hidden != null && !hidden){
+        }else if (t == AUTH_INTERFACE && hidden != null && hidden){
             t = PermissionType.AUTH_CODE_INTERFACE;
         }
         return t;
