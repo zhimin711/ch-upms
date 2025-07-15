@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.ch.cloud</groupId>
         <artifactId>ch-cloud</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
+        <version>2.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>ch-upms</artifactId>
     <version>${revision}</version>
@@ -19,7 +19,7 @@
     </modules>
 
     <properties>
-        <revision>1.0.0-SNAPSHOT</revision>
+        <revision>2.1.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.test.skip>true</maven.test.skip>
         <downloadSources>true</downloadSources>
@@ -32,7 +32,6 @@
         <ch.cloud.version>2.1.0-SNAPSHOT</ch.cloud.version>
         <ch.version>2.0.1-SNAPSHOT</ch.version>
         <ch.sso.version>2.1.0-SNAPSHOT</ch.sso.version>
-
 
         <mapstruct.version>1.5.2.Final</mapstruct.version>
         <lombok.version>1.18.20</lombok.version>
