@@ -1,14 +1,27 @@
-FROM openjdk:8u322-jdk-buster
-VOLUME /tmp
-#ADD apache-skywalking-java-agent-8.11.0.tgz .
-RUN #sh -c 'mv skywalking-agent agent'
-ADD ch-upms-*-SNAPSHOT.jar app.jar
-RUN sh -c 'touch /app.jar'
+FROM openjdk:8-alpine as builder
+WORKDIR application
+ARG JAR_FILE=./app.jar
+COPY ${JAR_FILE} application.jar
+RUN java -Djarmode=layertools -jar application.jar extract
+
+
+FROM openjdk:8-alpine
+COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas
+
+MAINTAINER zhimin (zhimin711@gmail.com)
+
+#ADD apache-skywalking-java-agent-8.12.0.tgz .
+
+WORKDIR application
+COPY --from=builder application/dependencies/ ./
+COPY --from=builder application/spring-boot-loader/ ./
+COPY --from=builder application/snapshot-dependencies/ ./
+COPY --from=builder application/application/ ./
+
+EXPOSE  8080
 
 ENV JAVA_OPTS=""
-#
+#-javaagent:/skywalking-agent/skywalking-agent.jar
 ENV AGENT_OPTS=""
-#-javaagent:/agent/skywalking-agent.jar
 
-EXPOSE 8080
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS $AGENT_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+ENTRYPOINT ["sh","-c","exec java ${JAVA_OPTS} ${JAVA_AGENT} -Djava.ext.dirs=$JAVA_HOME/jre/lib/ext:./skywalking-agent/ org.springframework.boot.loader.JarLauncher"]
