@@ -3,6 +3,7 @@ package com.ch.cloud.upms.user.controller;
 import com.ch.Constants;
 import com.ch.cloud.sso.client.SsoPasswordClient;
 import com.ch.cloud.upms.dto.TenantDto;
+import com.ch.cloud.upms.mapstrut.MapperTenant;
 import com.ch.cloud.upms.mq.sender.GatewayNotifySender;
 import com.ch.cloud.upms.service.IUserService;
 import com.ch.cloud.upms.user.manager.UserQueryManager;
@@ -20,6 +21,7 @@ import com.ch.pojo.KeyValue;
 import com.ch.pojo.VueRecord2;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.toolkit.ContextUtil;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -120,10 +122,7 @@ public class UserController {
                 userService.updateById(updateUser);
             }
             gatewayNotifySender.cleanNotify(new KeyValue("users", token));
-            TenantDto dto = new TenantDto();
-            dto.setId(tenant.getId());
-            dto.setName(tenant.getName());
-            return dto;
+            return MapperTenant.INSTANCE.toClientDto(tenant);
         });
     }
     
@@ -131,24 +130,19 @@ public class UserController {
     public Result<UserInfo> findValid(@RequestParam(value = "name", required = false) String idOrUsernameOrRealName) {
         return ResultUtils.wrapList(() -> userQueryManager.findAllValid(idOrUsernameOrRealName));
     }
-/*
+    
+    
     @GetMapping({"tenants"})
     public Result<TenantDto> findTenants() {
         return ResultUtils.wrapList(() -> {
-            String username = RequestUtils.getHeaderUser();
+            String username = ContextUtil.getUsername();
             if (CommonUtils.isEmpty(username)) {
                 return null;
             }
-            List<Tenant> tenantList = userService.findTenantsByUsername(RequestUtils.getHeaderUser());
-            return tenantList.stream().map(e -> {
-                TenantDto record = new TenantDto();
-                record.setId(e.getId());
-                record.setName(e.getName());
-                record.setDeptId(e.getDepartmentId());
-                return record;
-            }).collect(Collectors.toList());
+            List<Tenant> tenantList = userService.findTenantsByUsername(username);
+            return tenantList.stream().map(MapperTenant.INSTANCE::toClientDto).collect(Collectors.toList());
         });
-    }*/
+    }
     
     @GetMapping({"tenant/{tenantId:[0-9]+}/projects"})
     public Result<VueRecord2> findProjects(@PathVariable Long tenantId) {

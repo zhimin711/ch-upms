@@ -8,6 +8,7 @@ import com.ch.cloud.upms.dto.ProjectRoleDto;
 import com.ch.cloud.upms.dto.RoleDto;
 import com.ch.cloud.upms.dto.TenantDto;
 import com.ch.cloud.upms.dto.UserDto;
+import com.ch.cloud.upms.mapstrut.MapperTenant;
 import com.ch.cloud.upms.enums.RoleType;
 import com.ch.cloud.upms.manage.IProjectManage;
 import com.ch.cloud.upms.manage.IUserManage;
@@ -113,13 +114,7 @@ public class UserClientController implements UpmsUserClient {
     public Result<TenantDto> findTenantsByUsername(@PathVariable String username) {
         return ResultUtils.wrapList(() -> {
             List<Tenant> tenantList = userService.findTenantsByUsername(username);
-            return tenantList.stream().map(e -> {
-                TenantDto record = new TenantDto();
-                record.setId(e.getId());
-                record.setName(e.getName());
-                record.setDeptId(e.getDepartmentId());
-                return record;
-            }).collect(Collectors.toList());
+            return tenantList.stream().map(MapperTenant.INSTANCE::toClientDto).collect(Collectors.toList());
         });
     }
     

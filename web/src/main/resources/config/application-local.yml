@@ -91,7 +91,7 @@ management:
     db:
       enabled: false
 logging:
-  config: classpath:config/logback.xml
+#  config: classpath:config/logback.xml
   level:
     com.ch.cloud: debug
     com.ch.utils: info
