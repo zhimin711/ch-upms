@@ -16,6 +16,7 @@ import com.ch.pojo.VueRecord2;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
+import com.ch.toolkit.ContextUtil;
 import com.ch.utils.CommonUtils;
 import com.ch.utils.DateUtils;
 import com.ch.core.utils.StrUtil;
@@ -142,7 +143,7 @@ public class PermissionController {
             if (CommonUtils.isNotEmpty(record.getUrl())) {
                 record.setUrl(record.getUrl().trim());
             }
-            record.setUpdateBy(RequestUtils.getHeaderUser());
+            record.setUpdateBy(ContextUtil.getUsername());
             record.setUpdateAt(DateUtils.current());
             Permission r = permissionService.findByCode(record.getCode());
             Permission orig = permissionService.getById(id);

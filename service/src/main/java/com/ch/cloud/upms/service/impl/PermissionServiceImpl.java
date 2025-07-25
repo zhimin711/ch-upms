@@ -251,6 +251,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 .set(Permission::getMethod, record.getMethod())
                 .set(Permission::getIcon, record.getIcon())
                 .set(Permission::getHidden, record.getHidden())
+                .set(Permission::getEnableCookie, record.getEnableCookie())
                 .set(Permission::getSys, record.getSys())
                 .set(Permission::getName, record.getName())
                 .set(Permission::getParentId, record.getParentId())
