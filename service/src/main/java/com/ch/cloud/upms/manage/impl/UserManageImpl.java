@@ -136,8 +136,12 @@ public class UserManageImpl implements IUserManage {
     @Transactional
     @Override
     public boolean updateWithAll(User record) {
-        record.setUserId(null);
-        record.setUsername(null);
+        // 不要清除userId，因为缓存key需要使用这个值
+        String userId = record.getUserId();
+        // 确保userId没有被清除
+        record.setUserId(userId);
+        String username = record.getUsername();
+        record.setUsername(username);
         //不更新密码
         record.setPassword(null);
         saveDepartmentPosition(record);
