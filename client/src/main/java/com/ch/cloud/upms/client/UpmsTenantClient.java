@@ -5,6 +5,7 @@ import com.ch.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * decs:通用用户权限客户端接口
@@ -19,5 +20,6 @@ public interface UpmsTenantClient {
     @GetMapping({"{id:[0-9]+}/projects"})
     Result<ProjectDto> findProjects(@PathVariable Long id);
 
-
+    @GetMapping({"{id:[0-9]+}/has-admin"})
+    Result<Boolean> hasAdmin(@PathVariable Long id, @RequestParam("username") String username);
 }
