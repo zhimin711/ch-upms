@@ -1,15 +1,19 @@
 package com.ch.cloud.upms.user.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.ch.cloud.upms.dto.UsernameDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -22,7 +26,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("bt_tenant")
+@TableName(value = "bt_tenant",autoResultMap = true)
 public class Tenant extends Model<Tenant> {
 
     private static final long serialVersionUID = 1L;
@@ -51,7 +55,8 @@ public class Tenant extends Model<Tenant> {
     /**
      * 负责人
      */
-    private String manager;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<UsernameDTO> manager;
 
     /**
      * 排序

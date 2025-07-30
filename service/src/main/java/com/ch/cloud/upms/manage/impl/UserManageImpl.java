@@ -4,21 +4,21 @@ import cn.hutool.core.util.RandomUtil;
 import com.ch.StatusS;
 import com.ch.cloud.upms.dto.UserDto;
 import com.ch.cloud.upms.manage.IUserManage;
-import com.ch.cloud.upms.user.model.Department;
-import com.ch.cloud.upms.user.model.Position;
-import com.ch.cloud.upms.user.model.Role;
-import com.ch.cloud.upms.user.model.Tenant;
-import com.ch.cloud.upms.user.model.User;
 import com.ch.cloud.upms.service.IDepartmentService;
 import com.ch.cloud.upms.service.IPositionService;
 import com.ch.cloud.upms.service.IRoleService;
 import com.ch.cloud.upms.service.ITenantService;
 import com.ch.cloud.upms.service.IUserService;
+import com.ch.cloud.upms.user.model.Department;
+import com.ch.cloud.upms.user.model.Position;
+import com.ch.cloud.upms.user.model.Role;
+import com.ch.cloud.upms.user.model.Tenant;
+import com.ch.cloud.upms.user.model.User;
+import com.ch.core.utils.StrUtil;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
-import com.ch.utils.AssertUtils;
 import com.ch.utils.BeanUtilsV2;
 import com.ch.utils.CommonUtils;
-import com.ch.core.utils.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -126,7 +126,7 @@ public class UserManageImpl implements IUserManage {
         if (CommonUtils.isEmpty(record.getPassword())) {
             record.setPassword(RandomUtil.randomString(6));
         }
-        record.setUserId(RandomUtil.randomNumbers(10));
+        record.setUserId(generateUserId());
         boolean c = userService.save(record);
         saveDepartmentPosition(record);
         userService.updateById(record);
@@ -149,10 +149,10 @@ public class UserManageImpl implements IUserManage {
     }
     
     private void saveDepartmentPosition(User record) {
-        AssertUtils.isEmpty(record.getDutyList(), PubError.NON_NULL, "组织职位");
+        Assert.notEmpty(record.getDutyList(), PubError.NON_NULL, "组织职位");
         userService.deleteDepartmentPositionByUserId(record.getId());
         record.getDutyList().forEach(r -> {
-            AssertUtils.isTrue(CommonUtils.isEmpty(r.getDepartment()) || CommonUtils.isEmpty(r.getDuty()),
+            Assert.isFalse(CommonUtils.isEmpty(r.getDepartment()) || CommonUtils.isEmpty(r.getDuty()),
                     PubError.NON_NULL, "组织或职位");
             Department dept = departmentService.getById(StrUtil.lastId(r.getDepartment()));
             String deptId = r.getDepartment();
@@ -179,6 +179,18 @@ public class UserManageImpl implements IUserManage {
                 record.setTenantName(tenant.getName());
             }
         }
+    }
+    
+    /**
+     * 生成用户ID，确保不以0开头
+     * @return 10位数字的用户ID
+     */
+    private String generateUserId() {
+        // 生成第一位数字，确保不为0
+        String firstDigit = String.valueOf(RandomUtil.randomInt(1, 10));
+        // 生成剩余9位数字
+        String remainingDigits = RandomUtil.randomNumbers(9);
+        return firstDigit + remainingDigits;
     }
     
 }
