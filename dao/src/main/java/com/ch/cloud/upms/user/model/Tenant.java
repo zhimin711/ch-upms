@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class Tenant extends Model<Tenant> {
      * 负责人
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<UsernameDTO> manager;
+    private List<UsernameDTO> manager = new ArrayList<>();
 
     /**
      * 排序

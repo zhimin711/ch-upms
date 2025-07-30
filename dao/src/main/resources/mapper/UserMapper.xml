@@ -65,8 +65,19 @@
     </where>
     group by t.username
   </select>
-    <select id="findTenantsByUsername" resultType="com.ch.cloud.upms.user.model.Tenant">
-        SELECT distinct t.id,t.`name`,t.DEPARTMENT_ID,t.DEPARTMENT_NAME, IF(u.department_id = t.DEPARTMENT_ID,-1,IFNULL(t.sort,0)) as SORT, t.manager
+    <!-- Tenant查询结果映射 -->
+    <resultMap id="TenantResultMap" type="com.ch.cloud.upms.user.model.Tenant">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="DEPARTMENT_ID" property="departmentId" />
+        <result column="DEPARTMENT_NAME" property="departmentName" />
+        <result column="SORT" property="sort" />
+        <result column="manager" property="manager" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler" />
+    </resultMap>
+
+    <select id="findTenantsByUsername" resultMap="TenantResultMap">
+        SELECT distinct t.id,t.`name`,t.DEPARTMENT_ID,t.DEPARTMENT_NAME, IF(u.department_id = t.DEPARTMENT_ID,-1,IFNULL(t.sort,0)) as SORT, 
+               IF(t.manager IS NULL OR t.manager = '', '[]', t.manager) as manager
         from bt_tenant t
         INNER JOIN st_user_department_position udp
 --         on t.DEPARTMENT_ID = udp.department_id
