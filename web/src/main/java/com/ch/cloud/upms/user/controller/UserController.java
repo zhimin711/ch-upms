@@ -134,13 +134,19 @@ public class UserController {
     
     @GetMapping({"tenants"})
     public Result<TenantDto> findTenants() {
-        return ResultUtils.wrapList(() -> {
+        return ResultUtils.wrap(() -> {
             String username = ContextUtil.getUsername();
             if (CommonUtils.isEmpty(username)) {
                 return null;
             }
             List<Tenant> tenantList = userService.findTenantsByUsername(username);
-            return tenantList.stream().map(MapperTenant.INSTANCE::toClientDto).collect(Collectors.toList());
+            return tenantList.stream().map(t -> {
+                TenantDto clientDto = MapperTenant.INSTANCE.toClientDto(t);
+                if (CommonUtils.isNotEmpty(t.getManager())) {
+                    clientDto.setHasAdmin(t.getManager().stream().anyMatch(e -> username.equals(e.getUsername())));
+                }
+                return clientDto;
+            }).collect(Collectors.toList());
         });
     }
     
@@ -153,7 +159,7 @@ public class UserController {
                 VueRecord2 record = new VueRecord2();
                 record.setValue(e.getId() + "");
                 record.setLabel(e.getName());
-                record.setKey(e.getCode() + "");
+                record.setKey(e.getCode());
                 return record;
             }).collect(Collectors.toList());
         });

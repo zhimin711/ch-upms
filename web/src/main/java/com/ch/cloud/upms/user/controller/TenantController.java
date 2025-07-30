@@ -56,7 +56,7 @@ public class TenantController {
     
     @Operation(summary = "分页查询", description = "分页查询业务-租户") // 修改: 替换 @ApiOperation 为 @Operation
     @GetMapping(value = {"{num:[0-9]+}/{size:[0-9]+}"})
-    public PageResult<Tenant> page(@RequestParam String name, @RequestParam String status,
+    public PageResult<Tenant> page(@RequestParam(required = false) String name, @RequestParam(required = false) String status,
             @PathVariable(value = "num") int pageNum, @PathVariable(value = "size") int pageSize) {
         return ResultUtils.wrapPage(() -> {
             Tenant record = new Tenant();

@@ -31,4 +31,6 @@ public class TenantDto {
     @Schema(description = "租户所属部门")
     private String deptId;
 
+    @Schema(description = "有管理权限")
+    private boolean hasAdmin;
 }
