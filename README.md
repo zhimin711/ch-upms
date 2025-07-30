@@ -23,7 +23,7 @@ mvn clean install -Drevision=1.0.1-SNAPSHOT
 ```
 ### 打包client模块
 ```shell
-mvn -U -pl client -am clean install -Dmaven.test.skip -Drevision=1.1.1-SNAPSHOT
+mvn -U -pl client -am clean install -Dmaven.test.skip -Drevision=2.1.0-SNAPSHOT
 
 mvn -U -pl client -am clean deploy -Dmaven.test.skip -Drevision=1.1.1-SNAPSHOT
 

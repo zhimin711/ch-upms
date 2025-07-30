@@ -6,14 +6,14 @@ import com.ch.cloud.upms.client.UpmsProjectClient;
 import com.ch.cloud.upms.dto.ProjectDto;
 import com.ch.cloud.upms.dto.ProjectUserRoleDTO;
 import com.ch.cloud.upms.mapstrut.MapperProject;
-import com.ch.cloud.upms.user.model.Project;
 import com.ch.cloud.upms.service.IProjectService;
+import com.ch.cloud.upms.user.model.Project;
+import com.ch.e.Assert;
 import com.ch.e.PubError;
 import com.ch.result.InvokerPage;
 import com.ch.result.PageResult;
 import com.ch.result.Result;
 import com.ch.result.ResultUtils;
-import com.ch.utils.AssertUtils;
 import com.ch.utils.CommonUtils;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +83,7 @@ public class ProjectClientController implements UpmsProjectClient {
     public Result<ProjectDto> infoByIdOrCode(@RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "code", required = false) String code) {
         return ResultUtils.wrap(() -> {
-            AssertUtils.isTrue(id == null && CommonUtils.isEmpty(code), PubError.NON_NULL, "id or code");
+            Assert.isFalse(id == null && CommonUtils.isEmpty(code), PubError.NON_NULL, "id or code");
             Project record;
             if (id != null) {
                 record = projectService.getById(id);

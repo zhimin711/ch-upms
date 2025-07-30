@@ -8,6 +8,7 @@ import com.ch.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "${feign.client.upms:ch-upms}", url = "${feign.client.upmsUrl:}", path = "/fc/auth", contextId = "upmsAuthCodeClient")
 public interface UpmsAuthCodeClient {
     
-    @GetMapping({"generate"})
+    @PostMapping({"generate"})
     Result<AuthCodeVO> generate(@RequestBody AuthCodeGenerateDTO dto);
     
     @GetMapping({"{code}"})

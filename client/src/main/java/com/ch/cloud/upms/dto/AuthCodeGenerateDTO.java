@@ -10,7 +10,6 @@ import java.util.Date;
 @Schema(description = "授权码生成请求DTO")
 public class AuthCodeGenerateDTO {
     
-    
     /**
      * 授权人
      */
