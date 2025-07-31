@@ -57,7 +57,7 @@ public class Tenant extends Model<Tenant> {
      * 负责人
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<UsernameDTO> manager = new ArrayList<>();
+    private List<UsernameDTO> manager;
 
     /**
      * 排序

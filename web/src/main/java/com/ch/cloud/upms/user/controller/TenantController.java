@@ -133,9 +133,7 @@ public class TenantController {
     @GetMapping({"available"})
     public Result<VueRecord> findAvailable() {
         return ResultUtils.wrapList(() -> {
-            Tenant param = new Tenant();
-            param.setStatus(StatusS.ENABLED);
-            List<Tenant> list = tenantService.list(Wrappers.query(param));
+            List<Tenant> list = tenantService.lambdaQuery().eq(Tenant::getStatus, StatusS.ENABLED).list();
             return VueRecordUtils.covertIdTree(list);
         });
     }

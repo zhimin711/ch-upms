@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @since 2022/4/28 08:34
  */
 @RestController
-@RequestMapping("/tenants")
+@RequestMapping("/tenant")
 public class TenantClientController implements UpmsTenantClient {
 
     @Autowired

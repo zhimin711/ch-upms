@@ -95,9 +95,7 @@ public class UserController {
             if (!exists) {
                 ExUtils.throwError(PubError.NOT_EXISTS, role.getId());
             }
-            User updateUser = new User();
-            updateUser.setRoleId(role.getId());
-            return userService.updateById(updateUser);
+            return userService.lambdaUpdate().eq(User::getId, user.getId()).set(User::getRoleId, role.getId()).update();
         });
     }
     
