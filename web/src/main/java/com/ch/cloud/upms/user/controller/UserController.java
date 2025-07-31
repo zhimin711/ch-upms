@@ -49,19 +49,19 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    
+
     @Autowired
     private IUserService userService;
-    
+
     @Autowired
     private UserQueryManager userQueryManager;
-    
+
     @Autowired
     private SsoPasswordClient ssoPasswordClient;
-    
+
     @Autowired
     private GatewayNotifySender gatewayNotifySender;
-    
+
     @PostMapping("changePwd")
     public Result<Integer> changePwd(@RequestBody KeyValue keyValue) {
         return ResultUtils.wrapFail(() -> {
@@ -81,8 +81,8 @@ public class UserController {
             return userService.updatePassword(user);
         });
     }
-    
-    
+
+
     @PostMapping("changeRole")
     public Result<Boolean> changDefaultRole(@RequestBody Role role) {
         return ResultUtils.wrapFail(() -> {
@@ -98,12 +98,11 @@ public class UserController {
             return userService.lambdaUpdate().eq(User::getId, user.getId()).set(User::getRoleId, role.getId()).update();
         });
     }
-    
+
     @PostMapping("changeTenant")
-    public Result<TenantDto> changTenant(@RequestHeader(Constants.X_TOKEN) String token,
-            @RequestBody TenantChangeVO record) {
+    public Result<TenantDto> changTenant(@RequestBody TenantChangeVO record) {
         return ResultUtils.wrapFail(() -> {
-            String username = RequestUtils.getHeaderUser();
+            String username = ContextUtil.getUsername();
             User user = userService.findByUsername(username);
             Assert.notNull(user, PubError.NOT_EXISTS, "用户不存在: " + username);
             List<Tenant> tenants = userService.findTenantsByUsername(username);
@@ -119,17 +118,17 @@ public class UserController {
                 updateUser.setTenantName(tenant.getName());
                 userService.updateById(updateUser);
             }
-            gatewayNotifySender.cleanNotify(new KeyValue("users", token));
+            gatewayNotifySender.cleanNotify(new KeyValue("users", username));
             return MapperTenant.INSTANCE.toClientDto(tenant);
         });
     }
-    
+
     @GetMapping("valid")
     public Result<UserInfo> findValid(@RequestParam(value = "name", required = false) String idOrUsernameOrRealName) {
         return ResultUtils.wrapList(() -> userQueryManager.findAllValid(idOrUsernameOrRealName));
     }
-    
-    
+
+
     @GetMapping({"tenants"})
     public Result<TenantDto> findTenants() {
         return ResultUtils.wrap(() -> {
@@ -147,7 +146,7 @@ public class UserController {
             }).collect(Collectors.toList());
         });
     }
-    
+
     @GetMapping({"tenant/{tenantId:[0-9]+}/projects"})
     public Result<VueRecord2> findProjects(@PathVariable Long tenantId) {
         return ResultUtils.wrapList(() -> {
