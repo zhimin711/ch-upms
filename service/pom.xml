@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ch.cloud</groupId>
+        <artifactId>ch-upms</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>ch-upms-service</artifactId>
+    <name>Chao Hua UPMS Service</name>
+
+    <properties>
+        <file_encoding>UTF-8</file_encoding>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-upms-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-cloud-starter-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-cloud-starter-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-sso-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+    </dependencies>
+</project>

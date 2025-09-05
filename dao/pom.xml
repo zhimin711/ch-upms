@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ch.cloud</groupId>
+        <artifactId>ch-upms</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>ch-upms-dao</artifactId>
+    <name>Chao Hua UPMS Dao</name>
+
+    <properties>
+        <file_encoding>UTF-8</file_encoding>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-upms-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ch.cloud</groupId>
+            <artifactId>ch-cloud-starter-mybatis-plus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
+</project>

@@ -10,8 +10,26 @@ UPMS是User Permissions Management Service，用户权限管理微服务.
 #### 软件架构
 请接Wiki文档 [传送门](https://gitee.com/ch-cloud/wiki)
 
+[docker](https://docs.docker.com/engine/security/certificates)
 
 #### 安装教程
+maven need install local jar
+```shell
+mvn install:install-file -Dfile=xxx/libs/third/ueditor-1.1.2.jar -DgroupId=com.baidu -DartifactId=ueditor -Dversion=1.1.2 -Dpackaging=jar
+```
+
+```shell
+mvn clean install -Drevision=1.0.1-SNAPSHOT
+```
+### 打包client模块
+```shell
+mvn -U -pl client -am clean install -Dmaven.test.skip -Drevision=2.1.0-SNAPSHOT
+
+mvn -U -pl client -am clean deploy -Dmaven.test.skip -Drevision=1.1.1-SNAPSHOT
+
+```
+
+
 
 1. 初化数据库  
 使用other目录db初始化数据库

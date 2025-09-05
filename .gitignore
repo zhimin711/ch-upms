@@ -72,3 +72,5 @@ logs/
 Thumbs.db
 
 upload/
+target/
+.flattened-pom.xml

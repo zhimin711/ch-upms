@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  # 改镜像会暴露出自身的 `header` 信息
+  upms:
+    container_name: ch-upms
+    image: ch-upms:v1
+    expose:
+        - 7002
+    labels:
+      # 设置Host 为 gateway.docker.localhost 进行域名访问
+      - "traefik.http.routers.gateway.upms=Host(`upms.ch.com`)"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 550M
+        reservations:
+          cpus: '0.5'
+          memory: 200M
+# 使用已存在的 traefik 的 network
+networks:
+  default:
+    external:
+      name: nginx_default

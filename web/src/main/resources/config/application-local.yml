@@ -1,0 +1,137 @@
+server:
+  port: 7002
+jasypt:
+  encryptor:
+    password: abc123
+    algorithm: PBEWithMD5AndDES
+
+#====================================shardingsphereconfig===============================================
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  shardingsphere:
+    # 参数配置，显示sql
+    props:
+      sql-show: true # 显示执行的 SQL
+      sql-logging-level: DEBUG # 设置日志级别为 DEBUG
+      sql-logging-format: SQL # 设置日志格式为 SQL 语句格式
+      sql-federation-enabled: false
+      check-table-metadata-enabled: false #关闭元数据检查,可加快启动速度，但要确保表结构一致
+    datasource:
+      names: upms
+      upms:
+        url: jdbc:mysql://192.168.150.254:3306/ch_upms?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+        username: admin
+        password: 123456
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.zaxxer.hikari.HikariDataSource
+        hikari:
+          minimum-idle: 5
+          maximum-pool-size: 15
+          auto-commit: true
+          idle-timeout: 30000
+          max-lifetime: 1800000
+          connection-timeout: 30000
+          connection-test-query: SELECT 1
+    rules:
+      sharding:
+        sharding-algorithms:
+          timestamp-date-month-algorithm:
+            type: TIMESTAMP_DATE_MONTH_ALGORITHM
+        tables:
+          lt_op_record:
+            actual-data-nodes: upms.lt_op_record_20$->{24..99}0$->{1..9},upms.lt_op_record_20$->{24..99}$->{10..12}
+            logic-table: lt_op_record
+            table-strategy:
+              standard:
+                sharding-column: REQUEST_TIME
+                sharding-algorithm-name: timestamp-date-month-algorithm
+#====================================spring config===============================================
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+##    url: jdbc:mysql://106.12.140.185:3306/dev_ch_upms
+##    username: admin
+##    password: ENC(hfO3JFDCY2HB6x+j1obZOg==)
+#    url: jdbc:mysql://192.168.0.109:3306/ch_upms?characterEncoding=UTF-8&serverTimezone=GMT
+#    username: admin
+#    password: 123456
+#    type: com.zaxxer.hikari.HikariDataSource
+#    hikari:
+#      minimum-idle: 5
+#      maximum-pool-size: 15
+#      auto-commit: true
+#      idle-timeout: 30000
+#      pool-name: DatebookHikariCP
+#      connection-timeout: 30000
+#      connection-test-query: SELECT 1
+  thymeleaf:
+    mode: HTML
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: 100MB
+  redis:
+    host: 192.168.150.254
+    port: 6379
+    password: admin123
+    database: 3
+  cache:
+    type: redis
+    redis:
+      key-prefix: upms_
+
+
+management:
+  health:
+    db:
+      enabled: false
+logging:
+#  config: classpath:config/logback.xml
+  level:
+    com.ch.cloud: debug
+    com.ch.utils: info
+    com.alibaba.nacos.client: warn
+  file:
+    path: web/target/build/logs
+
+
+#====================================rocketmq config===============================================
+rocketmq:
+  name-server: 192.168.20.244:9876 # 自己的RocketMQ服务地址
+  producer:
+    send-message-timeout: 300000
+    group: ch-upms
+#====================================mybatis-plus config===============================================
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  typeAliasesPackage: com.ch.cloud.upms.model
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      id-type: auto
+
+#====================================custom config===============================================
+path:
+  root: xxx
+  temp: xxx/tmp
+  upload: ${path.root}\\upload
+  download: share/download
+
+ch:
+  gateway: ch-gateway
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  #    path: /swagger-ui/index.html  # 默认路径，可自定义
+  api-docs:
+    path: /v3/api-docs      # OpenAPI JSON 端点
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ch.cloud.upms.log.mapper.OPRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ch.cloud.upms.log.model.OPRecord">
+        <id column="ID" property="id" />
+        <result column="URL" property="url" />
+        <result column="METHOD" property="method" />
+        <result column="REQUEST" property="request" />
+        <result column="PROXY" property="proxy" />
+        <result column="RESPONSE" property="response" />
+        <result column="AUTH_CODE" property="authCode" />
+        <result column="STATUS" property="status" />
+        <result column="OPERATOR" property="operator" />
+        <result column="REQUEST_IP" property="requestIp" />
+        <result column="REQUEST_TIME" property="requestTime" />
+        <result column="RESPONSE_TIME" property="responseTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, URL, METHOD, REQUEST, PROXY, RESPONSE, AUTH_CODE, STATUS, OPERATOR, REQUEST_IP, REQUEST_TIME, RESPONSE_TIME
+    </sql>
+
+</mapper>
