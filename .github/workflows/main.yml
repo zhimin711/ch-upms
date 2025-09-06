@@ -62,7 +62,7 @@ jobs:
           
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.IMG_NAME }} -f web/src/main/docker/Dockerfile .
+          docker build -t ${{ env.IMG_NAME }} -f web/src/main/docker/Dockerfile web/target
           docker tag ${{ env.IMG_NAME }} ${{ env.FULL_IMAGE }}
 
       - name: Log in to Docker Hub
